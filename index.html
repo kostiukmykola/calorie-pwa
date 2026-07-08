@@ -425,24 +425,23 @@
 
     <!-- Mode: AI -->
     <div id="addModeAI" style="display:none">
-      <button class="btn btn-secondary btn-sm btn-block" onclick="openAIAnalysis()" style="margin-bottom:12px">🤖 Відкрити ChatGPT</button>
-      <div class="form-group">
-        <label>Встав відповідь ChatGPT:</label>
-        <textarea id="aiResult" rows="5" placeholder="Назва: ...
+      <div id="aiStep1">
+        <button class="btn btn-secondary btn-sm btn-block" onclick="openAIAnalysis()" style="margin-bottom:12px">🤖 Відкрити ChatGPT</button>
+        <div class="form-group"><label>Встав скопійовану відповідь ChatGPT:</label><textarea id="aiResult" rows="5" placeholder="Назва: ...
 Ккал: ...
 Білки: ...
 Жири: ...
-Вуглеводи: ..."></textarea>
+Вуглеводи: ..."></textarea></div>
+        <button class="btn btn-secondary btn-sm" onclick="parseAIResult()" style="margin-bottom:12px">📋 Вставити дані</button>
       </div>
-      <button class="btn btn-secondary btn-sm" onclick="parseAIResult()" style="margin-bottom:12px">📋 Застосувати AI результат</button>
-      <div id="aiFilled" style="display:none">
-        <div class="form-group"><label>Назва</label><input type="text" id="aiNameInput" readonly style="opacity:0.7"></div>
+      <div id="aiStep2" style="display:none">
+        <div class="form-group"><label>Назва</label><input type="text" id="aiNameInput"></div>
         <div class="form-row-3">
-          <div class="form-group"><label>🔥 Ккал</label><input type="text" id="aiCalInput" readonly style="opacity:0.7"></div>
-          <div class="form-group"><label>🥩 Білки</label><input type="text" id="aiProteinInput" readonly style="opacity:0.7"></div>
-          <div class="form-group"><label>🧈 Жири</label><input type="text" id="aiFatInput" readonly style="opacity:0.7"></div>
+          <div class="form-group"><label>🔥 Ккал</label><input type="number" id="aiCalInput" step="0.1"></div>
+          <div class="form-group"><label>🥩 Білки</label><input type="number" id="aiProteinInput" step="0.1"></div>
+          <div class="form-group"><label>🧈 Жири</label><input type="number" id="aiFatInput" step="0.1"></div>
         </div>
-        <div class="form-group"><label>🍚 Вуглеводи</label><input type="text" id="aiCarbsInput" readonly style="opacity:0.7"></div>
+        <div class="form-group"><label>🍚 Вуглеводи</label><input type="number" id="aiCarbsInput" step="0.1"></div>
       </div>
     </div>
 
@@ -863,7 +862,13 @@ async function openAddMealModal() {
   document.getElementById('quickFat').value = '0';
   document.getElementById('quickCarbs').value = '0';
   document.getElementById('aiResult').value = '';
-  document.getElementById('aiFilled').style.display = 'none';
+  document.getElementById('aiStep1').style.display = 'block';
+  document.getElementById('aiStep2').style.display = 'none';
+  document.getElementById('aiNameInput').value = '';
+  document.getElementById('aiCalInput').value = '';
+  document.getElementById('aiProteinInput').value = '';
+  document.getElementById('aiFatInput').value = '';
+  document.getElementById('aiCarbsInput').value = '';
   setAddMode('product');
   openModal('addMealModal');
 }
@@ -983,9 +988,9 @@ function parseAIResult() {
   document.getElementById('aiProteinInput').value = protein;
   document.getElementById('aiFatInput').value = fat;
   document.getElementById('aiCarbsInput').value = carbs;
-  document.getElementById('aiFilled').style.display = 'block';
-  document.getElementById('aiResult').value = '';
-  showToast(`✅ ${name}: ${cal} ккал, Б${protein} Ж${fat} В${carbs}`);
+  document.getElementById('aiStep1').style.display = 'none';
+  document.getElementById('aiStep2').style.display = 'block';
+  showToast(`✅ ${name}: ${cal} ккал, Б${protein} Ж${fat} В${carbs}. Можете відредагувати поля`);
 }
 
 async function deleteEntry(id) {
