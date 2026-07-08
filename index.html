@@ -108,6 +108,7 @@
       flex:1;
     }
     .header .date-nav { display:flex; align-items:center; gap:8px; }
+    .header .date-nav.hidden { display:none; }
     .header .date-nav button {
       background:var(--card); border:none; color:var(--text);
       width:32px; height:32px; border-radius:50%;
@@ -207,7 +208,7 @@
 
     .form-group { margin-bottom: 14px; }
     .form-group label { display: block; font-size: 13px; color: var(--text2); margin-bottom: 4px; font-weight: 500; }
-    .form-group input, .form-group select { width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: var(--text); font-size: 14px; font-family: inherit; outline: none; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: var(--text); font-size: 14px; font-family: inherit; outline: none; resize:vertical; }
     .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
     .form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23aaa' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -338,7 +339,7 @@
   <div class="header">
     <h1>🍽️ Щоденник Калорій</h1>
     <span class="sync-badge" id="syncBadge">✓</span>
-    <div class="date-nav">
+    <div class="date-nav" id="dateNav">
       <button onclick="changeDate(-1)">◀</button>
       <span id="dateDisplay"></span>
       <button onclick="changeDate(1)">▶</button>
@@ -420,23 +421,29 @@
         <div class="form-group"><label>🧈 Жири (г)</label><input type="number" id="quickFat" value="0" step="0.1"></div>
       </div>
       <div class="form-group"><label>🍚 Вуглеводи (г)</label><input type="number" id="quickCarbs" value="0" step="0.1"></div>
-      <div class="form-group"><label>Вага порції (г)</label><input type="number" id="quickWeight" value="100" min="1" step="1"></div>
     </div>
 
     <!-- Mode: AI -->
     <div id="addModeAI" style="display:none">
-      <div class="form-group"><label>Оберіть продукт</label><select id="aiProductSelect"></select></div>
-      <div class="form-group"><label>Вага (г)</label><input type="number" id="aiWeight" value="100" min="1" step="1"></div>
-      <button class="btn btn-secondary btn-sm btn-block" onclick="openAIAnalysis()">🤖 Відкрити ChatGPT</button>
-      <div class="form-group" style="margin-top:8px">
-        <label>Або встав відповідь вручну</label>
-        <textarea id="aiResult" rows="4" placeholder="Назва: ...
+      <button class="btn btn-secondary btn-sm btn-block" onclick="openAIAnalysis()" style="margin-bottom:12px">🤖 Відкрити ChatGPT</button>
+      <div class="form-group">
+        <label>Встав відповідь ChatGPT:</label>
+        <textarea id="aiResult" rows="5" placeholder="Назва: ...
 Ккал: ...
 Білки: ...
 Жири: ...
 Вуглеводи: ..."></textarea>
       </div>
-      <button class="btn btn-secondary btn-sm" onclick="parseAIResult()">📋 Застосувати AI результат</button>
+      <button class="btn btn-secondary btn-sm" onclick="parseAIResult()" style="margin-bottom:12px">📋 Застосувати AI результат</button>
+      <div id="aiFilled" style="display:none">
+        <div class="form-group"><label>Назва</label><input type="text" id="aiNameInput" readonly style="opacity:0.7"></div>
+        <div class="form-row-3">
+          <div class="form-group"><label>🔥 Ккал</label><input type="text" id="aiCalInput" readonly style="opacity:0.7"></div>
+          <div class="form-group"><label>🥩 Білки</label><input type="text" id="aiProteinInput" readonly style="opacity:0.7"></div>
+          <div class="form-group"><label>🧈 Жири</label><input type="text" id="aiFatInput" readonly style="opacity:0.7"></div>
+        </div>
+        <div class="form-group"><label>🍚 Вуглеводи</label><input type="text" id="aiCarbsInput" readonly style="opacity:0.7"></div>
+      </div>
     </div>
 
     <button class="btn btn-primary btn-block" onclick="addMealEntry()" style="margin-top:12px">Додати</button>
@@ -483,8 +490,8 @@
     <h3 id="confirmTitle">Видалити?</h3>
     <p id="confirmText">Цю дію не можна скасувати.</p>
     <div class="actions">
-      <button class="btn btn-secondary btn-sm" onclick="closeConfirm()">Скасувати</button>
-      <button class="btn btn-primary btn-sm" id="confirmBtn" onclick="closeConfirm()">Видалити</button>
+      <button class="btn btn-secondary btn-sm" onclick="closeConfirmCancel()">Скасувати</button>
+      <button class="btn btn-primary btn-sm" id="confirmBtn" onclick="confirmAccept()">Видалити</button>
     </div>
   </div>
 </div>
@@ -619,7 +626,12 @@ function showConfirm(title, text, cb) {
   confirmCallback = cb;
 }
 
-function closeConfirm() {
+function closeConfirmCancel() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+  confirmCallback = null;
+}
+
+function confirmAccept() {
   document.getElementById('confirmOverlay').classList.remove('open');
   if (confirmCallback) { confirmCallback(); confirmCallback = null; }
 }
@@ -631,6 +643,14 @@ document.querySelectorAll('.modal-overlay').forEach(el => {
   el.addEventListener('click', e => {
     if (e.target === el) el.classList.remove('open');
   });
+});
+
+document.addEventListener('click', e => {
+  const menu = document.getElementById('userMenu');
+  const btn = document.querySelector('.user-btn');
+  if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) {
+    menu.classList.remove('open');
+  }
 });
 
 function changeDate(delta) {
@@ -650,6 +670,8 @@ function displayDateStr(d) {
 }
 
 function switchPage(page) {
+  document.getElementById('userMenu').classList.remove('open');
+  document.getElementById('dateNav').classList.toggle('hidden', page !== 'diary');
   currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1)).classList.add('active');
@@ -833,8 +855,6 @@ async function openAddMealModal() {
   await loadProducts();
   const sel = document.getElementById('addMealProduct');
   sel.innerHTML = products.map(p => `<option value="${p.id}">${escHtml(p.name)} (${p.cal} ккал/100г)</option>`).join('');
-  const aiSel = document.getElementById('aiProductSelect');
-  aiSel.innerHTML = products.map(p => `<option value="${p.id}">${escHtml(p.name)} (${p.cal} ккал/100г)</option>`).join('');
   document.getElementById('mealType').value = 'Сніданок';
   document.getElementById('addMealWeight').value = '100';
   document.getElementById('quickName').value = '';
@@ -842,8 +862,8 @@ async function openAddMealModal() {
   document.getElementById('quickProtein').value = '0';
   document.getElementById('quickFat').value = '0';
   document.getElementById('quickCarbs').value = '0';
-  document.getElementById('quickWeight').value = '100';
   document.getElementById('aiResult').value = '';
+  document.getElementById('aiFilled').style.display = 'none';
   setAddMode('product');
   openModal('addMealModal');
 }
@@ -899,11 +919,9 @@ async function addMealEntry() {
     const protein = parseFloat(document.getElementById('quickProtein').value) || 0;
     const fat = parseFloat(document.getElementById('quickFat').value) || 0;
     const carbs = parseFloat(document.getElementById('quickCarbs').value) || 0;
-    const weight = parseFloat(document.getElementById('quickWeight').value) || 100;
     if (cal <= 0) { showToast('Введіть калорійність'); return; }
     entry = {
-      date: formatDate(currentDate), mealType,
-      productName: name, weight,
+      date: formatDate(currentDate), mealType, productName: name, weight: 0,
       cal: Math.round(cal * 10) / 10,
       protein: Math.round(protein * 10) / 10,
       fat: Math.round(fat * 10) / 10,
@@ -911,23 +929,18 @@ async function addMealEntry() {
       timestamp: Date.now(),
     };
   } else if (addMode === 'ai') {
-    const productId = document.getElementById('aiProductSelect').value;
-    const weight = parseFloat(document.getElementById('aiWeight').value) || 0;
-    if (!weight || weight <= 0) { showToast('Введіть коректну вагу'); return; }
-    const product = products.find(p => p.id === productId);
-    if (!product) { showToast('Оберіть продукт'); return; }
-    if (product.id === 'ai_temp') {
-      const saved = await fireAdd('products', { name: product.name, cal: product.cal, protein: product.protein, fat: product.fat, carbs: product.carbs });
-      product.id = saved.id;
-    }
-    const ratio = weight / 100;
+    const name = document.getElementById('aiNameInput').value.trim();
+    if (!name) { showToast('Спочатку застосуйте AI результат'); return; }
+    const cal = parseFloat(document.getElementById('aiCalInput').value) || 0;
+    const protein = parseFloat(document.getElementById('aiProteinInput').value) || 0;
+    const fat = parseFloat(document.getElementById('aiFatInput').value) || 0;
+    const carbs = parseFloat(document.getElementById('aiCarbsInput').value) || 0;
     entry = {
-      date: formatDate(currentDate), mealType,
-      productName: product.name, weight,
-      cal: Math.round(product.cal * ratio * 10) / 10,
-      protein: Math.round(product.protein * ratio * 10) / 10,
-      fat: Math.round(product.fat * ratio * 10) / 10,
-      carbs: Math.round(product.carbs * ratio * 10) / 10,
+      date: formatDate(currentDate), mealType, productName: name, weight: 0,
+      cal: Math.round(cal * 10) / 10,
+      protein: Math.round(protein * 10) / 10,
+      fat: Math.round(fat * 10) / 10,
+      carbs: Math.round(carbs * 10) / 10,
       timestamp: Date.now(),
     };
   }
@@ -965,12 +978,14 @@ function parseAIResult() {
     else if (line.startsWith('Вуглеводи:')) carbs = parseFloat(line.replace('Вуглеводи:', '').trim()) || 0;
   }
   if (!name) { showToast('Не вдалося розпізнати назву. Переконайся що формат відповіді правильний'); return; }
-  const tempProduct = { id: 'ai_temp', name, cal, protein, fat, carbs };
-  products.unshift(tempProduct);
-  const aiSel = document.getElementById('aiProductSelect');
-  aiSel.innerHTML = products.map(p => `<option value="${p.id}" ${p.id === 'ai_temp' ? 'selected' : ''}>${escHtml(p.name)} (${p.cal} ккал/100г)</option>`).join('');
+  document.getElementById('aiNameInput').value = name;
+  document.getElementById('aiCalInput').value = cal;
+  document.getElementById('aiProteinInput').value = protein;
+  document.getElementById('aiFatInput').value = fat;
+  document.getElementById('aiCarbsInput').value = carbs;
+  document.getElementById('aiFilled').style.display = 'block';
   document.getElementById('aiResult').value = '';
-  showToast(`✅ ${name}: ${cal} ккал, Б${protein} Ж${fat} В${carbs} на 100г`);
+  showToast(`✅ ${name}: ${cal} ккал, Б${protein} Ж${fat} В${carbs}`);
 }
 
 async function deleteEntry(id) {
