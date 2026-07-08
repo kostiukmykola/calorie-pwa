@@ -853,17 +853,19 @@ function setAddMode(mode) {
   document.getElementById('addModeProduct').style.display = mode === 'product' ? 'block' : 'none';
   document.getElementById('addModeQuick').style.display = mode === 'quick' ? 'block' : 'none';
   document.getElementById('addModeAI').style.display = mode === 'ai' ? 'block' : 'none';
-  const btns = ['product','quick','ai'];
-  btns.forEach(m => {
-    const el = document.getElementById('mode' + m.charAt(0).toUpperCase() + m.slice(1));
-    if (m === mode) {
+
+  const ids = { product: 'modeProduct', quick: 'modeQuick', ai: 'modeAI' };
+  for (const [key, id] of Object.entries(ids)) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    if (key === mode) {
       el.style.background = 'var(--accent)';
       el.style.color = '#fff';
     } else {
       el.style.background = 'var(--card2)';
       el.style.color = 'var(--text2)';
     }
-  });
+  }
 }
 
 async function addMealEntry() {
