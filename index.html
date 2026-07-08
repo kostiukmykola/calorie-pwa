@@ -603,6 +603,14 @@ function escHtml(s) {
   return d.innerHTML;
 }
 
+async function getClipboardText() {
+  try {
+    return await navigator.clipboard.readText();
+  } catch (e) {
+    return '';
+  }
+}
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -970,9 +978,12 @@ function openAIAnalysis() {
   showToast('Відправ фото в ChatGPT і встав відповідь у поле нижче');
 }
 
-function parseAIResult() {
-  const text = document.getElementById('aiResult').value.trim();
-  if (!text) { showToast('Встав відповідь від ChatGPT'); return; }
+async function parseAIResult() {
+  let text = document.getElementById('aiResult').value.trim();
+  if (!text) {
+    text = await getClipboardText();
+  }
+  if (!text) { showToast('Встав відповідь від ChatGPT або скопіюй її в буфер обміну'); return; }
   const lines = text.split('\n').map(l => l.trim());
   let name = '', cal = 0, protein = 0, fat = 0, carbs = 0;
   for (const line of lines) {
