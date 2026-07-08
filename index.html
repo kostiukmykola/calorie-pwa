@@ -259,7 +259,7 @@
     .toggle.on::after { left: 22px; }
 
     .week-chart { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding: 10px 0; }
-    .week-chart .bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height: 100%; justify-content:flex-end; }
+    .week-chart .bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; height: 100%; justify-content:flex-end; }
     .week-chart .bar { width: 100%; max-width: 32px; border-radius: 4px 4px 0 0; background: var(--accent); min-height: 2px; transition: height 0.3s; }
     .week-chart .bar-label { font-size: 10px; color: var(--text2); }
     .week-chart .bar-value { font-size: 10px; color: var(--text2); font-weight: 600; }
@@ -1185,9 +1185,8 @@ async function renderStats() {
     <div class="week-chart">
       ${dailyData.map(d => `
         <div class="bar-wrap">
-          <div class="bar-value">${Math.round(d.cal)}</div>
-          <div style="flex:1;min-height:4px"></div>
           <div class="bar" style="height:${Math.max(2, d.cal / maxCal * 100)}%"></div>
+          <div class="bar-value">${Math.round(d.cal)}</div>
           <div class="bar-label">${statsWeekView ? daysLabels[d.date.getDay()] : d.date.getDate()}</div>
         </div>
       `).join('')}
