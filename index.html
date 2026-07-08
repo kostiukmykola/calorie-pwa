@@ -107,8 +107,7 @@
       -webkit-text-fill-color: transparent;
       flex:1;
     }
-    .header .date-nav { display:flex; align-items:center; gap:8px; }
-    .header .date-nav.hidden { display:none; }
+    .date-nav { display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:12px; }
     .header .date-nav button {
       background:var(--card); border:none; color:var(--text);
       width:32px; height:32px; border-radius:50%;
@@ -339,11 +338,6 @@
   <div class="header">
     <h1>🍽️ Щоденник Калорій</h1>
     <span class="sync-badge" id="syncBadge">✓</span>
-    <div class="date-nav" id="dateNav">
-      <button onclick="changeDate(-1)">◀</button>
-      <span id="dateDisplay"></span>
-      <button onclick="changeDate(1)">▶</button>
-    </div>
     <button class="user-btn" onclick="toggleUserMenu()">👤</button>
     <div class="user-menu" id="userMenu">
       <div style="padding:8px 12px;font-size:13px;color:var(--text2);word-break:break-all" id="userEmail"></div>
@@ -352,6 +346,11 @@
   </div>
 
   <div class="page active" id="pageDiary">
+    <div class="date-nav" id="dateNav">
+      <button onclick="changeDate(-1)">◀</button>
+      <span id="dateDisplay"></span>
+      <button onclick="changeDate(1)">▶</button>
+    </div>
     <div class="daily-summary" id="dailySummary"></div>
     <div id="mealSections"></div>
     <button class="btn btn-primary btn-block" onclick="openAddMealModal()">+ Додати прийом їжі</button>
@@ -678,7 +677,6 @@ function displayDateStr(d) {
 
 function switchPage(page) {
   document.getElementById('userMenu').classList.remove('open');
-  document.getElementById('dateNav').classList.toggle('hidden', page !== 'diary');
   currentPage = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1)).classList.add('active');
