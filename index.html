@@ -1147,16 +1147,16 @@ async function renderStats() {
   const allEntries = await fireGet('entries');
   const now = new Date();
 
-  const dayOfWeek = now.getDay();
-  const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   const dates = [];
   const numDays = statsWeekView ? 7 : 30;
   for (let i = numDays - 1; i >= 0; i--) {
     const d = new Date(now);
     if (statsWeekView) {
-      d.setDate(now.getDate() - (mondayOffset + i));
+      const dayOfWeek = d.getDay();
+      const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      d.setDate(d.getDate() - mondayOffset + (numDays - 1 - i));
     } else {
-      d.setDate(now.getDate() - i);
+      d.setDate(d.getDate() - i);
     }
     dates.push(d);
   }
