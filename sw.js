@@ -1,4 +1,4 @@
-const CACHE_NAME = 'calorie-pwa-v1';
+const CACHE_NAME = 'calorie-pwa-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -22,7 +22,12 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  if (event.request.url.startsWith('chrome-extension://')) return;
+  const url = new URL(event.request.url);
+  if (event.request.method !== 'GET') return;
+  if (url.hostname !== location.hostname && url.hostname !== 'fonts.googleapis.com' && url.hostname !== 'fonts.gstatic.com') return;
+  if (url.pathname.includes('firebase')) return;
+  if (url.pathname.includes('googleapis')) return;
+
   event.respondWith(
     caches.match(event.request).then(cached =>
       cached || fetch(event.request).then(response =>
