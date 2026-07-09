@@ -1502,7 +1502,7 @@ function updateGoalsUI() {
 
   const legendHtml = '<div class="dist-legend">' + mealOrder.map(m => `<div class="dist-legend-item"><div class="dist-legend-dot" style="background:${colors[m]}"></div>${faMeals[m]} ${m}</div>`).join('') + '</div>';
 
-  let html = '<div style="font-weight:600;font-size:15px;margin-bottom:8px"><i class="fas fa-fire"></i> Розподіл калорій</div>';
+  let html = '<div style="font-weight:600;font-size:15px;margin-bottom:8px;padding:0 16px"><i class="fas fa-fire"></i> Розподіл калорій</div>';
   const calVals = mealOrder.map(m => {
     const pPct = goals.distProtein[m] || 0;
     const fPct = goals.distFat[m] || 0;
@@ -1515,7 +1515,7 @@ function updateGoalsUI() {
   html += '<div class="dist-row"><div class="dist-label"></div>' + segBar(calVals) + '</div>';
   html += legendHtml;
 
-  html += '<div style="margin:16px 0;border-top:1px solid var(--bg3);padding-top:12px;font-weight:600;font-size:15px;margin-bottom:8px"><i class="fas fa-chart-simple"></i> Розподіл нутрієнтів</div>';
+  html += '<div style="margin:16px 0;border-top:1px solid var(--bg3);padding:12px 16px 0;font-weight:600;font-size:15px;margin-bottom:8px"><i class="fas fa-chart-simple"></i> Розподіл нутрієнтів</div>';
   const macros = [
     {key:'protein',label:'<i class="fas fa-drumstick-bite"></i> Білки', unit:'г', getPct:m=>goals.distProtein[m]||0},
     {key:'fat',label:'<i class="fas fa-droplet"></i> Жири', unit:'г', getPct:m=>goals.distFat[m]||0},
