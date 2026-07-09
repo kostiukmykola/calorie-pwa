@@ -1060,6 +1060,8 @@ async function importProducts() {
   if (!Array.isArray(list)) { resultEl.textContent = '❌ JSON має бути масивом продуктів'; return; }
   let imported = 0, skipped = 0;
   const existingNames = new Set(products.map(p => p.name.toLowerCase()));
+  const batch = db.batch();
+  const productsRef = userRef().collection('products');
   for (const item of list) {
     if (!item.name || typeof item.name !== 'string' || !item.name.trim()) { skipped++; continue; }
     const cal = parseFloat(item.cal);
@@ -1073,13 +1075,13 @@ async function importProducts() {
       fat: round1((parseFloat(item.fat) || 0) * 10) / 10,
       carbs: round1((parseFloat(item.carbs) || 0) * 10) / 10,
     };
-    try {
-      const added = await fireAdd('products', product);
-      products.push(added);
-      existingNames.add(name.toLowerCase());
-      imported++;
-    } catch(e) { skipped++; }
+    const docRef = productsRef.doc();
+    batch.set(docRef, product);
+    products.push({ ...product, id: docRef.id });
+    existingNames.add(name.toLowerCase());
+    imported++;
   }
+  await batch.commit();
   resultEl.textContent = `✅ Імпортовано: ${imported}, пропущено: ${skipped}`;
   productsCache.timestamp = 0;
   renderProducts();
@@ -1476,7 +1478,7 @@ async function loadGoals() {
     if (!goals.distFat) goals.distFat = {Сніданок:25,Обід:35,Вечеря:30,Перекус:10};
     if (!goals.distCarbs) goals.distCarbs = {Сніданок:25,Обід:35,Вечеря:30,Перекус:10};
   } else {
-    await userRef().collection('goals').doc('main').set(goals);
+  await userRef().collection('goals').doc('main').set(goals, { merge: true });
   }
   updateGoalsUI();
 }
