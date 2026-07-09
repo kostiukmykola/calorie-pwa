@@ -578,7 +578,13 @@ firebase.initializeApp({
 
 const auth = firebase.auth();
 const db = firebase.firestore();
-const settings = { timestampsInSnapshots: true };
+db.enablePersistence({ synchronizeTabs: true }).catch(err => {
+  if (err.code === 'failed-precondition') {
+    console.warn('Persistence failed: multiple tabs open');
+  } else if (err.code === 'unimplemented') {
+    console.warn('Persistence not supported');
+  }
+});
 
 // ====== AUTH ======
 let currentUser = null;
@@ -673,7 +679,8 @@ let entries = [];
 let goals = { cal:2000, protein:150, fat:65, carbs:250, distProtein:{Сніданок:25,Обід:35,Вечеря:30,Перекус:10}, distFat:{Сніданок:25,Обід:35,Вечеря:30,Перекус:10}, distCarbs:{Сніданок:25,Обід:35,Вечеря:30,Перекус:10} };
 let editingProductId = null;
 let statsWeekView = true;
-let entriesCache = { data: null, timestamp: 0 };
+let entriesCache = { data: null, timestamp: 0, key: '' };
+let productsCache = { data: null, timestamp: 0 };
 const CACHE_TTL = 180000;
 let statsOffset = 0;
 let confirmCallback = null;
@@ -868,6 +875,18 @@ function fireGetById(collection, id) {
   });
 }
 
+fireGetWhere = wrapFire(fireGetWhere);
+function fireGetWhere(collection, ...conditions) {
+  if (!checkOnline()) return Promise.resolve([]);
+  let ref = userRef().collection(collection);
+  conditions.forEach(c => { ref = ref.where(c[0], c[1], c[2]); });
+  return ref.get().then(snap => {
+    const results = [];
+    snap.forEach(doc => results.push({ id: doc.id, ...doc.data() }));
+    return results;
+  });
+}
+
 function checkOnline() {
   if (!navigator.onLine) { showToast('🔴 Немає інтернету. Дані не завантажуються'); return false; }
   return true;
@@ -897,6 +916,10 @@ function fireDelete(collection, id) {
 
 // ====== PRODUCTS ======
 async function loadProducts() {
+  if (productsCache.data && Date.now() - productsCache.timestamp < CACHE_TTL) {
+    products = productsCache.data;
+    return products;
+  }
   products = await fireGet('products');
   if (products.length === 0) {
     const existingNames = new Set(products.map(p => p.name.toLowerCase()));
@@ -907,6 +930,7 @@ async function loadProducts() {
       }
     }
   }
+  productsCache = { data: products, timestamp: Date.now() };
   return products;
 }
 
@@ -968,12 +992,14 @@ async function saveProduct() {
   };
   if (id) {
     await fireSet('products', id, data);
+    const idx = products.findIndex(p => p.id === id);
+    if (idx >= 0) Object.assign(products[idx], data);
   } else {
     const added = await fireAdd('products', data);
     products.push(added);
   }
+  productsCache.timestamp = 0;
   closeModal('productModal');
-  await loadProducts();
   renderProducts();
   showSyncBadge();
   showToast('Продукт збережено');
@@ -983,6 +1009,7 @@ async function deleteProduct(id) {
   showConfirm('Видалити продукт?', 'Це не вплине на записи в щоденнику.', async () => {
     await fireDelete('products', id);
     products = products.filter(p => p.id !== id);
+    productsCache.timestamp = 0;
     closeModal('productModal');
     renderProducts();
     showToast('Продукт видалено');
@@ -1026,6 +1053,7 @@ async function importProducts() {
     } catch(e) { skipped++; }
   }
   resultEl.textContent = `✅ Імпортовано: ${imported}, пропущено: ${skipped}`;
+  productsCache.timestamp = 0;
   renderProducts();
   if (imported > 0) showToast(`Імпортовано ${imported} продуктів`);
 }
@@ -1034,15 +1062,7 @@ async function importProducts() {
 async function loadDiary() {
   document.getElementById('mealSections').innerHTML = '<div class="loader"></div>';
   document.getElementById('dailySummary').innerHTML = '';
-  const dateStr = formatDate(currentDate);
-  let allEntries;
-  if (entriesCache.data && Date.now() - entriesCache.timestamp < CACHE_TTL) {
-    allEntries = entriesCache.data;
-  } else {
-    allEntries = await fireGet('entries');
-    entriesCache = { data: allEntries, timestamp: Date.now() };
-  }
-  entries = allEntries.filter(e => e.date === dateStr);
+  entries = await fireGetWhere('entries', ['date', '==', formatDate(currentDate)]);
   await loadProducts();
   renderDiary();
 }
@@ -1149,10 +1169,12 @@ async function addMealEntry() {
     };
   }
 
-  await fireAdd('entries', entry);
+  const added = await fireAdd('entries', entry);
   closeModal('addMealModal');
+  entries.push(added);
+  entriesCache.timestamp = 0;
+  renderDiary();
   showSyncBadge();
-  await loadDiary();
   showToast('Додано!');
 }
 
@@ -1577,13 +1599,6 @@ function shiftStatsPeriod(dir) {
 async function renderStats() {
   const container = document.getElementById('statsContent');
   container.innerHTML = '<div class="loader"></div>';
-  let allEntries;
-  if (entriesCache.data && Date.now() - entriesCache.timestamp < CACHE_TTL) {
-    allEntries = entriesCache.data;
-  } else {
-    allEntries = await fireGet('entries');
-    entriesCache = { data: allEntries, timestamp: Date.now() };
-  }
   const now = new Date();
 
   let numDays = statsWeekView ? 7 : 30;
@@ -1634,6 +1649,17 @@ async function renderStats() {
       d.setFullYear(refMonth.getFullYear(), refMonth.getMonth(), i + 1);
     }
     dates.push(d);
+  }
+
+  const startStr = formatDate(dates[0]);
+  const endStr = formatDate(dates[dates.length - 1]);
+  const cacheKey = startStr + '_' + endStr;
+  let allEntries;
+  if (entriesCache.data && entriesCache.key === cacheKey && Date.now() - entriesCache.timestamp < CACHE_TTL) {
+    allEntries = entriesCache.data;
+  } else {
+    allEntries = await fireGetWhere('entries', ['date', '>=', startStr], ['date', '<=', endStr]);
+    entriesCache = { data: allEntries, key: cacheKey, timestamp: Date.now() };
   }
 
   const dailyData = dates.map(d => {
@@ -1717,8 +1743,7 @@ auth.onAuthStateChanged(async user => {
     showApp();
     showLoadingOverlay('Завантаження даних...');
     try {
-      await loadProducts();
-      await loadGoals();
+      await Promise.all([loadProducts(), loadGoals()]);
       updateDateDisplay();
       loadDiary();
     } catch (e) {
