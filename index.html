@@ -625,6 +625,8 @@ let entries = [];
 let goals = { cal:2000, protein:150, fat:65, carbs:250 };
 let editingProductId = null;
 let statsWeekView = true;
+let entriesCache = { data: null, timestamp: 0 };
+const CACHE_TTL = 60000;
 let statsOffset = 0;
 let confirmCallback = null;
 
@@ -688,6 +690,7 @@ function showToast(msg) {
 }
 
 function showSyncBadge() {
+  entriesCache.timestamp = 0;
   const el = document.getElementById('syncBadge');
   el.classList.add('show');
   clearTimeout(el._t);
@@ -943,7 +946,13 @@ async function loadDiary() {
   document.getElementById('mealSections').innerHTML = '<div class="loader"></div>';
   document.getElementById('dailySummary').innerHTML = '';
   const dateStr = formatDate(currentDate);
-  const allEntries = await fireGet('entries');
+  let allEntries;
+  if (entriesCache.data && Date.now() - entriesCache.timestamp < CACHE_TTL) {
+    allEntries = entriesCache.data;
+  } else {
+    allEntries = await fireGet('entries');
+    entriesCache = { data: allEntries, timestamp: Date.now() };
+  }
   entries = allEntries.filter(e => e.date === dateStr);
   await loadProducts();
   renderDiary();
@@ -1278,7 +1287,13 @@ function shiftStatsPeriod(dir) {
 async function renderStats() {
   const container = document.getElementById('statsContent');
   container.innerHTML = '<div class="loader"></div>';
-  const allEntries = await fireGet('entries');
+  let allEntries;
+  if (entriesCache.data && Date.now() - entriesCache.timestamp < CACHE_TTL) {
+    allEntries = entriesCache.data;
+  } else {
+    allEntries = await fireGet('entries');
+    entriesCache = { data: allEntries, timestamp: Date.now() };
+  }
   const now = new Date();
 
   let numDays = statsWeekView ? 7 : 30;
