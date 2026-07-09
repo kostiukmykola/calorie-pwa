@@ -55,7 +55,7 @@
     /* AUTH PAGE */
     .auth-page {
       display: flex; flex-direction: column; justify-content: center; align-items: center;
-      min-height: 100dvh; padding: 24px;
+      min-height: 100dvh; padding: 24px; padding-top: max(24px, env(safe-area-inset-top, 24px)); padding-bottom: max(24px, env(safe-area-inset-bottom, 24px));
     }
     .auth-page.hidden { display: none; }
     .auth-box {
@@ -96,11 +96,11 @@
     .auth-box .divider::after { right: 0; }
 
     /* APP */
-    #app { display: none; }
+    #app { display: none; padding-top: env(safe-area-inset-top, 0); }
     #app.visible { display: block; }
 
     .header {
-      position: sticky; top:0; z-index:100;
+      position: sticky; top: env(safe-area-inset-top, 0); z-index:100;
       background: var(--bg2);
       padding: 12px 16px;
       display: flex; align-items: center; gap: 12px;
