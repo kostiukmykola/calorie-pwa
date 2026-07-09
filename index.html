@@ -179,6 +179,7 @@
     .meal-section { margin-bottom: 24px; }
     .meal-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; cursor: pointer; position: relative; }
     .meal-header::after { content: ''; position: absolute; bottom: 0; left: -16px; right: -16px; height: 1px; background: rgba(255,255,255,0.06); }
+    .meal-header:has(+ .meal-items.hidden)::after { display: none; }
     .meal-header .meal-title { font-weight: 600; font-size: 15px; }
     .meal-header .meal-title .emoji { margin-right: 6px; }
     .meal-items { list-style: none; }
