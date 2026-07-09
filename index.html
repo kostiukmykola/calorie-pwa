@@ -1594,7 +1594,17 @@ window.addEventListener('online', () => showToast('🟢 Інтернет з\'я�
 
 // Register SW
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js?v=4', { updateViaCache: 'none' }).catch(() => {});
+  navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
+    reg.addEventListener('updatefound', () => {
+      const newSW = reg.installing;
+      newSW.addEventListener('statechange', () => {
+        if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+          showToast('🔄 Оновлення застосунку…');
+          setTimeout(() => location.reload(), 500);
+        }
+      });
+    });
+  }).catch(() => {});
 }
 </script>
 </body>
