@@ -164,7 +164,8 @@
     .page.active { display: block; animation: fadeIn 0.25s ease; }
     @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
 
-    .page-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; display:flex; align-items:center; gap:8px; padding: 0 16px; }
+    .page-title { font-size: 20px; font-weight: 700; margin-bottom: 16px; padding: 0 16px; text-align: center; position: relative; }
+    .page-title i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); }
     .card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
 
     .daily-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
@@ -388,7 +389,7 @@
     <div id="statsContent"></div>
   </div>
 
-  <div class="page" id="pageGoals">
+    <div class="page" id="pageGoals">
     <div class="page-title"><i class="fas fa-bullseye"></i> Мої цілі</div>
     <div class="card">
       <div class="goal-row"><span class="glabel"><i class="fas fa-fire"></i> Калорії</span><span class="gvalue"><span id="goalCal">2000</span> ккал</span></div>
@@ -396,8 +397,8 @@
       <div class="goal-row"><span class="glabel"><i class="fas fa-droplet"></i> Жири</span><span class="gvalue"><span id="goalFat">65</span> г</span></div>
       <div class="goal-row"><span class="glabel"><i class="fas fa-wheat-awn"></i> Вуглеводи</span><span class="gvalue"><span id="goalCarbs">250</span> г</span></div>
     </div>
+    <div class="page-title"><i class="fas fa-chart-simple"></i> Розподіл по прийомах</div>
     <div class="card" id="distCard">
-      <div style="font-weight:600;font-size:15px;margin-bottom:8px"><i class="fas fa-chart-simple"></i> Розподіл по прийомах</div>
       <div id="distPreview"></div>
     </div>
     <button class="btn btn-primary btn-block" onclick="openGoalsModal()"><i class="fas fa-gear"></i> Змінити цілі</button>
