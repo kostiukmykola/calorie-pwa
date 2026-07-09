@@ -325,15 +325,15 @@
         <label>Пароль</label>
         <input type="password" id="authPassword" placeholder="Пароль" autocomplete="current-password">
       </div>
-      <button class="btn btn-primary" id="authSubmitBtn" onclick="authLogin()">Увійти</button>
+      <button class="btn btn-primary" id="authSubmitBtn">Увійти</button>
 
       <div class="divider">або</div>
-      <button class="google-btn" onclick="authGoogle()">
+      <button class="google-btn" id="authGoogleBtn">
         <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="m6.306 14.691 6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238A11.91 11.91 0 0 1 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303a12.04 12.04 0 0 1-4.087 5.571l.003-.002 6.19 5.238c-.016.012 9.591-7.447 9.591-14.809 0-1.341-.138-2.65-.389-3.917z"/></svg>
         Увійти з Google
       </button>
 
-      <div class="link"><a onclick="toggleAuthMode()">Немає акаунта? Зареєструватись</a></div>
+      <div class="link"><a id="authToggleLink">Немає акаунта? Зареєструватись</a></div>
     </div>
 
     <div id="registerForm" style="display:none">
@@ -345,8 +345,8 @@
         <label>Пароль (мін. 6 символів)</label>
         <input type="password" id="regPassword" placeholder="Пароль" autocomplete="new-password">
       </div>
-      <button class="btn btn-primary" onclick="authRegister()">Зареєструватись</button>
-      <div class="link"><a onclick="toggleAuthMode()">Вже є акаунт? Увійти</a></div>
+      <button class="btn btn-primary" id="authRegisterBtn">Зареєструватись</button>
+      <div class="link"><a id="authToggleLink2">Вже є акаунт? Увійти</a></div>
     </div>
   </div>
 </div>
@@ -362,30 +362,30 @@
   <div class="header">
     <h1>Calorie Diary</h1>
     <span class="sync-badge" id="syncBadge">✓</span>
-    <button class="user-btn" onclick="toggleUserMenu()"><i class="fas fa-user"></i></button>
+    <button class="user-btn" id="userMenuBtn"><i class="fas fa-user"></i></button>
     <div class="user-menu" id="userMenu">
       <div style="padding:8px 12px;font-size:13px;color:var(--text2);word-break:break-all" id="userEmail"></div>
-      <button onclick="logout()"><i class="fas fa-right-from-bracket"></i> Вийти</button>
+      <button id="logoutBtn"><i class="fas fa-right-from-bracket"></i> Вийти</button>
     </div>
   </div>
 
   <div class="page active" id="pageDiary">
     <div class="date-nav" id="dateNav">
-      <button onclick="changeDate(-1)">◀</button>
+      <button id="datePrevBtn">◀</button>
       <span id="dateDisplay" style="font-size:15px;font-weight:600"></span>
-      <button onclick="changeDate(1)">▶</button>
+      <button id="dateNextBtn">▶</button>
     </div>
     <div class="daily-summary" id="dailySummary"></div>
     <div id="mealSections"><div class="loader"></div></div>
-    <button class="btn btn-primary btn-block" onclick="openAddMealModal()">+ Додати прийом їжі</button>
+    <button class="btn btn-primary btn-block" id="addMealBtn">+ Додати прийом їжі</button>
   </div>
 
   <div class="page" id="pageProducts">
     <div class="page-title"><i class="fas fa-box"></i> Мої продукти</div>
     <div class="product-search"><input type="text" id="productSearchInput" placeholder="Пошук продуктів..." oninput="renderProducts()"></div>
     <div style="display:flex;gap:8px;margin-bottom:12px">
-      <button class="btn btn-primary" style="flex:1" onclick="openProductModal()">+ Новий продукт</button>
-      <button class="btn btn-secondary" onclick="openImportModal()" style="flex-shrink:0"><i class="fas fa-file-import"></i> Імпорт</button>
+      <button class="btn btn-primary" style="flex:1" id="newProductBtn">+ Новий продукт</button>
+      <button class="btn btn-secondary" id="importBtn" style="flex-shrink:0"><i class="fas fa-file-import"></i> Імпорт</button>
     </div>
     <div id="productList"></div>
   </div>
@@ -393,13 +393,13 @@
   <div class="page" id="pageStats">
     <div class="page-title"><i class="fas fa-chart-simple"></i> Статистика</div>
     <div class="segmented">
-      <button class="active" id="segWeek" onclick="setStatsPeriod('week')">Тиждень</button>
-      <button id="segMonth" onclick="setStatsPeriod('month')">Місяць</button>
+      <button class="active" id="segWeek">Тиждень</button>
+      <button id="segMonth">Місяць</button>
     </div>
     <div class="date-nav" id="statsNav">
-      <button onclick="shiftStatsPeriod(-1)">◀</button>
+      <button id="statsPrevBtn">◀</button>
       <span id="statsPeriodLabel"></span>
-      <button onclick="shiftStatsPeriod(1)">▶</button>
+      <button id="statsNextBtn">▶</button>
     </div>
     <div id="statsContent"></div>
   </div>
@@ -416,14 +416,14 @@
     <div class="card" id="distCard">
       <div id="distPreview"></div>
     </div>
-    <button class="btn btn-primary btn-block" onclick="openGoalsModal()"><i class="fas fa-gear"></i> Змінити цілі</button>
+    <button class="btn btn-primary btn-block" id="openGoalsBtn"><i class="fas fa-gear"></i> Змінити цілі</button>
   </div>
 
   <div class="nav">
-    <button class="active" onclick="switchPage('diary')"><span class="icon"><i class="fas fa-book"></i></span>Щоденник</button>
-    <button onclick="switchPage('products')"><span class="icon"><i class="fas fa-box"></i></span>Продукти</button>
-    <button onclick="switchPage('stats')"><span class="icon"><i class="fas fa-chart-simple"></i></span>Статистика</button>
-    <button onclick="switchPage('goals')"><span class="icon"><i class="fas fa-bullseye"></i></span>Цілі</button>
+    <button class="active" id="navDiary"><span class="icon"><i class="fas fa-book"></i></span>Щоденник</button>
+    <button id="navProducts"><span class="icon"><i class="fas fa-box"></i></span>Продукти</button>
+    <button id="navStats"><span class="icon"><i class="fas fa-chart-simple"></i></span>Статистика</button>
+    <button id="navGoals"><span class="icon"><i class="fas fa-bullseye"></i></span>Цілі</button>
   </div>
 </div>
 
@@ -436,9 +436,9 @@
 
     <!-- Mode selector -->
     <div style="display:flex;gap:8px;margin-bottom:16px">
-      <button class="btn btn-sm" id="modeProduct" onclick="setAddMode('product')" style="flex:1;background:var(--accent);color:#fff"><i class="fas fa-box"></i> Продукт</button>
-      <button class="btn btn-sm" id="modeQuick" onclick="setAddMode('quick')" style="flex:1;background:var(--card2);color:var(--text2)"><i class="fas fa-pencil"></i> Вручну</button>
-      <button class="btn btn-sm" id="modeAI" onclick="setAddMode('ai')" style="flex:1;background:var(--card2);color:var(--text2)"><i class="fas fa-robot"></i> AI</button>
+      <button class="btn btn-sm" id="modeProduct" style="flex:1;background:var(--accent);color:#fff"><i class="fas fa-box"></i> Продукт</button>
+      <button class="btn btn-sm" id="modeQuick" style="flex:1;background:var(--card2);color:var(--text2)"><i class="fas fa-pencil"></i> Вручну</button>
+      <button class="btn btn-sm" id="modeAI" style="flex:1;background:var(--card2);color:var(--text2)"><i class="fas fa-robot"></i> AI</button>
     </div>
 
     <!-- Mode: Product -->
@@ -463,9 +463,9 @@
       <div id="aiStep1">
         <p style="font-size:13px;color:var(--text2);margin-bottom:8px">1. Натисни кнопку, відправ фото в ChatGPT</p>
         <p style="font-size:13px;color:var(--text2);margin-bottom:12px">2. Скопіюй відповідь і встав нижче (або просто натисни "Вставити дані")</p>
-        <button class="btn btn-secondary btn-sm btn-block" onclick="openAIAnalysis()" style="margin-bottom:12px"><i class="fas fa-robot"></i> Відкрити ChatGPT</button>
+        <button class="btn btn-secondary btn-sm btn-block" id="openAIBtn" style="margin-bottom:12px"><i class="fas fa-robot"></i> Відкрити ChatGPT</button>
         <div class="form-group"><label>Встав скопійовану відповідь ChatGPT:</label><textarea id="aiResult" rows="3"></textarea></div>
-        <button class="btn btn-secondary btn-sm btn-block" onclick="parseAIResult()" style="margin-bottom:12px"><i class="fas fa-clipboard"></i> Вставити дані</button>
+        <button class="btn btn-secondary btn-sm btn-block" id="parseAIBtn" style="margin-bottom:12px"><i class="fas fa-clipboard"></i> Вставити дані</button>
       </div>
       <div id="aiStep2" style="display:none">
         <div class="form-group"><label>Назва</label><input type="text" id="aiNameInput"></div>
@@ -478,8 +478,8 @@
       </div>
     </div>
 
-    <button class="btn btn-primary btn-block" onclick="addMealEntry()" style="margin-top:12px">Додати</button>
-    <button class="btn btn-secondary btn-block" onclick="closeModal('addMealModal')" style="margin-top:8px">Скасувати</button>
+    <button class="btn btn-primary btn-block" id="addMealSubmit" style="margin-top:12px">Додати</button>
+    <button class="btn btn-secondary btn-block" id="addMealCancel" style="margin-top:8px">Скасувати</button>
   </div>
 </div>
 
@@ -495,9 +495,9 @@
       <div class="form-group"><label>Жири (г)</label><input type="number" id="productFat" value="0" step="0.1"></div>
       <div class="form-group"><label>Вуглеводи (г)</label><input type="number" id="productCarbs" value="0" step="0.1"></div>
     </div>
-    <button class="btn btn-primary btn-block" onclick="saveProduct()">Зберегти</button>
-    <button class="btn btn-secondary btn-block" onclick="closeModal('productModal')" style="margin-top:8px">Скасувати</button>
-    <button class="btn btn-secondary btn-block" id="productDeleteBtn" onclick="deleteProduct(document.getElementById('productEditId').value)" style="margin-top:8px;background:rgba(233,69,96,0.15);color:var(--accent)"><i class="fas fa-trash-can"></i> Видалити продукт</button>
+    <button class="btn btn-primary btn-block" id="saveProductBtn">Зберегти</button>
+    <button class="btn btn-secondary btn-block" id="productCancel" style="margin-top:8px">Скасувати</button>
+    <button class="btn btn-secondary btn-block" id="productDeleteBtn" style="margin-top:8px;background:rgba(233,69,96,0.15);color:var(--accent)"><i class="fas fa-trash-can"></i> Видалити продукт</button>
   </div>
 </div>
 
@@ -509,8 +509,8 @@
       <textarea id="importJson" rows="8" style="resize:vertical;font-family:monospace" placeholder='[&#10;  {"name":"Куряча грудка","cal":165,"protein":31,"fat":3.6,"carbs":0},&#10;  {"name":"Яйце куряче","cal":155,"protein":13,"fat":11,"carbs":1.1}&#10;]'></textarea>
     </div>
     <div id="importResult" style="font-size:13px;margin-bottom:12px;min-height:20px"></div>
-    <button class="btn btn-primary btn-block" onclick="importProducts()"><i class="fas fa-file-import"></i> Імпортувати</button>
-    <button class="btn btn-secondary btn-block" onclick="closeModal('importModal')" style="margin-top:8px">Скасувати</button>
+    <button class="btn btn-primary btn-block" id="importSubmit"><i class="fas fa-file-import"></i> Імпортувати</button>
+    <button class="btn btn-secondary btn-block" id="importCancel" style="margin-top:8px">Скасувати</button>
   </div>
 </div>
 
@@ -547,8 +547,8 @@
       <div class="form-group"><label><i class="fas fa-cookie-bite"></i> Перекус</label><input type="number" id="distC3" min="0" max="100" step="1" oninput="validateDist()"></div>
     </div>
     <div id="distHint" style="font-size:13px;color:#ef4444;margin-bottom:12px;min-height:20px"></div>
-    <button class="btn btn-primary btn-block" id="saveGoalsBtn" onclick="saveGoals()">Зберегти</button>
-    <button class="btn btn-secondary btn-block" onclick="closeModal('goalsModal')" style="margin-top:8px">Скасувати</button>
+    <button class="btn btn-primary btn-block" id="saveGoalsBtn">Зберегти</button>
+    <button class="btn btn-secondary btn-block" id="goalsCancel" style="margin-top:8px">Скасувати</button>
   </div>
 </div>
 
@@ -564,9 +564,9 @@
       <div class="form-group"><label><i class="fas fa-droplet"></i> Жири (г)</label><input type="number" id="editEntryFat" step="0.1"></div>
       <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи (г)</label><input type="number" id="editEntryCarbs" step="0.1"></div>
     </div>
-    <button class="btn btn-primary btn-block" onclick="saveEditEntry()">Зберегти</button>
-    <button class="btn btn-secondary btn-block" onclick="closeModal('editEntryModal')" style="margin-top:8px">Скасувати</button>
-    <button class="btn btn-secondary btn-block" onclick="deleteEntryFromEdit()" style="margin-top:8px;background:rgba(233,69,96,0.15);color:var(--accent)"><i class="fas fa-trash-can"></i> Видалити запис</button>
+    <button class="btn btn-primary btn-block" id="saveEditBtn">Зберегти</button>
+    <button class="btn btn-secondary btn-block" id="editCancel" style="margin-top:8px">Скасувати</button>
+    <button class="btn btn-secondary btn-block" id="deleteEntryBtn" style="margin-top:8px;background:rgba(233,69,96,0.15);color:var(--accent)"><i class="fas fa-trash-can"></i> Видалити запис</button>
   </div>
 </div>
 
@@ -575,8 +575,8 @@
     <h3 id="confirmTitle">Видалити?</h3>
     <p id="confirmText">Цю дію не можна скасувати.</p>
     <div class="actions">
-      <button class="btn btn-secondary btn-sm" onclick="closeConfirmCancel()">Скасувати</button>
-      <button class="btn btn-primary btn-sm" id="confirmBtn" onclick="confirmAccept()">Видалити</button>
+      <button class="btn btn-secondary btn-sm" id="confirmCancel">Скасувати</button>
+      <button class="btn btn-primary btn-sm" id="confirmBtn">Видалити</button>
     </div>
   </div>
 </div>
@@ -1742,6 +1742,51 @@ function showAuth() {
   document.getElementById('authPage').style.display = 'flex';
   document.getElementById('app').classList.remove('visible');
 }
+
+// ====== EVENT LISTENERS ======
+document.getElementById('authSubmitBtn').addEventListener('click', authLogin);
+document.getElementById('authGoogleBtn').addEventListener('click', authGoogle);
+document.getElementById('authToggleLink').addEventListener('click', toggleAuthMode);
+document.getElementById('authRegisterBtn').addEventListener('click', authRegister);
+document.getElementById('authToggleLink2').addEventListener('click', toggleAuthMode);
+document.getElementById('userMenuBtn').addEventListener('click', toggleUserMenu);
+document.getElementById('logoutBtn').addEventListener('click', logout);
+document.getElementById('datePrevBtn').addEventListener('click', () => changeDate(-1));
+document.getElementById('dateNextBtn').addEventListener('click', () => changeDate(1));
+document.getElementById('addMealBtn').addEventListener('click', openAddMealModal);
+document.getElementById('newProductBtn').addEventListener('click', openProductModal);
+document.getElementById('importBtn').addEventListener('click', openImportModal);
+document.getElementById('segWeek').addEventListener('click', () => setStatsPeriod('week'));
+document.getElementById('segMonth').addEventListener('click', () => setStatsPeriod('month'));
+document.getElementById('statsPrevBtn').addEventListener('click', () => shiftStatsPeriod(-1));
+document.getElementById('statsNextBtn').addEventListener('click', () => shiftStatsPeriod(1));
+document.getElementById('openGoalsBtn').addEventListener('click', openGoalsModal);
+document.getElementById('navDiary').addEventListener('click', () => switchPage('diary'));
+document.getElementById('navProducts').addEventListener('click', () => switchPage('products'));
+document.getElementById('navStats').addEventListener('click', () => switchPage('stats'));
+document.getElementById('navGoals').addEventListener('click', () => switchPage('goals'));
+document.getElementById('modeProduct').addEventListener('click', () => setAddMode('product'));
+document.getElementById('modeQuick').addEventListener('click', () => setAddMode('quick'));
+document.getElementById('modeAI').addEventListener('click', () => setAddMode('ai'));
+document.getElementById('openAIBtn').addEventListener('click', openAIAnalysis);
+document.getElementById('parseAIBtn').addEventListener('click', parseAIResult);
+document.getElementById('addMealSubmit').addEventListener('click', addMealEntry);
+document.getElementById('addMealCancel').addEventListener('click', () => closeModal('addMealModal'));
+document.getElementById('saveProductBtn').addEventListener('click', saveProduct);
+document.getElementById('productCancel').addEventListener('click', () => closeModal('productModal'));
+document.getElementById('importSubmit').addEventListener('click', importProducts);
+document.getElementById('importCancel').addEventListener('click', () => closeModal('importModal'));
+document.getElementById('saveGoalsBtn').addEventListener('click', saveGoals);
+document.getElementById('goalsCancel').addEventListener('click', () => closeModal('goalsModal'));
+document.getElementById('saveEditBtn').addEventListener('click', saveEditEntry);
+document.getElementById('editCancel').addEventListener('click', () => closeModal('editEntryModal'));
+document.getElementById('confirmCancel').addEventListener('click', closeConfirmCancel);
+document.getElementById('confirmBtn').addEventListener('click', confirmAccept);
+
+document.getElementById('productDeleteBtn').addEventListener('click', () => {
+  deleteProduct(document.getElementById('productEditId').value);
+});
+document.getElementById('deleteEntryBtn').addEventListener('click', deleteEntryFromEdit);
 
 auth.onAuthStateChanged(async user => {
   if (user) {
