@@ -1422,7 +1422,7 @@ function renderDiary() {
       <div class="meal-section card">
         <div class="meal-header" onclick="toggleMeal('${m}')">
           <div class="meal-title"><span class="emoji">${m==='Сніданок'?'<i class="fas fa-sun"></i>':m==='Обід'?'<i class="fas fa-cloud-sun"></i>':m==='Вечеря'?'<i class="fas fa-moon"></i>':'<i class="fas fa-cookie-bite"></i>'}</span>${m}</div>
-          <div style="font-size:12px;justify-content:flex-end">
+          <div style="text-align:right;font-size:12px">
             <span style="font-weight:600">${Math.round(mealTotal.cal)} <span style="color:var(--text2)">ккал</span></span> <span style="color:var(--text2)">·</span> <span style="color:#22c55e">Б</span> ${Math.round(mealTotal.protein*10)/10}<span style="color:var(--text2)">г</span> <span style="color:var(--text2)">·</span> <span style="color:#eab308">Ж</span> ${Math.round(mealTotal.fat*10)/10}<span style="color:var(--text2)">г</span> <span style="color:var(--text2)">·</span> <span style="color:#3b82f6">В</span> ${Math.round(mealTotal.carbs*10)/10}<span style="color:var(--text2)">г</span>
           </div>
         </div>
