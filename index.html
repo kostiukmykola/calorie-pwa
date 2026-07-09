@@ -362,7 +362,10 @@
   <div class="page" id="pageProducts">
     <div class="page-title">📦 Мої продукти</div>
     <div class="product-search"><input type="text" id="productSearchInput" placeholder="Пошук продуктів..." oninput="renderProducts()"></div>
-    <button class="btn btn-primary btn-block" onclick="openProductModal()" style="margin-bottom:12px">+ Новий продукт</button>
+    <div style="display:flex;gap:8px;margin-bottom:12px">
+      <button class="btn btn-primary" style="flex:1" onclick="openProductModal()">+ Новий продукт</button>
+      <button class="btn btn-secondary" onclick="openImportModal()" style="flex-shrink:0">📥 Імпорт</button>
+    </div>
     <div id="productList"></div>
   </div>
 
@@ -474,6 +477,19 @@
     <button class="btn btn-primary btn-block" onclick="saveProduct()">Зберегти</button>
     <button class="btn btn-secondary btn-block" onclick="closeModal('productModal')" style="margin-top:8px">Скасувати</button>
     <button class="btn btn-secondary btn-block" id="productDeleteBtn" onclick="deleteProduct(document.getElementById('productEditId').value)" style="margin-top:8px;background:rgba(233,69,96,0.15);color:var(--accent)">🗑️ Видалити продукт</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="importModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2>📥 Імпорт продуктів</h2>
+    <div class="form-group"><label>Встав список продуктів у форматі JSON:</label>
+      <textarea id="importJson" rows="8" style="resize:vertical;font-family:monospace" placeholder='[&#10;  {"name":"Куряча грудка","cal":165,"protein":31,"fat":3.6,"carbs":0},&#10;  {"name":"Яйце куряче","cal":155,"protein":13,"fat":11,"carbs":1.1}&#10;]'></textarea>
+    </div>
+    <div id="importResult" style="font-size:13px;margin-bottom:12px;min-height:20px"></div>
+    <button class="btn btn-primary btn-block" onclick="importProducts()">📥 Імпортувати</button>
+    <button class="btn btn-secondary btn-block" onclick="closeModal('importModal')" style="margin-top:8px">Скасувати</button>
   </div>
 </div>
 
@@ -971,6 +987,47 @@ async function deleteProduct(id) {
     renderProducts();
     showToast('Продукт видалено');
   });
+}
+
+function openImportModal() {
+  document.getElementById('importJson').value = '';
+  document.getElementById('importResult').textContent = '';
+  openModal('importModal');
+}
+
+async function importProducts() {
+  const text = document.getElementById('importJson').value.trim();
+  const resultEl = document.getElementById('importResult');
+  resultEl.textContent = '';
+  if (!text) { showToast('Вставте JSON з продуктами'); return; }
+  let list;
+  try { list = JSON.parse(text); } catch(e) { resultEl.textContent = '❌ Помилка парсингу JSON: ' + e.message; return; }
+  if (!Array.isArray(list)) { resultEl.textContent = '❌ JSON має бути масивом продуктів'; return; }
+  let imported = 0, skipped = 0;
+  const existingNames = new Set(products.map(p => p.name.toLowerCase()));
+  for (const item of list) {
+    if (!item.name || typeof item.name !== 'string' || !item.name.trim()) { skipped++; continue; }
+    const cal = parseFloat(item.cal);
+    if (isNaN(cal) || cal <= 0) { skipped++; continue; }
+    const name = item.name.trim();
+    if (existingNames.has(name.toLowerCase())) { skipped++; continue; }
+    const product = {
+      name,
+      cal: Math.round(cal * 10) / 10,
+      protein: Math.round((parseFloat(item.protein) || 0) * 10) / 10,
+      fat: Math.round((parseFloat(item.fat) || 0) * 10) / 10,
+      carbs: Math.round((parseFloat(item.carbs) || 0) * 10) / 10,
+    };
+    try {
+      const added = await fireAdd('products', product);
+      products.push(added);
+      existingNames.add(name.toLowerCase());
+      imported++;
+    } catch(e) { skipped++; }
+  }
+  resultEl.textContent = `✅ Імпортовано: ${imported}, пропущено: ${skipped}`;
+  renderProducts();
+  if (imported > 0) showToast(`Імпортовано ${imported} продуктів`);
 }
 
 // ====== DIARY ======
