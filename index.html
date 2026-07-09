@@ -1153,7 +1153,7 @@ async function renderStats() {
   const allEntries = await fireGet('entries');
   const now = new Date();
 
-  const numDays = statsWeekView ? 7 : 30;
+  let numDays = statsWeekView ? 7 : 30;
   const label = document.getElementById('statsPeriodLabel');
 
   let refDay = new Date(now);
@@ -1182,9 +1182,10 @@ async function renderStats() {
       }
     }
   } else {
-    const refMonth = new Date(now.getFullYear(), now.getMonth() + statsOffset, 1);
+    refMonth = new Date(now.getFullYear(), now.getMonth() + statsOffset, 1);
     const months = ['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
     label.textContent = months[refMonth.getMonth()] + ' ' + refMonth.getFullYear();
+    numDays = new Date(refMonth.getFullYear(), refMonth.getMonth() + 1, 0).getDate();
   }
 
   const dates = [];
@@ -1196,9 +1197,8 @@ async function renderStats() {
       const monday = new Date(refDay);
       monday.setDate(refDay.getDate() - mondayOffset);
       d.setTime(monday.getTime() + i * 86400000);
-    } else {
-      d.setFullYear(now.getFullYear(), now.getMonth() + statsOffset, i + 1);
-      if (d.getMonth() !== (now.getMonth() + statsOffset + 12) % 12) break;
+    } else if (refMonth) {
+      d.setFullYear(refMonth.getFullYear(), refMonth.getMonth(), i + 1);
     }
     dates.push(d);
   }
