@@ -2,7 +2,7 @@
   "name": "Calorie Diary",
   "short_name": "Calories",
   "description": "PWA для обліку калорійності та поживної цінності прийомів їжі",
-  "start_url": "/calorie-pwa/index.html?v=3",
+  "start_url": "/calorie-pwa/index.html?v=4",
   "display": "standalone",
   "background_color": "#1a1a2e",
   "theme_color": "#e94560",

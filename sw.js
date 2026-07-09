@@ -1,4 +1,4 @@
-const CACHE_NAME = 'calorie-pwa-v3';
+const CACHE_NAME = 'calorie-pwa-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -29,14 +29,26 @@ self.addEventListener('fetch', event => {
   if (url.pathname.includes('firebase')) return;
   if (url.pathname.includes('googleapis')) return;
 
-  event.respondWith(
-    caches.match(event.request).then(cached =>
-      cached || fetch(event.request).then(response =>
-        caches.open(CACHE_NAME).then(cache => {
+  const isDoc = url.pathname.endsWith('index.html') || url.pathname === '/' || url.pathname.endsWith('/');
+  if (isDoc) {
+    event.respondWith(
+      fetch(event.request).then(response => {
+        return caches.open(CACHE_NAME).then(cache => {
           cache.put(event.request, response.clone());
           return response;
-        })
-      ).catch(() => caches.match('./index.html'))
-    )
-  );
+        });
+      }).catch(() => caches.match(event.request))
+    );
+  } else {
+    event.respondWith(
+      caches.match(event.request).then(cached =>
+        cached || fetch(event.request).then(response =>
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, response.clone());
+            return response;
+          })
+        ).catch(() => caches.match('./index.html'))
+      )
+    );
+  }
 });
