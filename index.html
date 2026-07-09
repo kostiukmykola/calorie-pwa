@@ -1214,26 +1214,28 @@ document.getElementById('mealSections').addEventListener('touchstart', e => {
   const content = item.querySelector('.meal-content');
   if (!content) return;
   if (item !== _openSwipeItem) closeOpenSwipeItem();
-  item._touchX = e.touches[0].clientX;
-  item._touchY = e.touches[0].clientY;
+  item._startX = e.touches[0].clientX;
+  item._startY = e.touches[0].clientY;
+  const m = content.style.transform?.match(/translateX\((-?\d+)/);
+  item._startPos = m ? parseFloat(m[1]) : 0;
   content.classList.add('swiping');
 }, { passive: true });
 
 document.getElementById('mealSections').addEventListener('touchmove', e => {
   const item = e.target.closest('.meal-item');
-  if (!item || item._touchX === undefined) return;
+  if (!item || item._startX === undefined) return;
   const content = item.querySelector('.meal-content');
   if (!content) return;
-  const dx = e.touches[0].clientX - item._touchX;
-  const dy = e.touches[0].clientY - item._touchY;
-  if (dx < 0 && Math.abs(dx) > Math.abs(dy)) {
-    content.style.transform = `translateX(${Math.max(dx, -80)}px)`;
-  }
+  const dx = e.touches[0].clientX - item._startX;
+  const dy = e.touches[0].clientY - item._startY;
+  if (Math.abs(dx) < Math.abs(dy)) return;
+  const newPos = item._startPos + dx;
+  content.style.transform = `translateX(${Math.max(Math.min(newPos, 0), -80)}px)`;
 }, { passive: true });
 
 document.getElementById('mealSections').addEventListener('touchend', e => {
   const item = e.target.closest('.meal-item');
-  if (!item || item._touchX === undefined) return;
+  if (!item || item._startX === undefined) return;
   const content = item.querySelector('.meal-content');
   if (!content) return;
   content.classList.remove('swiping');
@@ -1246,7 +1248,7 @@ document.getElementById('mealSections').addEventListener('touchend', e => {
     content.style.transform = '';
     _openSwipeItem = null;
   }
-  item._touchX = undefined;
+  item._startX = undefined;
 }, { passive: true });
 
 document.getElementById('mealSections').addEventListener('touchcancel', e => {
@@ -1256,7 +1258,7 @@ document.getElementById('mealSections').addEventListener('touchcancel', e => {
   if (!content) return;
   content.classList.remove('swiping');
   content.style.transform = '';
-  item._touchX = undefined;
+  item._startX = undefined;
   _openSwipeItem = null;
 }, { passive: true });
 
