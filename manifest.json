@@ -1,6 +1,6 @@
 {
-  "name": "Щоденник Калорій",
-  "short_name": "Калорії",
+  "name": "Calorie Diary",
+  "short_name": "Calories",
   "description": "PWA для обліку калорійності та поживної цінності прийомів їжі",
   "start_url": "/calorie-pwa/index.html",
   "display": "standalone",
