@@ -1745,12 +1745,9 @@ function showAuth() {
 }
 
 auth.onAuthStateChanged(async user => {
-  document.getElementById('splash').style.display = 'none';
   if (user) {
     currentUser = user;
     document.getElementById('userEmail').textContent = user.email;
-    showApp();
-    showLoadingOverlay('Завантаження даних...');
     try {
       await Promise.all([loadProducts(), loadGoals()]);
       updateDateDisplay();
@@ -1758,9 +1755,11 @@ auth.onAuthStateChanged(async user => {
     } catch (e) {
       handleFirebaseError(e);
     }
-    hideLoadingOverlay();
+    document.getElementById('splash').style.display = 'none';
+    showApp();
   } else {
     currentUser = null;
+    document.getElementById('splash').style.display = 'none';
     showAuth();
   }
 });
