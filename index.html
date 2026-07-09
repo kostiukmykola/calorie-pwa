@@ -247,13 +247,13 @@
     .goal-row .gvalue { font-size: 14px; color: var(--text2); }
 
     .dist-chart { margin-top: 4px; }
-    .dist-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-    .dist-label { font-size: 12px; color: var(--text2); min-width: 70px; text-align: right; white-space: nowrap; }
-    .dist-bar { flex: 1; height: 22px; border-radius: 6px; overflow: hidden; display: flex; cursor: pointer; }
+    .dist-row { display: grid; grid-template-columns: 70px 1fr 48px; gap: 10px; align-items: center; margin-bottom: 10px; }
+    .dist-label { font-size: 12px; color: var(--text2); text-align: right; white-space: nowrap; }
+    .dist-bar { height: 22px; border-radius: 6px; overflow: hidden; display: flex; cursor: pointer; }
     .dist-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #fff; transition: flex 0.3s; min-width: 0; }
     .dist-seg span { opacity: 0; transition: opacity 0.2s; }
     .dist-seg:hover span { opacity: 1; }
-    .dist-total { font-size: 12px; font-weight: 600; min-width: 48px; text-align: left; color: var(--text2); }
+    .dist-total { font-size: 12px; font-weight: 600; color: var(--text2); }
     .dist-legend { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
     .dist-legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text2); }
     .dist-legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
@@ -1512,14 +1512,14 @@ function updateGoalsUI() {
     const cG = goals.carbs * cPct / 100;
     return {meal:m, val:pG*4+fG*9+cG*4, unit:'ккал'};
   });
-  html += '<div class="dist-row"><div class="dist-label"></div>' + segBar(calVals) + '</div>';
+  html += '<div class="dist-row"><div class="dist-label"><i class="fas fa-fire"></i> К</div>' + segBar(calVals) + '</div>';
   html += legendHtml;
 
   html += '<div style="margin:16px 0;border-top:1px solid var(--bg3);padding:12px 16px 0;font-weight:600;font-size:15px;margin-bottom:8px"><i class="fas fa-chart-simple"></i> Розподіл нутрієнтів</div>';
   const macros = [
-    {key:'protein',label:'<i class="fas fa-drumstick-bite"></i> Білки', unit:'г', getPct:m=>goals.distProtein[m]||0},
-    {key:'fat',label:'<i class="fas fa-droplet"></i> Жири', unit:'г', getPct:m=>goals.distFat[m]||0},
-    {key:'carbs',label:'<i class="fas fa-wheat-awn"></i> Вуглеводи', unit:'г', getPct:m=>goals.distCarbs[m]||0},
+    {key:'protein',label:'<i class="fas fa-drumstick-bite"></i> Б', unit:'г', getPct:m=>goals.distProtein[m]||0},
+    {key:'fat',label:'<i class="fas fa-droplet"></i> Ж', unit:'г', getPct:m=>goals.distFat[m]||0},
+    {key:'carbs',label:'<i class="fas fa-wheat-awn"></i> В', unit:'г', getPct:m=>goals.distCarbs[m]||0},
   ];
   macros.forEach(mt => {
     const totalGoals = mt.key==='protein'?goals.protein:mt.key==='fat'?goals.fat:goals.carbs;
