@@ -704,6 +704,12 @@ const CACHE_TTL = 180000;
 let statsOffset = 0;
 let confirmCallback = null;
 
+const MEAL_ORDER = ['Сніданок','Обід','Вечеря','Перекус'];
+const MEAL_ICONS = {Сніданок:'<i class="fas fa-sun"></i>',Обід:'<i class="fas fa-cloud-sun"></i>',Вечеря:'<i class="fas fa-moon"></i>',Перекус:'<i class="fas fa-cookie-bite"></i>'};
+const MEAL_COLORS = {Сніданок:'#f59e0b',Обід:'#3b82f6',Вечеря:'#8b5cf6',Перекус:'#10b981'};
+function round1(v) { return Math.round(v * 10) / 10; }
+function toNum(v) { return parseFloat(v) || 0; }
+
 function escHtml(s) {
   const d = document.createElement('div');
   d.textContent = s;
@@ -1062,10 +1068,10 @@ async function importProducts() {
     if (existingNames.has(name.toLowerCase())) { skipped++; continue; }
     const product = {
       name,
-      cal: Math.round(cal * 10) / 10,
-      protein: Math.round((parseFloat(item.protein) || 0) * 10) / 10,
-      fat: Math.round((parseFloat(item.fat) || 0) * 10) / 10,
-      carbs: Math.round((parseFloat(item.carbs) || 0) * 10) / 10,
+      cal: round1(cal * 10) / 10,
+      protein: round1((parseFloat(item.protein) || 0) * 10) / 10,
+      fat: round1((parseFloat(item.fat) || 0) * 10) / 10,
+      carbs: round1((parseFloat(item.carbs) || 0) * 10) / 10,
     };
     try {
       const added = await fireAdd('products', product);
@@ -1152,10 +1158,10 @@ async function addMealEntry() {
     entry = {
       date: formatDate(currentDate), mealType,
       productName: product.name, weight,
-      cal: Math.round(product.cal * ratio * 10) / 10,
-      protein: Math.round(product.protein * ratio * 10) / 10,
-      fat: Math.round(product.fat * ratio * 10) / 10,
-      carbs: Math.round(product.carbs * ratio * 10) / 10,
+      cal: round1(product.cal * ratio * 10) / 10,
+      protein: round1(product.protein * ratio * 10) / 10,
+      fat: round1(product.fat * ratio * 10) / 10,
+      carbs: round1(product.carbs * ratio * 10) / 10,
       timestamp: Date.now(),
     };
   } else if (addMode === 'quick') {
@@ -1168,10 +1174,10 @@ async function addMealEntry() {
     if (cal <= 0) { showToast('Введіть калорійність'); return; }
     entry = {
       date: formatDate(currentDate), mealType, productName: name, weight: 0,
-      cal: Math.round(cal * 10) / 10,
-      protein: Math.round(protein * 10) / 10,
-      fat: Math.round(fat * 10) / 10,
-      carbs: Math.round(carbs * 10) / 10,
+      cal: round1(cal * 10) / 10,
+      protein: round1(protein * 10) / 10,
+      fat: round1(fat * 10) / 10,
+      carbs: round1(carbs * 10) / 10,
       timestamp: Date.now(),
     };
   } else if (addMode === 'ai') {
@@ -1183,10 +1189,10 @@ async function addMealEntry() {
     const carbs = parseFloat(document.getElementById('aiCarbsInput').value) || 0;
     entry = {
       date: formatDate(currentDate), mealType, productName: name, weight: 0,
-      cal: Math.round(cal * 10) / 10,
-      protein: Math.round(protein * 10) / 10,
-      fat: Math.round(fat * 10) / 10,
-      carbs: Math.round(carbs * 10) / 10,
+      cal: round1(cal * 10) / 10,
+      protein: round1(protein * 10) / 10,
+      fat: round1(fat * 10) / 10,
+      carbs: round1(carbs * 10) / 10,
       timestamp: Date.now(),
     };
   }
@@ -1378,9 +1384,7 @@ function renderDiary() {
   const sections = document.getElementById('mealSections');
 
   let total = { cal:0, protein:0, fat:0, carbs:0 };
-  const mealOrder = ['Сніданок','Обід','Вечеря','Перекус'];
-  const meals = {};
-  mealOrder.forEach(m => meals[m] = []);
+  MEAL_ORDER.forEach(m => meals[m] = []);
   entries.forEach(e => {
     if (meals[e.mealType]) meals[e.mealType].push(e);
     total.cal += e.cal;
@@ -1422,7 +1426,7 @@ function renderDiary() {
 
   let hasItems = false;
   let html = '';
-  mealOrder.forEach(m => {
+  MEAL_ORDER.forEach(m => {
     const items = meals[m];
     if (items.length === 0) return;
     hasItems = true;
@@ -1430,9 +1434,9 @@ function renderDiary() {
     html += `
       <div class="meal-section card">
         <div class="meal-header" onclick="toggleMeal('${m}')">
-          <div class="meal-title"><span class="emoji">${m==='Сніданок'?'<i class="fas fa-sun"></i>':m==='Обід'?'<i class="fas fa-cloud-sun"></i>':m==='Вечеря'?'<i class="fas fa-moon"></i>':'<i class="fas fa-cookie-bite"></i>'}</span>${m}</div>
+          <div class="meal-title"><span class="emoji">${MEAL_ICONS[m]}</span>${m}</div>
           <div style="text-align:right;font-size:12px;line-height:18px">
-            <span style="font-weight:600">${Math.round(mealTotal.cal)} <span style="color:var(--text2)">ккал</span></span> <span style="color:var(--text2)">·</span> <span style="color:#22c55e">Б</span> ${Math.round(mealTotal.protein*10)/10}<span style="color:var(--text2)">г</span> <span style="color:var(--text2)">·</span> <span style="color:#eab308">Ж</span> ${Math.round(mealTotal.fat*10)/10}<span style="color:var(--text2)">г</span> <span style="color:var(--text2)">·</span> <span style="color:#3b82f6">В</span> ${Math.round(mealTotal.carbs*10)/10}<span style="color:var(--text2)">г</span>
+            <span style="font-weight:600">${Math.round(mealTotal.cal)} <span style="color:var(--text2)">ккал</span></span> <span style="color:var(--text2)">·</span> <span style="color:#22c55e">Б</span> ${round1(mealTotal.protein*10)/10}<span style="color:var(--text2)">г</span> <span style="color:var(--text2)">·</span> <span style="color:#eab308">Ж</span> ${round1(mealTotal.fat*10)/10}<span style="color:var(--text2)">г</span> <span style="color:var(--text2)">·</span> <span style="color:#3b82f6">В</span> ${round1(mealTotal.carbs*10)/10}<span style="color:var(--text2)">г</span>
           </div>
         </div>
         <ul class="meal-items" id="meal_${m}">
@@ -1482,10 +1486,6 @@ function updateGoalsUI() {
   document.getElementById('goalProtein').textContent = goals.protein;
   document.getElementById('goalFat').textContent = goals.fat;
   document.getElementById('goalCarbs').textContent = goals.carbs;
-  const mealOrder = ['Сніданок','Обід','Вечеря','Перекус'];
-  const colors = {Сніданок:'#f59e0b',Обід:'#3b82f6',Вечеря:'#8b5cf6',Перекус:'#10b981'};
-  const ml = {Сніданок:'🌅',Обід:'☀️',Вечеря:'🌙',Перекус:'🍿'};
-  const faMeals = {Сніданок:'<i class="fas fa-sun"></i>',Обід:'<i class="fas fa-cloud-sun"></i>',Вечеря:'<i class="fas fa-moon"></i>',Перекус:'<i class="fas fa-cookie-bite"></i>'};
 
   function segBar(mealVals) {
     const total = mealVals.reduce((s,x) => s+x.val, 0);
@@ -1493,16 +1493,16 @@ function updateGoalsUI() {
     mealVals.forEach(s => {
       const w = total > 0 ? s.val/total*100 : 0;
       const pct = Math.round(w);
-      h += `<div class="dist-seg" style="flex:${w};background:${colors[s.meal]};min-width:${w>0?4:0}px" title="${ml[s.meal]} ${s.meal}: ${Math.round(s.val)}${s.unit}">${pct>0?pct+'%':''}</div>`;
+      h += `<div class="dist-seg" style="flex:${w};background:${MEAL_COLORS[s.meal]};min-width:${w>0?4:0}px" title="${s.meal}: ${Math.round(s.val)}${s.unit}">${pct>0?pct+'%':''}</div>`;
     });
     h += `</div><div class="dist-total">${Math.round(total)} ${mealVals[0].unit}</div>`;
     return h;
   }
 
-  const legendHtml = '<div class="dist-legend">' + mealOrder.map(m => `<div class="dist-legend-item"><div class="dist-legend-dot" style="background:${colors[m]}"></div>${faMeals[m]} ${m}</div>`).join('') + '</div>';
+  const legendHtml = '<div class="dist-legend">' + MEAL_ORDER.map(m => `<div class="dist-legend-item"><div class="dist-legend-dot" style="background:${MEAL_COLORS[m]}"></div>${MEAL_ICONS[m]} ${m}</div>`).join('') + '</div>';
 
   let html = '<div style="font-weight:600;font-size:15px;margin-bottom:8px;padding:0 16px"><i class="fas fa-fire"></i> Розподіл калорій</div>';
-  const calVals = mealOrder.map(m => {
+  const calVals = MEAL_ORDER.map(m => {
     const pPct = goals.distProtein[m] || 0;
     const fPct = goals.distFat[m] || 0;
     const cPct = goals.distCarbs[m] || 0;
@@ -1524,7 +1524,7 @@ function updateGoalsUI() {
   ];
   macros.forEach(mt => {
     const totalGoals = mt.key==='protein'?goals.protein:mt.key==='fat'?goals.fat:goals.carbs;
-    const vals = mealOrder.map(m => ({meal:m, val:totalGoals * mt.getPct(m) / 100, unit:mt.unit}));
+    const vals = MEAL_ORDER.map(m => ({meal:m, val:totalGoals * mt.getPct(m) / 100, unit:mt.unit}));
     html += '<div class="dist-row"><div class="dist-label">' + mt.label + '</div>' + segBar(vals) + '</div>';
   });
   html += legendHtml;
@@ -1537,10 +1537,9 @@ function openGoalsModal() {
   document.getElementById('goalProteinInput').value = goals.protein;
   document.getElementById('goalFatInput').value = goals.fat;
   document.getElementById('goalCarbsInput').value = goals.carbs;
-  const mealOrder = ['Сніданок','Обід','Вечеря','Перекус'];
   const distMap = {P:'distProtein',F:'distFat',C:'distCarbs'};
   ['P','F','C'].forEach(t => {
-    mealOrder.forEach((m,i) => {
+    MEAL_ORDER.forEach((m,i) => {
       document.getElementById('dist'+t+i).value = goals[distMap[t]]?.[m] || 0;
     });
   });
@@ -1550,14 +1549,13 @@ function openGoalsModal() {
 
 
 function validateDist() {
-  const mealOrder = ['Сніданок','Обід','Вечеря','Перекус'];
   const labels = ['Білків','Жирів','Вуглеводів'];
   const prefixes = ['P','F','C'];
   let allOk = true;
   let hints = [];
   prefixes.forEach((pref, idx) => {
     let sum = 0;
-    mealOrder.forEach((_, i) => {
+    MEAL_ORDER.forEach((_, i) => {
       sum += parseInt(document.getElementById('dist'+pref+i).value) || 0;
     });
     if (sum !== 100) {
@@ -1576,10 +1574,9 @@ async function saveGoals() {
   goals.protein = parseInt(document.getElementById('goalProteinInput').value) || 0;
   goals.fat = parseInt(document.getElementById('goalFatInput').value) || 0;
   goals.carbs = parseInt(document.getElementById('goalCarbsInput').value) || 0;
-  const mealOrder = ['Сніданок','Обід','Вечеря','Перекус'];
   const distMap = {P:'distProtein',F:'distFat',C:'distCarbs'};
   ['P','F','C'].forEach(t => {
-    mealOrder.forEach((m,i) => {
+    MEAL_ORDER.forEach((m,i) => {
       goals[distMap[t]][m] = parseInt(document.getElementById('dist'+t+i).value) || 0;
     });
   });
