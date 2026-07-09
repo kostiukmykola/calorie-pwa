@@ -529,6 +529,7 @@
     </div>
     <button class="btn btn-primary btn-block" onclick="saveEditEntry()">Зберегти</button>
     <button class="btn btn-secondary btn-block" onclick="closeModal('editEntryModal')" style="margin-top:8px">Скасувати</button>
+    <button class="btn btn-secondary btn-block" onclick="deleteEntryFromEdit()" style="margin-top:8px;background:rgba(233,69,96,0.15);color:var(--accent)">🗑️ Видалити запис</button>
   </div>
 </div>
 
@@ -1167,6 +1168,13 @@ async function saveEditEntry() {
   renderDiary();
   showSyncBadge();
   showToast('Запис оновлено');
+}
+
+function deleteEntryFromEdit() {
+  const id = document.getElementById('editEntryId').value;
+  if (!id) return;
+  closeModal('editEntryModal');
+  deleteEntry(id);
 }
 
 async function deleteEntry(id) {
