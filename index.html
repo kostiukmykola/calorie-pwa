@@ -176,7 +176,7 @@
     .progress-bar { height: 6px; background: var(--bg3); border-radius: 3px; margin: 4px 0 2px; overflow:hidden; }
     .progress-bar .fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
 
-    .meal-section { margin-bottom: 16px; }
+    .meal-section { margin-bottom: 24px; }
     .meal-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; cursor: pointer; }
     .meal-header .meal-title { font-weight: 600; font-size: 15px; }
     .meal-header .meal-title .emoji { margin-right: 6px; }
@@ -1412,34 +1412,17 @@ function renderDiary() {
 
   let hasItems = false;
   let html = '';
-  function pctLabel(label, val, goal) {
-    const pct = goal > 0 ? Math.round(val/goal*100) : 0;
-    const color = pct > 100 ? '#ef4444' : '#10b981';
-    return `<span style="color:${color};font-weight:600">${label}: ${pct}%</span>`;
-  }
-  function valLabel(label, val) {
-    if (label === 'К') return `К: ${Math.round(val)}`;
-    return `${label}: ${Math.round(val*10)/10} г`;
-  }
   mealOrder.forEach(m => {
     const items = meals[m];
     if (items.length === 0) return;
     hasItems = true;
     const mealTotal = items.reduce((s, e) => ({ cal: s.cal+e.cal, protein: s.protein+e.protein, fat: s.fat+e.fat, carbs: s.carbs+e.carbs }), {cal:0,protein:0,fat:0,carbs:0});
-    const pPct = goals.distProtein[m] || 0;
-    const fPct = goals.distFat[m] || 0;
-    const cPct = goals.distCarbs[m] || 0;
-    const pGoal = Math.round(goals.protein * pPct / 100);
-    const fGoal = Math.round(goals.fat * fPct / 100);
-    const cGoal = Math.round(goals.carbs * cPct / 100);
-    const calGoal = pGoal * 4 + cGoal * 4 + fGoal * 9;
     html += `
       <div class="meal-section card">
         <div class="meal-header" onclick="toggleMeal('${m}')">
           <div class="meal-title"><span class="emoji">${m==='Сніданок'?'<i class="fas fa-sun"></i>':m==='Обід'?'<i class="fas fa-cloud-sun"></i>':m==='Вечеря'?'<i class="fas fa-moon"></i>':'<i class="fas fa-cookie-bite"></i>'}</span>${m}</div>
-          <div style="text-align:right;font-size:11px;line-height:1.5">
-            <div style="color:var(--text2)">${valLabel('К',mealTotal.cal)} · ${valLabel('Б',mealTotal.protein)} · ${valLabel('Ж',mealTotal.fat)} · ${valLabel('В',mealTotal.carbs)}</div>
-            <div>${pctLabel('К',mealTotal.cal,calGoal)} · ${pctLabel('Б',mealTotal.protein,pGoal)} · ${pctLabel('Ж',mealTotal.fat,fGoal)} · ${pctLabel('В',mealTotal.carbs,cGoal)}</div>
+          <div style="text-align:right;font-size:12px;line-height:1.6">
+            <span style="font-weight:600">${Math.round(mealTotal.cal)} <span style="color:var(--text2)">ккал</span></span> <span style="color:var(--text2)">·</span> <span style="color:#22c55e">Б</span> ${Math.round(mealTotal.protein*10)/10}<span style="color:var(--text2)">г</span> <span style="color:var(--text2)">·</span> <span style="color:#eab308">Ж</span> ${Math.round(mealTotal.fat*10)/10}<span style="color:var(--text2)">г</span> <span style="color:var(--text2)">·</span> <span style="color:#3b82f6">В</span> ${Math.round(mealTotal.carbs*10)/10}<span style="color:var(--text2)">г</span>
           </div>
         </div>
         <ul class="meal-items" id="meal_${m}">
@@ -1448,7 +1431,7 @@ function renderDiary() {
               <div class="meal-content" onclick="onSwipeableClick(this)">
                 <div class="info">
                   <div class="name">${escHtml(e.productName)}</div>
-                  <div class="detail">${e.weight} г · Б: ${e.protein} г · Ж: ${e.fat} г · В: ${e.carbs} г</div>
+                  <div class="detail">${e.weight ? e.weight + ' г' : '— г'} · Б: ${e.protein} г · Ж: ${e.fat} г · В: ${e.carbs} г</div>
                 </div>
                 <div class="kcal">${e.cal} ккал</div>
               </div>
