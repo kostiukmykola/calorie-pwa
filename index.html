@@ -247,12 +247,9 @@
     .goal-row .glabel { font-size: 14px; }
     .goal-row .gvalue { font-size: 14px; color: var(--text2); }
 
-    .toggle-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-    .toggle-wrap label { font-size: 14px; }
-    .toggle { width: 44px; height: 24px; background: var(--bg3); border-radius: 12px; position: relative; cursor: pointer; transition: 0.2s; flex-shrink:0; }
-    .toggle.on { background: var(--accent); }
-    .toggle::after { content:''; position:absolute; top:2px; left:2px; width:20px; height:20px; background:#fff; border-radius:50%; transition: 0.2s; }
-    .toggle.on::after { left: 22px; }
+    .segmented { display:flex; background:var(--card); border-radius:12px; padding:3px; margin-bottom:16px; overflow:hidden; }
+    .segmented button { flex:1; background:none; border:none; color:var(--text2); font-size:13px; font-weight:500; padding:8px 12px; border-radius:10px; cursor:pointer; font-family:inherit; transition:all 0.2s; }
+    .segmented button.active { background:var(--accent); color:#fff; }
 
     .week-chart { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding: 10px 0; }
     .week-chart .bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height: 100%; justify-content:flex-end; }
@@ -362,9 +359,9 @@
 
   <div class="page" id="pageStats">
     <div class="page-title">📊 Статистика</div>
-    <div class="toggle-wrap">
-      <div class="toggle on" id="statsToggle" onclick="toggleStatsView()"></div>
-      <label id="statsToggleLabel">Цей тиждень</label>
+    <div class="segmented">
+      <button class="active" id="segWeek" onclick="setStatsPeriod('week')">Тиждень</button>
+      <button id="segMonth" onclick="setStatsPeriod('month')">Місяць</button>
     </div>
     <div id="statsContent"></div>
   </div>
@@ -1132,10 +1129,10 @@ async function saveGoals() {
 }
 
 // ====== STATS ======
-function toggleStatsView() {
-  statsWeekView = !statsWeekView;
-  document.getElementById('statsToggle').classList.toggle('on', statsWeekView);
-  document.getElementById('statsToggleLabel').textContent = statsWeekView ? 'Цей тиждень' : 'Цей місяць';
+function setStatsPeriod(period) {
+  statsWeekView = period === 'week';
+  document.getElementById('segWeek').classList.toggle('active', statsWeekView);
+  document.getElementById('segMonth').classList.toggle('active', !statsWeekView);
   renderStats();
 }
 
