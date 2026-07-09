@@ -163,21 +163,17 @@
     .daily-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
     .daily-summary .stat { background: var(--card); border-radius: var(--radius); padding: 14px 12px; text-align: center; }
     .daily-summary .stat .label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
-    .daily-summary .stat .value { font-size: 24px; font-weight: 700; margin-top: 4px; }
+    .daily-summary .stat .value { font-size: 24px; font-weight: 700; margin-top: 4px; color: #fff; }
     .daily-summary .stat .goal { font-size: 11px; color: var(--text2); }
-    .daily-summary .stat.cal .value { color: var(--accent); }
-    .daily-summary .stat.protein .value { color: var(--red); }
-    .daily-summary .stat.fat .value { color: var(--orange); }
-    .daily-summary .stat.carbs .value { color: var(--green); }
+    .daily-summary .stat.cal .value { color: #fff; }
+    .daily-summary .stat.protein .value { color: #3b82f6; }
+    .daily-summary .stat.fat .value { color: #f59e0b; }
+    .daily-summary .stat.carbs .value { color: #10b981; }
     .progress-bar { height: 6px; background: var(--bg3); border-radius: 3px; margin: 4px 0 2px; overflow:hidden; }
     .progress-bar .fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
-    .progress-bar .fill.cal { background: var(--accent); }
-    .progress-bar .fill.protein { background: var(--red); }
-    .progress-bar .fill.fat { background: var(--orange); }
-    .progress-bar .fill.carbs { background: var(--green); }
 
     .meal-section { margin-bottom: 16px; }
-    .meal-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .meal-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; cursor: pointer; }
     .meal-header .meal-title { font-weight: 600; font-size: 15px; }
     .meal-header .meal-title .emoji { margin-right: 6px; }
     .meal-header .meal-kcal { font-size: 14px; color: var(--text2); }
@@ -195,6 +191,7 @@
     .meal-item .actions button.edit-btn:hover { background: rgba(78,204,163,0.15); color: var(--green); }
 
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 20px; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .btn-primary { background: var(--accent); color: #fff; }
     .btn-primary:hover { background: #d63850; }
     .btn-secondary { background: var(--card2); color: var(--text); }
@@ -211,6 +208,7 @@
     .form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23aaa' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .form-row-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
 
     .modal-overlay { display: none; position: fixed; inset:0; background: rgba(0,0,0,0.6); z-index: 300; justify-content: center; align-items: flex-end; }
     .modal-overlay.open { display: flex; }
@@ -248,6 +246,18 @@
     .goal-row:last-child { border-bottom: none; }
     .goal-row .glabel { font-size: 14px; }
     .goal-row .gvalue { font-size: 14px; color: var(--text2); }
+
+    .dist-chart { margin-top: 4px; }
+    .dist-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .dist-label { font-size: 12px; color: var(--text2); min-width: 70px; text-align: right; white-space: nowrap; }
+    .dist-bar { flex: 1; height: 22px; border-radius: 6px; overflow: hidden; display: flex; cursor: pointer; }
+    .dist-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #fff; transition: flex 0.3s; min-width: 0; }
+    .dist-seg span { opacity: 0; transition: opacity 0.2s; }
+    .dist-seg:hover span { opacity: 1; }
+    .dist-total { font-size: 12px; font-weight: 600; min-width: 48px; text-align: left; color: var(--text2); }
+    .dist-legend { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
+    .dist-legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text2); }
+    .dist-legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
 
     .segmented { display:flex; background:var(--card); border-radius:12px; padding:3px; margin-bottom:16px; overflow:hidden; }
     .segmented button { flex:1; background:none; border:none; color:var(--text2); font-size:13px; font-weight:500; padding:8px 12px; border-radius:10px; cursor:pointer; font-family:inherit; transition:all 0.2s; }
@@ -385,6 +395,10 @@
       <div class="goal-row"><span class="glabel">🧈 Жири</span><span class="gvalue"><span id="goalFat">65</span> г</span></div>
       <div class="goal-row"><span class="glabel">🍚 Вуглеводи</span><span class="gvalue"><span id="goalCarbs">250</span> г</span></div>
     </div>
+    <div class="card" id="distCard">
+      <div style="font-weight:600;font-size:15px;margin-bottom:8px">📊 Розподіл по прийомах</div>
+      <div id="distPreview"></div>
+    </div>
     <button class="btn btn-primary btn-block" onclick="openGoalsModal()">⚙️ Змінити цілі</button>
   </div>
 
@@ -482,7 +496,30 @@
       <div class="form-group"><label>🧈 Жири (г)</label><input type="number" id="goalFatInput" min="0"></div>
       <div class="form-group"><label>🍚 Вуглеводи (г)</label><input type="number" id="goalCarbsInput" min="0"></div>
     </div>
-    <button class="btn btn-primary btn-block" onclick="saveGoals()">Зберегти</button>
+
+    <div style="margin:16px 0 8px;font-weight:600;font-size:14px">🥩 Розподіл Білків (%)</div>
+    <div class="form-row-4">
+      <div class="form-group"><label>🌅 Сніданок</label><input type="number" id="distP0" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label>☀️ Обід</label><input type="number" id="distP1" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label>🌙 Вечеря</label><input type="number" id="distP2" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label>🍿 Перекус</label><input type="number" id="distP3" min="0" max="100" step="1" oninput="validateDist()"></div>
+    </div>
+    <div style="margin:16px 0 8px;font-weight:600;font-size:14px">🧈 Розподіл Жирів (%)</div>
+    <div class="form-row-4">
+      <div class="form-group"><label>🌅 Сніданок</label><input type="number" id="distF0" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label>☀️ Обід</label><input type="number" id="distF1" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label>🌙 Вечеря</label><input type="number" id="distF2" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label>🍿 Перекус</label><input type="number" id="distF3" min="0" max="100" step="1" oninput="validateDist()"></div>
+    </div>
+    <div style="margin:16px 0 8px;font-weight:600;font-size:14px">🍚 Розподіл Вуглеводів (%)</div>
+    <div class="form-row-4">
+      <div class="form-group"><label>🌅 Сніданок</label><input type="number" id="distC0" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label>☀️ Обід</label><input type="number" id="distC1" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label>🌙 Вечеря</label><input type="number" id="distC2" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label>🍿 Перекус</label><input type="number" id="distC3" min="0" max="100" step="1" oninput="validateDist()"></div>
+    </div>
+    <div id="distHint" style="font-size:13px;color:#ef4444;margin-bottom:12px;min-height:20px"></div>
+    <button class="btn btn-primary btn-block" id="saveGoalsBtn" onclick="saveGoals()">Зберегти</button>
     <button class="btn btn-secondary btn-block" onclick="closeModal('goalsModal')" style="margin-top:8px">Скасувати</button>
   </div>
 </div>
@@ -623,7 +660,7 @@ let currentDate = new Date();
 let currentPage = 'diary';
 let products = [];
 let entries = [];
-let goals = { cal:2000, protein:150, fat:65, carbs:250 };
+let goals = { cal:2000, protein:150, fat:65, carbs:250, distProtein:{Сніданок:25,Обід:35,Вечеря:30,Перекус:10}, distFat:{Сніданок:25,Обід:35,Вечеря:30,Перекус:10}, distCarbs:{Сніданок:25,Обід:35,Вечеря:30,Перекус:10} };
 let editingProductId = null;
 let statsWeekView = true;
 let entriesCache = { data: null, timestamp: 0 };
@@ -1167,52 +1204,75 @@ function renderDiary() {
     total.carbs += e.carbs;
   });
 
+  function barColor(pct) {
+    return pct < 50 ? '#ef4444' : pct < 80 ? '#f59e0b' : '#10b981';
+  }
+
   summary.innerHTML = `
     <div class="stat cal">
       <div class="label">🔥 Калорії</div>
       <div class="value">${Math.round(total.cal)}</div>
       <div class="goal">з ${goals.cal}</div>
-      <div class="progress-bar"><div class="fill cal" style="width:${Math.min(100, total.cal/goals.cal*100)}%"></div></div>
+      <div class="progress-bar"><div class="fill" style="width:${Math.min(100, total.cal/goals.cal*100)}%;background:${barColor(total.cal/goals.cal*100)}"></div></div>
     </div>
     <div class="stat protein">
       <div class="label">🥩 Білки</div>
       <div class="value">${Math.round(total.protein)}г</div>
       <div class="goal">з ${goals.protein}г</div>
-      <div class="progress-bar"><div class="fill protein" style="width:${Math.min(100, total.protein/goals.protein*100)}%"></div></div>
+      <div class="progress-bar"><div class="fill" style="width:${Math.min(100, total.protein/goals.protein*100)}%;background:${barColor(total.protein/goals.protein*100)}"></div></div>
     </div>
     <div class="stat fat">
       <div class="label">🧈 Жири</div>
       <div class="value">${Math.round(total.fat)}г</div>
       <div class="goal">з ${goals.fat}г</div>
-      <div class="progress-bar"><div class="fill fat" style="width:${Math.min(100, total.fat/goals.fat*100)}%"></div></div>
+      <div class="progress-bar"><div class="fill" style="width:${Math.min(100, total.fat/goals.fat*100)}%;background:${barColor(total.fat/goals.fat*100)}"></div></div>
     </div>
     <div class="stat carbs">
       <div class="label">🍚 Вуглеводи</div>
       <div class="value">${Math.round(total.carbs)}г</div>
       <div class="goal">з ${goals.carbs}г</div>
-      <div class="progress-bar"><div class="fill carbs" style="width:${Math.min(100, total.carbs/goals.carbs*100)}%"></div></div>
+      <div class="progress-bar"><div class="fill" style="width:${Math.min(100, total.carbs/goals.carbs*100)}%;background:${barColor(total.carbs/goals.carbs*100)}"></div></div>
     </div>
   `;
 
   let hasItems = false;
   let html = '';
+  function pctLabel(label, val, goal) {
+    const pct = goal > 0 ? Math.round(val/goal*100) : 0;
+    const color = pct > 100 ? '#ef4444' : '#10b981';
+    return `<span style="color:${color};font-weight:600">${label}: ${pct}%</span>`;
+  }
+  function valLabel(label, val) {
+    if (label === 'К') return `К: ${Math.round(val)}`;
+    return `${label}: ${Math.round(val*10)/10} г`;
+  }
   mealOrder.forEach(m => {
     const items = meals[m];
     if (items.length === 0) return;
     hasItems = true;
     const mealTotal = items.reduce((s, e) => ({ cal: s.cal+e.cal, protein: s.protein+e.protein, fat: s.fat+e.fat, carbs: s.carbs+e.carbs }), {cal:0,protein:0,fat:0,carbs:0});
+    const pPct = goals.distProtein[m] || 0;
+    const fPct = goals.distFat[m] || 0;
+    const cPct = goals.distCarbs[m] || 0;
+    const pGoal = Math.round(goals.protein * pPct / 100);
+    const fGoal = Math.round(goals.fat * fPct / 100);
+    const cGoal = Math.round(goals.carbs * cPct / 100);
+    const calGoal = pGoal * 4 + cGoal * 4 + fGoal * 9;
     html += `
       <div class="meal-section card">
         <div class="meal-header" onclick="toggleMeal('${m}')">
           <div class="meal-title"><span class="emoji">${m==='Сніданок'?'🌅':m==='Обід'?'☀️':m==='Вечеря'?'🌙':'🍿'}</span>${m}</div>
-          <div><span class="meal-kcal">${Math.round(mealTotal.cal)} ккал</span></div>
+          <div style="text-align:right;font-size:11px;line-height:1.5">
+            <div style="color:var(--text2)">${valLabel('К',mealTotal.cal)} · ${valLabel('Б',mealTotal.protein)} · ${valLabel('Ж',mealTotal.fat)} · ${valLabel('В',mealTotal.carbs)}</div>
+            <div>${pctLabel('К',mealTotal.cal,calGoal)} · ${pctLabel('Б',mealTotal.protein,pGoal)} · ${pctLabel('Ж',mealTotal.fat,fGoal)} · ${pctLabel('В',mealTotal.carbs,cGoal)}</div>
+          </div>
         </div>
         <ul class="meal-items" id="meal_${m}">
           ${items.map(e => `
             <li class="meal-item">
               <div class="info">
                 <div class="name">${escHtml(e.productName)}</div>
-                <div class="detail">${e.weight}г · ${e.protein}г б · ${e.fat}г ж · ${e.carbs}г в</div>
+                <div class="detail">${e.weight} г · Б: ${e.protein} г · Ж: ${e.fat} г · В: ${e.carbs} г</div>
               </div>
               <div class="kcal">${e.cal} ккал</div>
               <div class="actions"><button class="edit-btn" onclick="openEditEntry('${e.id}')">✏️</button><button onclick="deleteEntry('${e.id}')">✕</button></div>
@@ -1238,6 +1298,9 @@ async function loadGoals() {
   const doc = await userRef().collection('goals').doc('main').get();
   if (doc.exists) {
     goals = doc.data();
+    if (!goals.distProtein) goals.distProtein = {Сніданок:25,Обід:35,Вечеря:30,Перекус:10};
+    if (!goals.distFat) goals.distFat = {Сніданок:25,Обід:35,Вечеря:30,Перекус:10};
+    if (!goals.distCarbs) goals.distCarbs = {Сніданок:25,Обід:35,Вечеря:30,Перекус:10};
   } else {
     await userRef().collection('goals').doc('main').set(goals);
   }
@@ -1249,6 +1312,51 @@ function updateGoalsUI() {
   document.getElementById('goalProtein').textContent = goals.protein;
   document.getElementById('goalFat').textContent = goals.fat;
   document.getElementById('goalCarbs').textContent = goals.carbs;
+  const mealOrder = ['Сніданок','Обід','Вечеря','Перекус'];
+  const colors = {Сніданок:'#f59e0b',Обід:'#3b82f6',Вечеря:'#8b5cf6',Перекус:'#10b981'};
+  const ml = {Сніданок:'🌅',Обід:'☀️',Вечеря:'🌙',Перекус:'🍿'};
+
+  function segBar(mealVals) {
+    const total = mealVals.reduce((s,x) => s+x.val, 0);
+    let h = '<div class="dist-bar">';
+    mealVals.forEach(s => {
+      const w = total > 0 ? s.val/total*100 : 0;
+      const pct = Math.round(w);
+      h += `<div class="dist-seg" style="flex:${w};background:${colors[s.meal]};min-width:${w>0?4:0}px" title="${ml[s.meal]} ${s.meal}: ${Math.round(s.val)}${s.unit}">${pct>0?pct+'%':''}</div>`;
+    });
+    h += `</div><div class="dist-total">${Math.round(total)} ${mealVals[0].unit}</div>`;
+    return h;
+  }
+
+  const legendHtml = '<div class="dist-legend">' + mealOrder.map(m => `<div class="dist-legend-item"><div class="dist-legend-dot" style="background:${colors[m]}"></div>${ml[m]} ${m}</div>`).join('') + '</div>';
+
+  let html = '<div style="font-weight:600;font-size:15px;margin-bottom:8px">🔥 Розподіл калорій</div>';
+  const calVals = mealOrder.map(m => {
+    const pPct = goals.distProtein[m] || 0;
+    const fPct = goals.distFat[m] || 0;
+    const cPct = goals.distCarbs[m] || 0;
+    const pG = goals.protein * pPct / 100;
+    const fG = goals.fat * fPct / 100;
+    const cG = goals.carbs * cPct / 100;
+    return {meal:m, val:pG*4+fG*9+cG*4, unit:'ккал'};
+  });
+  html += '<div class="dist-row"><div class="dist-label"></div>' + segBar(calVals) + '</div>';
+  html += legendHtml;
+
+  html += '<div style="margin:16px 0;border-top:1px solid var(--bg3);padding-top:12px;font-weight:600;font-size:15px;margin-bottom:8px">📊 Розподіл нутрієнтів</div>';
+  const macros = [
+    {key:'protein',label:'🥩 Білки', unit:'г', getPct:m=>goals.distProtein[m]||0},
+    {key:'fat',label:'🧈 Жири', unit:'г', getPct:m=>goals.distFat[m]||0},
+    {key:'carbs',label:'🍚 Вуглеводи', unit:'г', getPct:m=>goals.distCarbs[m]||0},
+  ];
+  macros.forEach(mt => {
+    const totalGoals = mt.key==='protein'?goals.protein:mt.key==='fat'?goals.fat:goals.carbs;
+    const vals = mealOrder.map(m => ({meal:m, val:totalGoals * mt.getPct(m) / 100, unit:mt.unit}));
+    html += '<div class="dist-row"><div class="dist-label">' + mt.label + '</div>' + segBar(vals) + '</div>';
+  });
+  html += legendHtml;
+
+  document.getElementById('distPreview').innerHTML = html;
 }
 
 function openGoalsModal() {
@@ -1256,14 +1364,52 @@ function openGoalsModal() {
   document.getElementById('goalProteinInput').value = goals.protein;
   document.getElementById('goalFatInput').value = goals.fat;
   document.getElementById('goalCarbsInput').value = goals.carbs;
+  const mealOrder = ['Сніданок','Обід','Вечеря','Перекус'];
+  const distMap = {P:'distProtein',F:'distFat',C:'distCarbs'};
+  ['P','F','C'].forEach(t => {
+    mealOrder.forEach((m,i) => {
+      document.getElementById('dist'+t+i).value = goals[distMap[t]]?.[m] || 0;
+    });
+  });
+  validateDist();
   openModal('goalsModal');
 }
 
+
+function validateDist() {
+  const mealOrder = ['Сніданок','Обід','Вечеря','Перекус'];
+  const labels = ['Білків','Жирів','Вуглеводів'];
+  const prefixes = ['P','F','C'];
+  let allOk = true;
+  let hints = [];
+  prefixes.forEach((pref, idx) => {
+    let sum = 0;
+    mealOrder.forEach((_, i) => {
+      sum += parseInt(document.getElementById('dist'+pref+i).value) || 0;
+    });
+    if (sum !== 100) {
+      allOk = false;
+      hints.push('Сума ' + labels[idx] + ' має бути 100% (зараз ' + sum + '%)');
+    }
+  });
+  document.getElementById('distHint').textContent = hints.join('. ');
+  document.getElementById('saveGoalsBtn').disabled = !allOk;
+}
+
 async function saveGoals() {
+  validateDist();
+  if (document.getElementById('saveGoalsBtn').disabled) return;
   goals.cal = parseInt(document.getElementById('goalCalInput').value) || 0;
   goals.protein = parseInt(document.getElementById('goalProteinInput').value) || 0;
   goals.fat = parseInt(document.getElementById('goalFatInput').value) || 0;
   goals.carbs = parseInt(document.getElementById('goalCarbsInput').value) || 0;
+  const mealOrder = ['Сніданок','Обід','Вечеря','Перекус'];
+  const distMap = {P:'distProtein',F:'distFat',C:'distCarbs'};
+  ['P','F','C'].forEach(t => {
+    mealOrder.forEach((m,i) => {
+      goals[distMap[t]][m] = parseInt(document.getElementById('dist'+t+i).value) || 0;
+    });
+  });
   await userRef().collection('goals').doc('main').set(goals);
   closeModal('goalsModal');
   updateGoalsUI();
@@ -1448,9 +1594,7 @@ window.addEventListener('online', () => showToast('🟢 Інтернет з\'я�
 
 // Register SW
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js').catch(() => {
-    // SW failed to register - non-critical, ignore silently
-  });
+  navigator.serviceWorker.register('./sw.js?v=3').catch(() => {});
 }
 </script>
 </body>
