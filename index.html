@@ -1398,6 +1398,7 @@ function renderDiary() {
   const sections = document.getElementById('mealSections');
 
   let total = { cal:0, protein:0, fat:0, carbs:0 };
+  const meals = {};
   MEAL_ORDER.forEach(m => meals[m] = []);
   entries.forEach(e => {
     if (meals[e.mealType]) meals[e.mealType].push(e);
