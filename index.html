@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="theme-color" content="#e94560">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -42,6 +42,8 @@
     body {
       font-family: 'Inter', -apple-system, sans-serif;
       background: var(--bg);
+      overscroll-behavior: none;
+      touch-action: manipulation;
       color: var(--text);
       min-height: 100dvh;
       overflow-x: hidden;
@@ -152,6 +154,7 @@
       font-size: 11px; font-weight: 500;
       display: flex; flex-direction: column; align-items: center; gap: 2px;
       cursor: pointer; padding: 6px 12px; border-radius: 12px;
+      margin-bottom: 8px;
       transition: all 0.2s;
     }
     .nav button .icon { font-size: 22px; line-height:1; }
