@@ -14,6 +14,7 @@
   <meta http-equiv="Expires" content="0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
@@ -185,7 +186,8 @@
     .meal-content .name { font-size: 14px; font-weight: 500; }
     .meal-content .detail { font-size: 12px; color: var(--text2); }
     .meal-content .kcal { font-size: 15px; font-weight: 600; transition: color 0.2s; }
-    .meal-delete { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; display: flex; align-items: center; justify-content: center; background: #ef4444; color: #fff; font-size: 24px; cursor: pointer; z-index: 1; }
+    .meal-delete { position: absolute; right: 4px; top: 4px; bottom: 4px; width: 76px; display: flex; align-items: center; justify-content: center; background: var(--accent); color: #fff; font-size: 18px; cursor: pointer; z-index: 1; border-radius: 10px; }
+    .meal-delete:hover { background: #d63850; }
 
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 20px; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -341,10 +343,10 @@
   <div class="header">
     <h1>Calorie Diary</h1>
     <span class="sync-badge" id="syncBadge">✓</span>
-    <button class="user-btn" onclick="toggleUserMenu()">👤</button>
+    <button class="user-btn" onclick="toggleUserMenu()"><i class="fas fa-user"></i></button>
     <div class="user-menu" id="userMenu">
       <div style="padding:8px 12px;font-size:13px;color:var(--text2);word-break:break-all" id="userEmail"></div>
-      <button onclick="logout()">🚪 Вийти</button>
+      <button onclick="logout()"><i class="fas fa-right-from-bracket"></i> Вийти</button>
     </div>
   </div>
 
@@ -360,17 +362,17 @@
   </div>
 
   <div class="page" id="pageProducts">
-    <div class="page-title">📦 Мої продукти</div>
+    <div class="page-title"><i class="fas fa-box"></i> Мої продукти</div>
     <div class="product-search"><input type="text" id="productSearchInput" placeholder="Пошук продуктів..." oninput="renderProducts()"></div>
     <div style="display:flex;gap:8px;margin-bottom:12px">
       <button class="btn btn-primary" style="flex:1" onclick="openProductModal()">+ Новий продукт</button>
-      <button class="btn btn-secondary" onclick="openImportModal()" style="flex-shrink:0">📥 Імпорт</button>
+      <button class="btn btn-secondary" onclick="openImportModal()" style="flex-shrink:0"><i class="fas fa-file-import"></i> Імпорт</button>
     </div>
     <div id="productList"></div>
   </div>
 
   <div class="page" id="pageStats">
-    <div class="page-title">📊 Статистика</div>
+    <div class="page-title"><i class="fas fa-chart-simple"></i> Статистика</div>
     <div class="segmented">
       <button class="active" id="segWeek" onclick="setStatsPeriod('week')">Тиждень</button>
       <button id="segMonth" onclick="setStatsPeriod('month')">Місяць</button>
@@ -384,25 +386,25 @@
   </div>
 
   <div class="page" id="pageGoals">
-    <div class="page-title">🎯 Мої цілі</div>
+    <div class="page-title"><i class="fas fa-bullseye"></i> Мої цілі</div>
     <div class="card">
-      <div class="goal-row"><span class="glabel">🔥 Калорії</span><span class="gvalue"><span id="goalCal">2000</span> ккал</span></div>
-      <div class="goal-row"><span class="glabel">🥩 Білки</span><span class="gvalue"><span id="goalProtein">150</span> г</span></div>
-      <div class="goal-row"><span class="glabel">🧈 Жири</span><span class="gvalue"><span id="goalFat">65</span> г</span></div>
-      <div class="goal-row"><span class="glabel">🍚 Вуглеводи</span><span class="gvalue"><span id="goalCarbs">250</span> г</span></div>
+      <div class="goal-row"><span class="glabel"><i class="fas fa-fire"></i> Калорії</span><span class="gvalue"><span id="goalCal">2000</span> ккал</span></div>
+      <div class="goal-row"><span class="glabel"><i class="fas fa-drumstick-bite"></i> Білки</span><span class="gvalue"><span id="goalProtein">150</span> г</span></div>
+      <div class="goal-row"><span class="glabel"><i class="fas fa-droplet"></i> Жири</span><span class="gvalue"><span id="goalFat">65</span> г</span></div>
+      <div class="goal-row"><span class="glabel"><i class="fas fa-wheat-awn"></i> Вуглеводи</span><span class="gvalue"><span id="goalCarbs">250</span> г</span></div>
     </div>
     <div class="card" id="distCard">
-      <div style="font-weight:600;font-size:15px;margin-bottom:8px">📊 Розподіл по прийомах</div>
+      <div style="font-weight:600;font-size:15px;margin-bottom:8px"><i class="fas fa-chart-simple"></i> Розподіл по прийомах</div>
       <div id="distPreview"></div>
     </div>
-    <button class="btn btn-primary btn-block" onclick="openGoalsModal()">⚙️ Змінити цілі</button>
+    <button class="btn btn-primary btn-block" onclick="openGoalsModal()"><i class="fas fa-gear"></i> Змінити цілі</button>
   </div>
 
   <div class="nav">
-    <button class="active" onclick="switchPage('diary')"><span class="icon">📓</span>Щоденник</button>
-    <button onclick="switchPage('products')"><span class="icon">📦</span>Продукти</button>
-    <button onclick="switchPage('stats')"><span class="icon">📊</span>Статистика</button>
-    <button onclick="switchPage('goals')"><span class="icon">🎯</span>Цілі</button>
+    <button class="active" onclick="switchPage('diary')"><span class="icon"><i class="fas fa-book"></i></span>Щоденник</button>
+    <button onclick="switchPage('products')"><span class="icon"><i class="fas fa-box"></i></span>Продукти</button>
+    <button onclick="switchPage('stats')"><span class="icon"><i class="fas fa-chart-simple"></i></span>Статистика</button>
+    <button onclick="switchPage('goals')"><span class="icon"><i class="fas fa-bullseye"></i></span>Цілі</button>
   </div>
 </div>
 
@@ -410,14 +412,14 @@
 <div class="modal-overlay" id="addMealModal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <h2>🍽️ Додати прийом їжі</h2>
+    <h2><i class="fas fa-utensils"></i> Додати прийом їжі</h2>
     <div class="form-group"><label>Тип прийому</label><select id="mealType"><option value="Сніданок">🌅 Сніданок</option><option value="Обід">☀️ Обід</option><option value="Вечеря">🌙 Вечеря</option><option value="Перекус">🍿 Перекус</option></select></div>
 
     <!-- Mode selector -->
     <div style="display:flex;gap:8px;margin-bottom:16px">
-      <button class="btn btn-sm" id="modeProduct" onclick="setAddMode('product')" style="flex:1;background:var(--accent);color:#fff">📦 Продукт</button>
-      <button class="btn btn-sm" id="modeQuick" onclick="setAddMode('quick')" style="flex:1;background:var(--card2);color:var(--text2)">✏️ Вручну</button>
-      <button class="btn btn-sm" id="modeAI" onclick="setAddMode('ai')" style="flex:1;background:var(--card2);color:var(--text2)">🤖 AI</button>
+      <button class="btn btn-sm" id="modeProduct" onclick="setAddMode('product')" style="flex:1;background:var(--accent);color:#fff"><i class="fas fa-box"></i> Продукт</button>
+      <button class="btn btn-sm" id="modeQuick" onclick="setAddMode('quick')" style="flex:1;background:var(--card2);color:var(--text2)"><i class="fas fa-pencil"></i> Вручну</button>
+      <button class="btn btn-sm" id="modeAI" onclick="setAddMode('ai')" style="flex:1;background:var(--card2);color:var(--text2)"><i class="fas fa-robot"></i> AI</button>
     </div>
 
     <!-- Mode: Product -->
@@ -429,11 +431,11 @@
     <!-- Mode: Manual -->
     <div id="addModeQuick" style="display:none">
       <div class="form-group"><label>Назва страви</label><input type="text" id="quickName" placeholder="напр. Яєчня з беконом"></div>
-      <div class="form-group"><label>🔥 Ккал</label><input type="number" id="quickCal" value="0" step="0.1"></div>
+      <div class="form-group"><label><i class="fas fa-fire"></i> Ккал</label><input type="number" id="quickCal" value="0" step="0.1"></div>
       <div class="form-row-3">
-        <div class="form-group"><label>🥩 Білки (г)</label><input type="number" id="quickProtein" value="0" step="0.1"></div>
-        <div class="form-group"><label>🧈 Жири (г)</label><input type="number" id="quickFat" value="0" step="0.1"></div>
-        <div class="form-group"><label>🍚 Вуглеводи (г)</label><input type="number" id="quickCarbs" value="0" step="0.1"></div>
+        <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки (г)</label><input type="number" id="quickProtein" value="0" step="0.1"></div>
+        <div class="form-group"><label><i class="fas fa-droplet"></i> Жири (г)</label><input type="number" id="quickFat" value="0" step="0.1"></div>
+        <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи (г)</label><input type="number" id="quickCarbs" value="0" step="0.1"></div>
       </div>
     </div>
 
@@ -442,17 +444,17 @@
       <div id="aiStep1">
         <p style="font-size:13px;color:var(--text2);margin-bottom:8px">1. Натисни кнопку, відправ фото в ChatGPT</p>
         <p style="font-size:13px;color:var(--text2);margin-bottom:12px">2. Скопіюй відповідь і встав нижче (або просто натисни "Вставити дані")</p>
-        <button class="btn btn-secondary btn-sm btn-block" onclick="openAIAnalysis()" style="margin-bottom:12px">🤖 Відкрити ChatGPT</button>
+        <button class="btn btn-secondary btn-sm btn-block" onclick="openAIAnalysis()" style="margin-bottom:12px"><i class="fas fa-robot"></i> Відкрити ChatGPT</button>
         <div class="form-group"><label>Встав скопійовану відповідь ChatGPT:</label><textarea id="aiResult" rows="3"></textarea></div>
-        <button class="btn btn-secondary btn-sm btn-block" onclick="parseAIResult()" style="margin-bottom:12px">📋 Вставити дані</button>
+        <button class="btn btn-secondary btn-sm btn-block" onclick="parseAIResult()" style="margin-bottom:12px"><i class="fas fa-clipboard"></i> Вставити дані</button>
       </div>
       <div id="aiStep2" style="display:none">
         <div class="form-group"><label>Назва</label><input type="text" id="aiNameInput"></div>
-        <div class="form-group"><label>🔥 Ккал</label><input type="number" id="aiCalInput" step="0.1"></div>
+        <div class="form-group"><label><i class="fas fa-fire"></i> Ккал</label><input type="number" id="aiCalInput" step="0.1"></div>
         <div class="form-row-3">
-          <div class="form-group"><label>🥩 Білки</label><input type="number" id="aiProteinInput" step="0.1"></div>
-          <div class="form-group"><label>🧈 Жири</label><input type="number" id="aiFatInput" step="0.1"></div>
-          <div class="form-group"><label>🍚 Вуглеводи</label><input type="number" id="aiCarbsInput" step="0.1"></div>
+          <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки</label><input type="number" id="aiProteinInput" step="0.1"></div>
+          <div class="form-group"><label><i class="fas fa-droplet"></i> Жири</label><input type="number" id="aiFatInput" step="0.1"></div>
+          <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи</label><input type="number" id="aiCarbsInput" step="0.1"></div>
         </div>
       </div>
     </div>
@@ -465,7 +467,7 @@
 <div class="modal-overlay" id="productModal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <h2 id="productModalTitle">📦 Новий продукт</h2>
+    <h2 id="productModalTitle"><i class="fas fa-box"></i> Новий продукт</h2>
     <input type="hidden" id="productEditId">
     <div class="form-group"><label>Назва продукту</label><input type="text" id="productName" placeholder="напр. Куряча грудка"></div>
     <div class="form-group"><label>Ккал (100г)</label><input type="number" id="productCal" value="0" step="0.1"></div>
@@ -476,19 +478,19 @@
     </div>
     <button class="btn btn-primary btn-block" onclick="saveProduct()">Зберегти</button>
     <button class="btn btn-secondary btn-block" onclick="closeModal('productModal')" style="margin-top:8px">Скасувати</button>
-    <button class="btn btn-secondary btn-block" id="productDeleteBtn" onclick="deleteProduct(document.getElementById('productEditId').value)" style="margin-top:8px;background:rgba(233,69,96,0.15);color:var(--accent)">🗑️ Видалити продукт</button>
+    <button class="btn btn-secondary btn-block" id="productDeleteBtn" onclick="deleteProduct(document.getElementById('productEditId').value)" style="margin-top:8px;background:rgba(233,69,96,0.15);color:var(--accent)"><i class="fas fa-trash-can"></i> Видалити продукт</button>
   </div>
 </div>
 
 <div class="modal-overlay" id="importModal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <h2>📥 Імпорт продуктів</h2>
+    <h2><i class="fas fa-file-import"></i> Імпорт продуктів</h2>
     <div class="form-group"><label>Встав список продуктів у форматі JSON:</label>
       <textarea id="importJson" rows="8" style="resize:vertical;font-family:monospace" placeholder='[&#10;  {"name":"Куряча грудка","cal":165,"protein":31,"fat":3.6,"carbs":0},&#10;  {"name":"Яйце куряче","cal":155,"protein":13,"fat":11,"carbs":1.1}&#10;]'></textarea>
     </div>
     <div id="importResult" style="font-size:13px;margin-bottom:12px;min-height:20px"></div>
-    <button class="btn btn-primary btn-block" onclick="importProducts()">📥 Імпортувати</button>
+    <button class="btn btn-primary btn-block" onclick="importProducts()"><i class="fas fa-file-import"></i> Імпортувати</button>
     <button class="btn btn-secondary btn-block" onclick="closeModal('importModal')" style="margin-top:8px">Скасувати</button>
   </div>
 </div>
@@ -496,36 +498,36 @@
 <div class="modal-overlay" id="goalsModal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <h2>🎯 Денні цілі</h2>
+    <h2><i class="fas fa-bullseye"></i> Денні цілі</h2>
     <div class="form-row">
-      <div class="form-group"><label>🔥 Калорії</label><input type="number" id="goalCalInput" min="0"></div>
-      <div class="form-group"><label>🥩 Білки (г)</label><input type="number" id="goalProteinInput" min="0"></div>
+      <div class="form-group"><label><i class="fas fa-fire"></i> Калорії</label><input type="number" id="goalCalInput" min="0"></div>
+      <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки (г)</label><input type="number" id="goalProteinInput" min="0"></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label>🧈 Жири (г)</label><input type="number" id="goalFatInput" min="0"></div>
-      <div class="form-group"><label>🍚 Вуглеводи (г)</label><input type="number" id="goalCarbsInput" min="0"></div>
+      <div class="form-group"><label><i class="fas fa-droplet"></i> Жири (г)</label><input type="number" id="goalFatInput" min="0"></div>
+      <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи (г)</label><input type="number" id="goalCarbsInput" min="0"></div>
     </div>
 
-    <div style="margin:16px 0 8px;font-weight:600;font-size:14px">🥩 Розподіл Білків (%)</div>
+    <div style="margin:16px 0 8px;font-weight:600;font-size:14px"><i class="fas fa-drumstick-bite"></i> Розподіл Білків (%)</div>
     <div class="form-row-4">
-      <div class="form-group"><label>🌅 Сніданок</label><input type="number" id="distP0" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label>☀️ Обід</label><input type="number" id="distP1" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label>🌙 Вечеря</label><input type="number" id="distP2" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label>🍿 Перекус</label><input type="number" id="distP3" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-sun"></i> Сніданок</label><input type="number" id="distP0" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-cloud-sun"></i> Обід</label><input type="number" id="distP1" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-moon"></i> Вечеря</label><input type="number" id="distP2" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-cookie-bite"></i> Перекус</label><input type="number" id="distP3" min="0" max="100" step="1" oninput="validateDist()"></div>
     </div>
-    <div style="margin:16px 0 8px;font-weight:600;font-size:14px">🧈 Розподіл Жирів (%)</div>
+    <div style="margin:16px 0 8px;font-weight:600;font-size:14px"><i class="fas fa-droplet"></i> Розподіл Жирів (%)</div>
     <div class="form-row-4">
-      <div class="form-group"><label>🌅 Сніданок</label><input type="number" id="distF0" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label>☀️ Обід</label><input type="number" id="distF1" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label>🌙 Вечеря</label><input type="number" id="distF2" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label>🍿 Перекус</label><input type="number" id="distF3" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-sun"></i> Сніданок</label><input type="number" id="distF0" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-cloud-sun"></i> Обід</label><input type="number" id="distF1" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-moon"></i> Вечеря</label><input type="number" id="distF2" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-cookie-bite"></i> Перекус</label><input type="number" id="distF3" min="0" max="100" step="1" oninput="validateDist()"></div>
     </div>
-    <div style="margin:16px 0 8px;font-weight:600;font-size:14px">🍚 Розподіл Вуглеводів (%)</div>
+    <div style="margin:16px 0 8px;font-weight:600;font-size:14px"><i class="fas fa-wheat-awn"></i> Розподіл Вуглеводів (%)</div>
     <div class="form-row-4">
-      <div class="form-group"><label>🌅 Сніданок</label><input type="number" id="distC0" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label>☀️ Обід</label><input type="number" id="distC1" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label>🌙 Вечеря</label><input type="number" id="distC2" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label>🍿 Перекус</label><input type="number" id="distC3" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-sun"></i> Сніданок</label><input type="number" id="distC0" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-cloud-sun"></i> Обід</label><input type="number" id="distC1" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-moon"></i> Вечеря</label><input type="number" id="distC2" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-cookie-bite"></i> Перекус</label><input type="number" id="distC3" min="0" max="100" step="1" oninput="validateDist()"></div>
     </div>
     <div id="distHint" style="font-size:13px;color:#ef4444;margin-bottom:12px;min-height:20px"></div>
     <button class="btn btn-primary btn-block" id="saveGoalsBtn" onclick="saveGoals()">Зберегти</button>
@@ -536,18 +538,18 @@
 <div class="modal-overlay" id="editEntryModal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <h2>✏️ Редагувати запис</h2>
+    <h2><i class="fas fa-pencil"></i> Редагувати запис</h2>
     <input type="hidden" id="editEntryId">
     <div class="form-group"><label>Назва страви</label><input type="text" id="editEntryName"></div>
-    <div class="form-group"><label>🔥 Ккал</label><input type="number" id="editEntryCal" step="0.1"></div>
+    <div class="form-group"><label><i class="fas fa-fire"></i> Ккал</label><input type="number" id="editEntryCal" step="0.1"></div>
     <div class="form-row-3">
-      <div class="form-group"><label>🥩 Білки (г)</label><input type="number" id="editEntryProtein" step="0.1"></div>
-      <div class="form-group"><label>🧈 Жири (г)</label><input type="number" id="editEntryFat" step="0.1"></div>
-      <div class="form-group"><label>🍚 Вуглеводи (г)</label><input type="number" id="editEntryCarbs" step="0.1"></div>
+      <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки (г)</label><input type="number" id="editEntryProtein" step="0.1"></div>
+      <div class="form-group"><label><i class="fas fa-droplet"></i> Жири (г)</label><input type="number" id="editEntryFat" step="0.1"></div>
+      <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи (г)</label><input type="number" id="editEntryCarbs" step="0.1"></div>
     </div>
     <button class="btn btn-primary btn-block" onclick="saveEditEntry()">Зберегти</button>
     <button class="btn btn-secondary btn-block" onclick="closeModal('editEntryModal')" style="margin-top:8px">Скасувати</button>
-    <button class="btn btn-secondary btn-block" onclick="deleteEntryFromEdit()" style="margin-top:8px;background:rgba(233,69,96,0.15);color:var(--accent)">🗑️ Видалити запис</button>
+    <button class="btn btn-secondary btn-block" onclick="deleteEntryFromEdit()" style="margin-top:8px;background:rgba(233,69,96,0.15);color:var(--accent)"><i class="fas fa-trash-can"></i> Видалити запис</button>
   </div>
 </div>
 
@@ -940,7 +942,7 @@ function renderProducts() {
   if (!products.length) { list.innerHTML = '<div class="loader"></div>'; }
   const filtered = products.filter(p => p.name.toLowerCase().includes(q));
   if (filtered.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="icon">📦</div><h3>Немає продуктів</h3><p>Додайте свій перший продукт</p></div>';
+    list.innerHTML = '<div class="empty-state"><div class="icon"><i class="fas fa-box"></i></div><h3>Немає продуктів</h3><p>Додайте свій перший продукт</p></div>';
     return;
   }
   list.innerHTML = '<div class="product-grid">' + filtered.map(p => `
@@ -953,7 +955,7 @@ function renderProducts() {
 
 async function openProductModal() {
   editingProductId = null;
-  document.getElementById('productModalTitle').textContent = '📦 Новий продукт';
+  document.getElementById('productModalTitle').innerHTML = '<i class="fas fa-box"></i> Новий продукт';
   document.getElementById('productEditId').value = '';
   document.getElementById('productName').value = '';
   document.getElementById('productCal').value = '0';
@@ -968,7 +970,7 @@ async function editProduct(id) {
   const product = products.find(p => p.id === id);
   if (!product) return;
   editingProductId = id;
-  document.getElementById('productModalTitle').textContent = '✏️ Редагувати продукт';
+  document.getElementById('productModalTitle').innerHTML = '<i class="fas fa-pencil"></i> Редагувати продукт';
   document.getElementById('productEditId').value = id;
   document.getElementById('productName').value = product.name;
   document.getElementById('productCal').value = product.cal;
@@ -1373,25 +1375,25 @@ function renderDiary() {
 
   summary.innerHTML = `
     <div class="stat cal">
-      <div class="label">🔥 Калорії</div>
+      <div class="label"><i class="fas fa-fire"></i> Калорії</div>
       <div class="value">${Math.round(total.cal)}</div>
       <div class="goal">з ${goals.cal}</div>
       <div class="progress-bar"><div class="fill" style="width:${Math.min(100, total.cal/goals.cal*100)}%;background:${barColor(total.cal/goals.cal*100)}"></div></div>
     </div>
     <div class="stat protein">
-      <div class="label">🥩 Білки</div>
+      <div class="label"><i class="fas fa-drumstick-bite"></i> Білки</div>
       <div class="value">${Math.round(total.protein)}г</div>
       <div class="goal">з ${goals.protein}г</div>
       <div class="progress-bar"><div class="fill" style="width:${Math.min(100, total.protein/goals.protein*100)}%;background:${barColor(total.protein/goals.protein*100)}"></div></div>
     </div>
     <div class="stat fat">
-      <div class="label">🧈 Жири</div>
+      <div class="label"><i class="fas fa-droplet"></i> Жири</div>
       <div class="value">${Math.round(total.fat)}г</div>
       <div class="goal">з ${goals.fat}г</div>
       <div class="progress-bar"><div class="fill" style="width:${Math.min(100, total.fat/goals.fat*100)}%;background:${barColor(total.fat/goals.fat*100)}"></div></div>
     </div>
     <div class="stat carbs">
-      <div class="label">🍚 Вуглеводи</div>
+      <div class="label"><i class="fas fa-wheat-awn"></i> Вуглеводи</div>
       <div class="value">${Math.round(total.carbs)}г</div>
       <div class="goal">з ${goals.carbs}г</div>
       <div class="progress-bar"><div class="fill" style="width:${Math.min(100, total.carbs/goals.carbs*100)}%;background:${barColor(total.carbs/goals.carbs*100)}"></div></div>
@@ -1424,7 +1426,7 @@ function renderDiary() {
     html += `
       <div class="meal-section card">
         <div class="meal-header" onclick="toggleMeal('${m}')">
-          <div class="meal-title"><span class="emoji">${m==='Сніданок'?'🌅':m==='Обід'?'☀️':m==='Вечеря'?'🌙':'🍿'}</span>${m}</div>
+          <div class="meal-title"><span class="emoji">${m==='Сніданок'?'<i class="fas fa-sun"></i>':m==='Обід'?'<i class="fas fa-cloud-sun"></i>':m==='Вечеря'?'<i class="fas fa-moon"></i>':'<i class="fas fa-cookie-bite"></i>'}</span>${m}</div>
           <div style="text-align:right;font-size:11px;line-height:1.5">
             <div style="color:var(--text2)">${valLabel('К',mealTotal.cal)} · ${valLabel('Б',mealTotal.protein)} · ${valLabel('Ж',mealTotal.fat)} · ${valLabel('В',mealTotal.carbs)}</div>
             <div>${pctLabel('К',mealTotal.cal,calGoal)} · ${pctLabel('Б',mealTotal.protein,pGoal)} · ${pctLabel('Ж',mealTotal.fat,fGoal)} · ${pctLabel('В',mealTotal.carbs,cGoal)}</div>
@@ -1440,7 +1442,7 @@ function renderDiary() {
                 </div>
                 <div class="kcal">${e.cal} ккал</div>
               </div>
-              <div class="meal-delete" onclick="event.stopPropagation();swipeDeleteEntry('${e.id}')">🗑️</div>
+              <div class="meal-delete" onclick="event.stopPropagation();swipeDeleteEntry('${e.id}')"><i class="fas fa-trash-can"></i></div>
             </li>
           `).join('')}
         </ul>
@@ -1448,7 +1450,7 @@ function renderDiary() {
     `;
   });
   if (!hasItems) {
-    html = `<div class="empty-state"><div class="icon">📓</div><h3>Ще немає записів</h3><p>Додайте свій перший прийом їжі на сьогодні</p></div>`;
+    html = `<div class="empty-state"><div class="icon"><i class="fas fa-book"></i></div><h3>Ще немає записів</h3><p>Додайте свій перший прийом їжі на сьогодні</p></div>`;
   }
   sections.innerHTML = html;
 }
@@ -1480,6 +1482,7 @@ function updateGoalsUI() {
   const mealOrder = ['Сніданок','Обід','Вечеря','Перекус'];
   const colors = {Сніданок:'#f59e0b',Обід:'#3b82f6',Вечеря:'#8b5cf6',Перекус:'#10b981'};
   const ml = {Сніданок:'🌅',Обід:'☀️',Вечеря:'🌙',Перекус:'🍿'};
+  const faMeals = {Сніданок:'<i class="fas fa-sun"></i>',Обід:'<i class="fas fa-cloud-sun"></i>',Вечеря:'<i class="fas fa-moon"></i>',Перекус:'<i class="fas fa-cookie-bite"></i>'};
 
   function segBar(mealVals) {
     const total = mealVals.reduce((s,x) => s+x.val, 0);
@@ -1493,9 +1496,9 @@ function updateGoalsUI() {
     return h;
   }
 
-  const legendHtml = '<div class="dist-legend">' + mealOrder.map(m => `<div class="dist-legend-item"><div class="dist-legend-dot" style="background:${colors[m]}"></div>${ml[m]} ${m}</div>`).join('') + '</div>';
+  const legendHtml = '<div class="dist-legend">' + mealOrder.map(m => `<div class="dist-legend-item"><div class="dist-legend-dot" style="background:${colors[m]}"></div>${faMeals[m]} ${m}</div>`).join('') + '</div>';
 
-  let html = '<div style="font-weight:600;font-size:15px;margin-bottom:8px">🔥 Розподіл калорій</div>';
+  let html = '<div style="font-weight:600;font-size:15px;margin-bottom:8px"><i class="fas fa-fire"></i> Розподіл калорій</div>';
   const calVals = mealOrder.map(m => {
     const pPct = goals.distProtein[m] || 0;
     const fPct = goals.distFat[m] || 0;
@@ -1508,11 +1511,11 @@ function updateGoalsUI() {
   html += '<div class="dist-row"><div class="dist-label"></div>' + segBar(calVals) + '</div>';
   html += legendHtml;
 
-  html += '<div style="margin:16px 0;border-top:1px solid var(--bg3);padding-top:12px;font-weight:600;font-size:15px;margin-bottom:8px">📊 Розподіл нутрієнтів</div>';
+  html += '<div style="margin:16px 0;border-top:1px solid var(--bg3);padding-top:12px;font-weight:600;font-size:15px;margin-bottom:8px"><i class="fas fa-chart-simple"></i> Розподіл нутрієнтів</div>';
   const macros = [
-    {key:'protein',label:'🥩 Білки', unit:'г', getPct:m=>goals.distProtein[m]||0},
-    {key:'fat',label:'🧈 Жири', unit:'г', getPct:m=>goals.distFat[m]||0},
-    {key:'carbs',label:'🍚 Вуглеводи', unit:'г', getPct:m=>goals.distCarbs[m]||0},
+    {key:'protein',label:'<i class="fas fa-drumstick-bite"></i> Білки', unit:'г', getPct:m=>goals.distProtein[m]||0},
+    {key:'fat',label:'<i class="fas fa-droplet"></i> Жири', unit:'г', getPct:m=>goals.distFat[m]||0},
+    {key:'carbs',label:'<i class="fas fa-wheat-awn"></i> Вуглеводи', unit:'г', getPct:m=>goals.distCarbs[m]||0},
   ];
   macros.forEach(mt => {
     const totalGoals = mt.key==='protein'?goals.protein:mt.key==='fat'?goals.fat:goals.carbs;
@@ -1695,29 +1698,29 @@ async function renderStats() {
   const statsHtml = `
     <div class="stats-grid">
       <div class="stat-card cal">
-        <div class="label">🔥 Середнє</div>
+        <div class="label"><i class="fas fa-fire"></i> Середнє</div>
         <div class="value">${Math.round(avg(dailyData.filter(d => d.cal > 0).map(d => d.cal)))}</div>
         <div class="sub">ккал/день</div>
       </div>
       <div class="stat-card protein">
-        <div class="label">🥩 Білки</div>
+        <div class="label"><i class="fas fa-drumstick-bite"></i> Білки</div>
         <div class="value">${Math.round(avg(dailyData.filter(d => d.protein > 0).map(d => d.protein)))}</div>
         <div class="sub">г/день</div>
       </div>
       <div class="stat-card fat">
-        <div class="label">🧈 Жири</div>
+        <div class="label"><i class="fas fa-droplet"></i> Жири</div>
         <div class="value">${Math.round(avg(dailyData.filter(d => d.fat > 0).map(d => d.fat)))}</div>
         <div class="sub">г/день</div>
       </div>
       <div class="stat-card carbs">
-        <div class="label">🍚 Вуглеводи</div>
+        <div class="label"><i class="fas fa-wheat-awn"></i> Вуглеводи</div>
         <div class="value">${Math.round(avg(dailyData.filter(d => d.carbs > 0).map(d => d.carbs)))}</div>
         <div class="sub">г/день</div>
       </div>
     </div>
     <div class="card">
-      <div class="goal-row"><span class="glabel">📆 Днів в періоді</span><span class="gvalue">${count}</span></div>
-      <div class="goal-row"><span class="glabel">✅ Днів з записами</span><span class="gvalue">${daysWithData}</span></div>
+      <div class="goal-row"><span class="glabel"><i class="fas fa-calendar"></i> Днів в періоді</span><span class="gvalue">${count}</span></div>
+      <div class="goal-row"><span class="glabel"><i class="fas fa-check"></i> Днів з записами</span><span class="gvalue">${daysWithData}</span></div>
     </div>
   `;
 
