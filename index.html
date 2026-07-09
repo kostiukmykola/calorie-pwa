@@ -398,7 +398,7 @@
     <!-- Mode selector -->
     <div style="display:flex;gap:8px;margin-bottom:16px">
       <button class="btn btn-sm" id="modeProduct" onclick="setAddMode('product')" style="flex:1;background:var(--accent);color:#fff">📦 Продукт</button>
-      <button class="btn btn-sm" id="modeQuick" onclick="setAddMode('quick')" style="flex:1;background:var(--card2);color:var(--text2)">✏️ Ручне</button>
+      <button class="btn btn-sm" id="modeQuick" onclick="setAddMode('quick')" style="flex:1;background:var(--card2);color:var(--text2)">✏️ Вручну</button>
       <button class="btn btn-sm" id="modeAI" onclick="setAddMode('ai')" style="flex:1;background:var(--card2);color:var(--text2)">🤖 AI</button>
     </div>
 
@@ -428,7 +428,7 @@
 Білки: ...
 Жири: ...
 Вуглеводи: ..."></textarea></div>
-        <button class="btn btn-secondary btn-sm" onclick="parseAIResult()" style="margin-bottom:12px">📋 Вставити дані</button>
+        <button class="btn btn-secondary btn-sm btn-block" onclick="parseAIResult()" style="margin-bottom:12px">📋 Вставити дані</button>
       </div>
       <div id="aiStep2" style="display:none">
         <div class="form-group"><label>Назва</label><input type="text" id="aiNameInput"></div>
