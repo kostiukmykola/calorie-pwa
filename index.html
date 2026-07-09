@@ -458,12 +458,12 @@
     <h2 id="productModalTitle">📦 Новий продукт</h2>
     <input type="hidden" id="productEditId">
     <div class="form-group"><label>Назва продукту</label><input type="text" id="productName" placeholder="напр. Куряча грудка"></div>
+    <div class="form-group"><label>Ккал (100г)</label><input type="number" id="productCal" value="0" step="0.1"></div>
     <div class="form-row-3">
-      <div class="form-group"><label>Ккал (100г)</label><input type="number" id="productCal" value="0" step="0.1"></div>
       <div class="form-group"><label>Білки (г)</label><input type="number" id="productProtein" value="0" step="0.1"></div>
       <div class="form-group"><label>Жири (г)</label><input type="number" id="productFat" value="0" step="0.1"></div>
+      <div class="form-group"><label>Вуглеводи (г)</label><input type="number" id="productCarbs" value="0" step="0.1"></div>
     </div>
-    <div class="form-group"><label>Вуглеводи (г)</label><input type="number" id="productCarbs" value="0" step="0.1"></div>
     <button class="btn btn-primary btn-block" onclick="saveProduct()">Зберегти</button>
     <button class="btn btn-secondary btn-block" onclick="closeModal('productModal')" style="margin-top:8px">Скасувати</button>
     <button class="btn btn-secondary btn-block" id="productDeleteBtn" onclick="deleteProduct(document.getElementById('productEditId').value)" style="margin-top:8px;background:rgba(233,69,96,0.15);color:var(--accent)">🗑️ Видалити продукт</button>
