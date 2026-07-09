@@ -267,6 +267,22 @@
     .dist-legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text2); }
     .dist-legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
 
+    .btn-danger { margin-top:8px; background:rgba(233,69,96,0.15); color:var(--accent); }
+    .btn-danger:hover { background:rgba(233,69,96,0.25); }
+    .btn-active { background:var(--accent); color:#fff; }
+    .btn-inactive { background:var(--card2); color:var(--text2); }
+    .toolbar { display:flex; gap:8px; margin-bottom:12px; }
+    .mt-8 { margin-top:8px; }
+    .mt-12 { margin-top:12px; }
+    .mb-12 { margin-bottom:12px; }
+    .flex-1 { flex:1; }
+    .flex-shrink-0 { flex-shrink:0; }
+    .fw-600 { font-weight:600; }
+    .c-text2 { color:var(--text2); }
+    .c-green { color:#22c55e; }
+    .c-yellow { color:#eab308; }
+    .c-blue { color:#3b82f6; }
+    .meal-macros { text-align:right; font-size:12px; line-height:18px; }
     .segmented { display:flex; background:var(--card); border-radius:12px; padding:3px; margin-bottom:16px; overflow:hidden; }
     .segmented button { flex:1; background:none; border:none; color:var(--text2); font-size:13px; font-weight:500; padding:8px 12px; border-radius:10px; cursor:pointer; font-family:inherit; transition:all 0.2s; }
     .segmented button.active { background:var(--accent); color:#fff; }
@@ -372,7 +388,7 @@
   <div class="page active" id="pageDiary">
     <div class="date-nav" id="dateNav">
       <button id="datePrevBtn">◀</button>
-      <span id="dateDisplay" style="font-size:15px;font-weight:600"></span>
+      <span id="dateDisplay" style="font-size:15px" class="fw-600"></span>
       <button id="dateNextBtn">▶</button>
     </div>
     <div class="daily-summary" id="dailySummary"></div>
@@ -383,9 +399,9 @@
   <div class="page" id="pageProducts">
     <div class="page-title"><i class="fas fa-box"></i> Мої продукти</div>
     <div class="product-search"><input type="text" id="productSearchInput" placeholder="Пошук продуктів..." oninput="renderProducts()"></div>
-    <div style="display:flex;gap:8px;margin-bottom:12px">
-      <button class="btn btn-primary" style="flex:1" id="newProductBtn">+ Новий продукт</button>
-      <button class="btn btn-secondary" id="importBtn" style="flex-shrink:0"><i class="fas fa-file-import"></i> Імпорт</button>
+      <div class="toolbar">
+      <button class="btn btn-primary flex-1" id="newProductBtn">+ Новий продукт</button>
+      <button class="btn btn-secondary flex-shrink-0" id="importBtn"><i class="fas fa-file-import"></i> Імпорт</button>
     </div>
     <div id="productList"></div>
   </div>
@@ -436,9 +452,9 @@
 
     <!-- Mode selector -->
     <div style="display:flex;gap:8px;margin-bottom:16px">
-      <button class="btn btn-sm" id="modeProduct" style="flex:1;background:var(--accent);color:#fff"><i class="fas fa-box"></i> Продукт</button>
-      <button class="btn btn-sm" id="modeQuick" style="flex:1;background:var(--card2);color:var(--text2)"><i class="fas fa-pencil"></i> Вручну</button>
-      <button class="btn btn-sm" id="modeAI" style="flex:1;background:var(--card2);color:var(--text2)"><i class="fas fa-robot"></i> AI</button>
+      <button class="btn btn-sm btn-active flex-1" id="modeProduct"><i class="fas fa-box"></i> Продукт</button>
+      <button class="btn btn-sm btn-inactive flex-1" id="modeQuick"><i class="fas fa-pencil"></i> Вручну</button>
+      <button class="btn btn-sm btn-inactive flex-1" id="modeAI"><i class="fas fa-robot"></i> AI</button>
     </div>
 
     <!-- Mode: Product -->
@@ -461,11 +477,11 @@
     <!-- Mode: AI -->
     <div id="addModeAI" style="display:none">
       <div id="aiStep1">
-        <p style="font-size:13px;color:var(--text2);margin-bottom:8px">1. Натисни кнопку, відправ фото в ChatGPT</p>
-        <p style="font-size:13px;color:var(--text2);margin-bottom:12px">2. Скопіюй відповідь і встав нижче (або просто натисни "Вставити дані")</p>
-        <button class="btn btn-secondary btn-sm btn-block" id="openAIBtn" style="margin-bottom:12px"><i class="fas fa-robot"></i> Відкрити ChatGPT</button>
+        <p class="c-text2" style="font-size:13px;margin-bottom:8px">1. Натисни кнопку, відправ фото в ChatGPT</p>
+        <p class="c-text2" style="font-size:13px;margin-bottom:12px">2. Скопіюй відповідь і встав нижче (або просто натисни "Вставити дані")</p>
+        <button class="btn btn-secondary btn-sm btn-block mb-12" id="openAIBtn"><i class="fas fa-robot"></i> Відкрити ChatGPT</button>
         <div class="form-group"><label>Встав скопійовану відповідь ChatGPT:</label><textarea id="aiResult" rows="3"></textarea></div>
-        <button class="btn btn-secondary btn-sm btn-block" id="parseAIBtn" style="margin-bottom:12px"><i class="fas fa-clipboard"></i> Вставити дані</button>
+        <button class="btn btn-secondary btn-sm btn-block mb-12" id="parseAIBtn"><i class="fas fa-clipboard"></i> Вставити дані</button>
       </div>
       <div id="aiStep2" style="display:none">
         <div class="form-group"><label>Назва</label><input type="text" id="aiNameInput"></div>
@@ -478,8 +494,8 @@
       </div>
     </div>
 
-    <button class="btn btn-primary btn-block" id="addMealSubmit" style="margin-top:12px">Додати</button>
-    <button class="btn btn-secondary btn-block" id="addMealCancel" style="margin-top:8px">Скасувати</button>
+    <button class="btn btn-primary btn-block mt-12" id="addMealSubmit">Додати</button>
+    <button class="btn btn-secondary btn-block mt-8" id="addMealCancel">Скасувати</button>
   </div>
 </div>
 
@@ -496,8 +512,8 @@
       <div class="form-group"><label>Вуглеводи (г)</label><input type="number" id="productCarbs" value="0" step="0.1"></div>
     </div>
     <button class="btn btn-primary btn-block" id="saveProductBtn">Зберегти</button>
-    <button class="btn btn-secondary btn-block" id="productCancel" style="margin-top:8px">Скасувати</button>
-    <button class="btn btn-secondary btn-block" id="productDeleteBtn" style="margin-top:8px;background:rgba(233,69,96,0.15);color:var(--accent)"><i class="fas fa-trash-can"></i> Видалити продукт</button>
+    <button class="btn btn-secondary btn-block mt-8" id="productCancel">Скасувати</button>
+    <button class="btn btn-secondary btn-block btn-danger" id="productDeleteBtn"><i class="fas fa-trash-can"></i> Видалити продукт</button>
   </div>
 </div>
 
@@ -508,9 +524,9 @@
     <div class="form-group"><label>Встав список продуктів у форматі JSON:</label>
       <textarea id="importJson" rows="8" style="resize:vertical;font-family:monospace" placeholder='[&#10;  {"name":"Куряча грудка","cal":165,"protein":31,"fat":3.6,"carbs":0},&#10;  {"name":"Яйце куряче","cal":155,"protein":13,"fat":11,"carbs":1.1}&#10;]'></textarea>
     </div>
-    <div id="importResult" style="font-size:13px;margin-bottom:12px;min-height:20px"></div>
+    <div id="importResult" class="mb-12" style="font-size:13px;min-height:20px"></div>
     <button class="btn btn-primary btn-block" id="importSubmit"><i class="fas fa-file-import"></i> Імпортувати</button>
-    <button class="btn btn-secondary btn-block" id="importCancel" style="margin-top:8px">Скасувати</button>
+    <button class="btn btn-secondary btn-block mt-8" id="importCancel">Скасувати</button>
   </div>
 </div>
 
@@ -548,7 +564,7 @@
     </div>
     <div id="distHint" style="font-size:13px;color:#ef4444;margin-bottom:12px;min-height:20px"></div>
     <button class="btn btn-primary btn-block" id="saveGoalsBtn">Зберегти</button>
-    <button class="btn btn-secondary btn-block" id="goalsCancel" style="margin-top:8px">Скасувати</button>
+    <button class="btn btn-secondary btn-block mt-8" id="goalsCancel">Скасувати</button>
   </div>
 </div>
 
@@ -565,8 +581,8 @@
       <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи (г)</label><input type="number" id="editEntryCarbs" step="0.1"></div>
     </div>
     <button class="btn btn-primary btn-block" id="saveEditBtn">Зберегти</button>
-    <button class="btn btn-secondary btn-block" id="editCancel" style="margin-top:8px">Скасувати</button>
-    <button class="btn btn-secondary btn-block" id="deleteEntryBtn" style="margin-top:8px;background:rgba(233,69,96,0.15);color:var(--accent)"><i class="fas fa-trash-can"></i> Видалити запис</button>
+    <button class="btn btn-secondary btn-block mt-8" id="editCancel">Скасувати</button>
+    <button class="btn btn-secondary btn-block btn-danger" id="deleteEntryBtn"><i class="fas fa-trash-can"></i> Видалити запис</button>
   </div>
 </div>
 
@@ -1133,13 +1149,8 @@ function setAddMode(mode) {
   for (const [key, id] of Object.entries(ids)) {
     const el = document.getElementById(id);
     if (!el) continue;
-    if (key === mode) {
-      el.style.background = 'var(--accent)';
-      el.style.color = '#fff';
-    } else {
-      el.style.background = 'var(--card2)';
-      el.style.color = 'var(--text2)';
-    }
+    el.classList.toggle('btn-active', key === mode);
+    el.classList.toggle('btn-inactive', key !== mode);
   }
 }
 
@@ -1438,8 +1449,8 @@ function renderDiary() {
       <div class="meal-section card">
         <div class="meal-header" onclick="toggleMeal('${m}')">
           <div class="meal-title"><span class="emoji">${MEAL_ICONS[m]}</span>${m}</div>
-          <div style="text-align:right;font-size:12px;line-height:18px">
-            <span style="font-weight:600">${Math.round(mealTotal.cal)} <span style="color:var(--text2)">ккал</span></span> <span style="color:var(--text2)">·</span> <span style="color:#22c55e">Б</span> ${round1(mealTotal.protein*10)/10}<span style="color:var(--text2)">г</span> <span style="color:var(--text2)">·</span> <span style="color:#eab308">Ж</span> ${round1(mealTotal.fat*10)/10}<span style="color:var(--text2)">г</span> <span style="color:var(--text2)">·</span> <span style="color:#3b82f6">В</span> ${round1(mealTotal.carbs*10)/10}<span style="color:var(--text2)">г</span>
+          <div class="meal-macros">
+            <span class="fw-600">${Math.round(mealTotal.cal)} <span class="c-text2">ккал</span></span> <span class="c-text2">·</span> <span class="c-green">Б</span> ${round1(mealTotal.protein*10)/10}<span class="c-text2">г</span> <span class="c-text2">·</span> <span class="c-yellow">Ж</span> ${round1(mealTotal.fat*10)/10}<span class="c-text2">г</span> <span class="c-text2">·</span> <span class="c-blue">В</span> ${round1(mealTotal.carbs*10)/10}<span class="c-text2">г</span>
           </div>
         </div>
         <ul class="meal-items" id="meal_${m}">
