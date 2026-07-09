@@ -224,11 +224,16 @@
     .product-search { margin-bottom: 12px; }
     .product-search input { width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: var(--text); font-size: 14px; font-family: inherit; outline: none; }
     .product-search input:focus { border-color: var(--accent); }
-    .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-    .product-card { background: var(--card2); border-radius: 12px; padding: 12px; cursor: pointer; transition: all 0.15s; border: 2px solid transparent; height: 100%; }
+    .product-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .product-card { background: var(--card2); border-radius: 12px; padding: 12px 16px; cursor: pointer; transition: all 0.15s; border: 2px solid transparent; }
     .product-card:active { transform: scale(0.97); }
-    .product-card .pname { font-size: 14px; font-weight: 600; margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .product-card .pinfo { font-size: 11px; color: var(--text2); }
+    .product-card .prow1 { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .product-card .pname { font-size: 14px; font-weight: 700; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 0 0 70%; padding-right: 8px; }
+    .product-card .pcal { font-size: 14px; font-weight: 600; color: var(--accent); flex: 0 0 30%; text-align: right; white-space: nowrap; }
+    .product-card .pinfo { font-size: 12px; display: flex; gap: 12px; }
+    .product-card .pinfo .c-b { color: #f59e0b; }
+    .product-card .pinfo .c-zh { color: #3b82f6; }
+    .product-card .pinfo .c-v { color: #8b5cf6; }
 
     .empty-state { text-align: center; padding: 40px 20px; color: var(--text2); }
     .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
@@ -949,8 +954,11 @@ function renderProducts() {
   }
   list.innerHTML = '<div class="product-grid">' + filtered.map(p => `
     <div class="product-card" onclick="editProduct('${p.id}')">
-      <div class="pname">${escHtml(p.name)}</div>
-      <div class="pinfo">${p.cal} ккал · Б${p.protein} · Ж${p.fat} · В${p.carbs}</div>
+      <div class="prow1">
+        <div class="pname">${escHtml(p.name)}</div>
+        <div class="pcal">${p.cal} ккал</div>
+      </div>
+      <div class="pinfo"><span><span class="c-b">Б</span> ${p.protein}г</span><span><span class="c-zh">Ж</span> ${p.fat}г</span><span><span class="c-v">В</span> ${p.carbs}г</span></div>
     </div>
   `).join('') + '</div>';
 }
