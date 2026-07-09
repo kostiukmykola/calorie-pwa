@@ -1156,8 +1156,8 @@ async function renderStats() {
   const numDays = statsWeekView ? 7 : 30;
   const label = document.getElementById('statsPeriodLabel');
 
+  let refDay = new Date(now);
   if (statsWeekView) {
-    const refDay = new Date(now);
     refDay.setDate(refDay.getDate() + statsOffset * 7);
     const dayOfWeek = refDay.getDay();
     const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
@@ -1165,10 +1165,25 @@ async function renderStats() {
     monday.setDate(refDay.getDate() - mondayOffset);
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
-    label.textContent = formatDate(monday) + ' – ' + formatDate(sunday);
+    const months = ['січ','лют','бер','кві','тра','чер','лип','сер','вер','жов','лис','гру'];
+    if (statsOffset === 0) {
+      label.textContent = 'Цей тиждень';
+    } else if (statsOffset === -1) {
+      label.textContent = 'Минулий тиждень';
+    } else {
+      const m = monday.getDate();
+      const s = sunday.getDate();
+      const mon = months[monday.getMonth()];
+      const sMon = months[sunday.getMonth()];
+      if (monday.getMonth() === sunday.getMonth()) {
+        label.textContent = `${m}–${s} ${mon}`;
+      } else {
+        label.textContent = `${m} ${mon} – ${s} ${sMon}`;
+      }
+    }
   } else {
     const refMonth = new Date(now.getFullYear(), now.getMonth() + statsOffset, 1);
-    const months = ['Січ','Лют','Бер','Кві','Тра','Чер','Лип','Сер','Вер','Жов','Лис','Гру'];
+    const months = ['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
     label.textContent = months[refMonth.getMonth()] + ' ' + refMonth.getFullYear();
   }
 
@@ -1176,8 +1191,6 @@ async function renderStats() {
   for (let i = 0; i < numDays; i++) {
     const d = new Date(now);
     if (statsWeekView) {
-      const refDay = new Date(now);
-      refDay.setDate(refDay.getDate() + statsOffset * 7);
       const dayOfWeek = refDay.getDay();
       const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
       const monday = new Date(refDay);
@@ -1185,6 +1198,7 @@ async function renderStats() {
       d.setTime(monday.getTime() + i * 86400000);
     } else {
       d.setFullYear(now.getFullYear(), now.getMonth() + statsOffset, i + 1);
+      if (d.getMonth() !== (now.getMonth() + statsOffset + 12) % 12) break;
     }
     dates.push(d);
   }
@@ -1209,7 +1223,6 @@ async function renderStats() {
 
   const daysLabels = ['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
   const chartHtml = `<div class="card">
-    <div style="font-weight:600;margin-bottom:8px;font-size:15px">${statsWeekView ? 'Цей тиждень' : 'Останні 30 днів'}</div>
     <div class="week-chart">
       ${dailyData.map(d => `
         <div class="bar-wrap">
