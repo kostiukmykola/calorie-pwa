@@ -608,6 +608,8 @@ async function getClipboardText() {
   }
 }
 
+function isOnline() { return navigator.onLine; }
+
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -730,6 +732,7 @@ function userRef() {
 }
 
 function fireGet(collection) {
+  if (!checkOnline()) return Promise.resolve([]);
   return userRef().collection(collection).get().then(snap => {
     const results = [];
     snap.forEach(doc => results.push({ id: doc.id, ...doc.data() }));
@@ -744,7 +747,13 @@ function fireGetById(collection, id) {
   });
 }
 
+function checkOnline() {
+  if (!navigator.onLine) { showToast('🔴 Немає інтернету. Дані не завантажуються'); return false; }
+  return true;
+}
+
 function fireAdd(collection, data) {
+  if (!checkOnline()) return Promise.reject('offline');
   const ref = userRef().collection(collection);
   // Use custom id for products (named)
   return ref.add(data).then(docRef => {
@@ -753,10 +762,12 @@ function fireAdd(collection, data) {
 }
 
 function fireSet(collection, id, data) {
+  if (!checkOnline()) return Promise.reject('offline');
   return userRef().collection(collection).doc(id).set(data, { merge: true });
 }
 
 function fireDelete(collection, id) {
+  if (!checkOnline()) return Promise.reject('offline');
   return userRef().collection(collection).doc(id).delete();
 }
 
@@ -1291,6 +1302,10 @@ auth.onAuthStateChanged(async user => {
     showAuth();
   }
 });
+
+// Online / offline listener
+window.addEventListener('offline', () => showToast('🔴 Інтернет відсутній. Дані не оновлюються'));
+window.addEventListener('online', () => showToast('🟢 Інтернет з\'явився'));
 
 // Register SW
 if ('serviceWorker' in navigator) {
