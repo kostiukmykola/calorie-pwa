@@ -363,6 +363,11 @@
       <button class="active" id="segWeek" onclick="setStatsPeriod('week')">Тиждень</button>
       <button id="segMonth" onclick="setStatsPeriod('month')">Місяць</button>
     </div>
+    <div class="date-nav" id="statsNav">
+      <button onclick="shiftStatsPeriod(-1)">◀</button>
+      <span id="statsPeriodLabel"></span>
+      <button onclick="shiftStatsPeriod(1)">▶</button>
+    </div>
     <div id="statsContent"></div>
   </div>
 
@@ -586,6 +591,7 @@ let entries = [];
 let goals = { cal:2000, protein:150, fat:65, carbs:250 };
 let editingProductId = null;
 let statsWeekView = true;
+let statsOffset = 0;
 let confirmCallback = null;
 
 function escHtml(s) {
@@ -1131,8 +1137,14 @@ async function saveGoals() {
 // ====== STATS ======
 function setStatsPeriod(period) {
   statsWeekView = period === 'week';
+  statsOffset = 0;
   document.getElementById('segWeek').classList.toggle('active', statsWeekView);
   document.getElementById('segMonth').classList.toggle('active', !statsWeekView);
+  renderStats();
+}
+
+function shiftStatsPeriod(dir) {
+  statsOffset += dir;
   renderStats();
 }
 
@@ -1141,16 +1153,38 @@ async function renderStats() {
   const allEntries = await fireGet('entries');
   const now = new Date();
 
-  const dates = [];
   const numDays = statsWeekView ? 7 : 30;
-  for (let i = numDays - 1; i >= 0; i--) {
+  const label = document.getElementById('statsPeriodLabel');
+
+  if (statsWeekView) {
+    const refDay = new Date(now);
+    refDay.setDate(refDay.getDate() + statsOffset * 7);
+    const dayOfWeek = refDay.getDay();
+    const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const monday = new Date(refDay);
+    monday.setDate(refDay.getDate() - mondayOffset);
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    label.textContent = formatDate(monday) + ' – ' + formatDate(sunday);
+  } else {
+    const refMonth = new Date(now.getFullYear(), now.getMonth() + statsOffset, 1);
+    const months = ['Січ','Лют','Бер','Кві','Тра','Чер','Лип','Сер','Вер','Жов','Лис','Гру'];
+    label.textContent = months[refMonth.getMonth()] + ' ' + refMonth.getFullYear();
+  }
+
+  const dates = [];
+  for (let i = 0; i < numDays; i++) {
     const d = new Date(now);
     if (statsWeekView) {
-      const dayOfWeek = d.getDay();
+      const refDay = new Date(now);
+      refDay.setDate(refDay.getDate() + statsOffset * 7);
+      const dayOfWeek = refDay.getDay();
       const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-      d.setDate(d.getDate() - mondayOffset + (numDays - 1 - i));
+      const monday = new Date(refDay);
+      monday.setDate(refDay.getDate() - mondayOffset);
+      d.setTime(monday.getTime() + i * 86400000);
     } else {
-      d.setDate(d.getDate() - i);
+      d.setFullYear(now.getFullYear(), now.getMonth() + statsOffset, i + 1);
     }
     dates.push(d);
   }
