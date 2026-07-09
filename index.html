@@ -702,7 +702,7 @@ let entriesCache = { data: null, timestamp: 0, key: '' };
 let productsCache = { data: null, timestamp: 0 };
 const CACHE_TTL = 180000;
 let statsOffset = 0;
-let confirmCallback = null;
+let confirmResolve = null;
 
 const MEAL_ORDER = ['Сніданок','Обід','Вечеря','Перекус'];
 const MEAL_ICONS = {Сніданок:'<i class="fas fa-sun"></i>',Обід:'<i class="fas fa-cloud-sun"></i>',Вечеря:'<i class="fas fa-moon"></i>',Перекус:'<i class="fas fa-cookie-bite"></i>'};
@@ -777,21 +777,23 @@ function showSyncBadge() {
   el._t = setTimeout(() => el.classList.remove('show'), 2000);
 }
 
-function showConfirm(title, text, cb) {
-  document.getElementById('confirmTitle').textContent = title;
-  document.getElementById('confirmText').textContent = text;
-  document.getElementById('confirmOverlay').classList.add('open');
-  confirmCallback = cb;
+function showConfirm(title, text) {
+  return new Promise(resolve => {
+    confirmResolve = resolve;
+    document.getElementById('confirmTitle').textContent = title;
+    document.getElementById('confirmText').textContent = text;
+    document.getElementById('confirmOverlay').classList.add('open');
+  });
 }
 
 function closeConfirmCancel() {
   document.getElementById('confirmOverlay').classList.remove('open');
-  confirmCallback = null;
+  if (confirmResolve) { confirmResolve(false); confirmResolve = null; }
 }
 
 function confirmAccept() {
   document.getElementById('confirmOverlay').classList.remove('open');
-  if (confirmCallback) { confirmCallback(); confirmCallback = null; }
+  if (confirmResolve) { confirmResolve(true); confirmResolve = null; }
 }
 
 function openModal(id) { document.getElementById(id).classList.add('open'); }
@@ -883,8 +885,7 @@ function userRef() {
   return db.collection('users').doc(currentUser.uid);
 }
 
-fireGet = wrapFire(fireGet);
-function fireGet(collection) {
+function fireGetImpl(collection) {
   if (!checkOnline()) return Promise.resolve([]);
   return userRef().collection(collection).get().then(snap => {
     const results = [];
@@ -892,6 +893,7 @@ function fireGet(collection) {
     return results;
   });
 }
+const fireGet = wrapFire(fireGetImpl);
 
 function fireGetById(collection, id) {
   return userRef().collection(collection).doc(id).get().then(doc => {
@@ -900,8 +902,7 @@ function fireGetById(collection, id) {
   });
 }
 
-fireGetWhere = wrapFire(fireGetWhere);
-function fireGetWhere(collection, ...conditions) {
+function fireGetWhereImpl(collection, ...conditions) {
   if (!checkOnline()) return Promise.resolve([]);
   let ref = userRef().collection(collection);
   conditions.forEach(c => { ref = ref.where(c[0], c[1], c[2]); });
@@ -911,33 +912,33 @@ function fireGetWhere(collection, ...conditions) {
     return results;
   });
 }
+const fireGetWhere = wrapFire(fireGetWhereImpl);
 
 function checkOnline() {
   if (!navigator.onLine) { showToast('🔴 Немає інтернету. Дані не завантажуються'); return false; }
   return true;
 }
 
-fireAdd = wrapFire(fireAdd);
-function fireAdd(collection, data) {
+function fireAddImpl(collection, data) {
   if (!checkOnline()) return Promise.reject('offline');
   const ref = userRef().collection(collection);
-  // Use custom id for products (named)
   return ref.add(data).then(docRef => {
     return { id: docRef.id, ...data };
   });
 }
+const fireAdd = wrapFire(fireAddImpl);
 
-fireSet = wrapFire(fireSet);
-function fireSet(collection, id, data) {
+function fireSetImpl(collection, id, data) {
   if (!checkOnline()) return Promise.reject('offline');
   return userRef().collection(collection).doc(id).set(data, { merge: true });
 }
+const fireSet = wrapFire(fireSetImpl);
 
-fireDelete = wrapFire(fireDelete);
-function fireDelete(collection, id) {
+function fireDeleteImpl(collection, id) {
   if (!checkOnline()) return Promise.reject('offline');
   return userRef().collection(collection).doc(id).delete();
 }
+const fireDelete = wrapFire(fireDeleteImpl);
 
 // ====== PRODUCTS ======
 async function loadProducts() {
@@ -1034,14 +1035,14 @@ async function saveProduct() {
 }
 
 async function deleteProduct(id) {
-  showConfirm('Видалити продукт?', 'Це не вплине на записи в щоденнику.', async () => {
+  if (await showConfirm('Видалити продукт?', 'Це не вплине на записи в щоденнику.')) {
     await fireDelete('products', id);
     products = products.filter(p => p.id !== id);
     productsCache.timestamp = 0;
     closeModal('productModal');
     renderProducts();
     showToast('Продукт видалено');
-  });
+  }
 }
 
 function openImportModal() {
@@ -1289,13 +1290,13 @@ function deleteEntryFromEdit() {
 }
 
 async function deleteEntry(id) {
-  showConfirm('Видалити запис?', 'Прийом їжі буде видалено.', async () => {
+  if (await showConfirm('Видалити запис?', 'Прийом їжі буде видалено.')) {
     await fireDelete('entries', id);
     entries = entries.filter(e => e.id !== id);
     renderDiary();
     showSyncBadge();
     showToast('Видалено');
-  });
+  }
 }
 
 let _openSwipeItem = null;
@@ -1371,14 +1372,14 @@ document.getElementById('mealSections').addEventListener('touchcancel', e => {
   _openSwipeItem = null;
 }, { passive: true });
 
-function swipeDeleteEntry(id) {
+async function swipeDeleteEntry(id) {
   closeOpenSwipeItem();
-  showConfirm('Видалити запис?', 'Прийом їжі буде видалено.', async () => {
+  if (await showConfirm('Видалити запис?', 'Прийом їжі буде видалено.')) {
     await fireDelete('entries', id);
     entries = entries.filter(e => e.id !== id);
     renderDiary();
     showSyncBadge();
-  });
+  }
 }
 
 function renderDiary() {
