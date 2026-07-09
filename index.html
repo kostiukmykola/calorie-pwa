@@ -1172,10 +1172,10 @@ async function addMealEntry() {
     entry = {
       date: formatDate(currentDate), mealType,
       productName: product.name, weight,
-      cal: round1(product.cal * ratio * 10) / 10,
-      protein: round1(product.protein * ratio * 10) / 10,
-      fat: round1(product.fat * ratio * 10) / 10,
-      carbs: round1(product.carbs * ratio * 10) / 10,
+      cal: round1(product.cal * ratio),
+      protein: round1(product.protein * ratio),
+      fat: round1(product.fat * ratio),
+      carbs: round1(product.carbs * ratio),
       timestamp: Date.now(),
     };
   } else if (addMode === 'quick') {
@@ -1188,10 +1188,10 @@ async function addMealEntry() {
     if (cal <= 0) { showToast('Введіть калорійність'); return; }
     entry = {
       date: formatDate(currentDate), mealType, productName: name, weight: 0,
-      cal: round1(cal * 10) / 10,
-      protein: round1(protein * 10) / 10,
-      fat: round1(fat * 10) / 10,
-      carbs: round1(carbs * 10) / 10,
+      cal: round1(cal),
+      protein: round1(protein),
+      fat: round1(fat),
+      carbs: round1(carbs),
       timestamp: Date.now(),
     };
   } else if (addMode === 'ai') {
@@ -1203,10 +1203,10 @@ async function addMealEntry() {
     const carbs = parseFloat(document.getElementById('aiCarbsInput').value) || 0;
     entry = {
       date: formatDate(currentDate), mealType, productName: name, weight: 0,
-      cal: round1(cal * 10) / 10,
-      protein: round1(protein * 10) / 10,
-      fat: round1(fat * 10) / 10,
-      carbs: round1(carbs * 10) / 10,
+      cal: round1(cal),
+      protein: round1(protein),
+      fat: round1(fat),
+      carbs: round1(carbs),
       timestamp: Date.now(),
     };
   }
@@ -1451,7 +1451,7 @@ function renderDiary() {
         <div class="meal-header" onclick="toggleMeal('${m}')">
           <div class="meal-title"><span class="emoji">${MEAL_ICONS[m]}</span>${m}</div>
           <div class="meal-macros">
-            <span class="fw-600">${Math.round(mealTotal.cal)} <span class="c-text2">ккал</span></span> <span class="c-text2">·</span> <span class="c-green">Б</span> ${round1(mealTotal.protein*10)/10}<span class="c-text2">г</span> <span class="c-text2">·</span> <span class="c-yellow">Ж</span> ${round1(mealTotal.fat*10)/10}<span class="c-text2">г</span> <span class="c-text2">·</span> <span class="c-blue">В</span> ${round1(mealTotal.carbs*10)/10}<span class="c-text2">г</span>
+            <span class="fw-600">${Math.round(mealTotal.cal)} <span class="c-text2">ккал</span></span> <span class="c-text2">·</span> <span class="c-green">Б</span> ${round1(mealTotal.protein)}<span class="c-text2">г</span> <span class="c-text2">·</span> <span class="c-yellow">Ж</span> ${round1(mealTotal.fat)}<span class="c-text2">г</span> <span class="c-text2">·</span> <span class="c-blue">В</span> ${round1(mealTotal.carbs)}<span class="c-text2">г</span>
           </div>
         </div>
         <ul class="meal-items" id="meal_${m}">
@@ -1460,7 +1460,7 @@ function renderDiary() {
               <div class="meal-content" onclick="onSwipeableClick(this)">
                 <div class="info">
                   <div class="name">${escHtml(e.productName)}</div>
-                  <div class="detail">${e.weight ? e.weight + ' г' : '— г'} · Б: ${e.protein} г · Ж: ${e.fat} г · В: ${e.carbs} г</div>
+                  <div class="detail">${e.weight ? e.weight + ' г' : '— г'} · Б: ${round1(e.protein)} г · Ж: ${round1(e.fat)} г · В: ${round1(e.carbs)} г</div>
                 </div>
                 <div class="kcal">${e.cal} ккал</div>
               </div>
