@@ -398,7 +398,7 @@
     <!-- Mode selector -->
     <div style="display:flex;gap:8px;margin-bottom:16px">
       <button class="btn btn-sm" id="modeProduct" onclick="setAddMode('product')" style="flex:1;background:var(--accent);color:#fff">📦 Продукт</button>
-      <button class="btn btn-sm" id="modeQuick" onclick="setAddMode('quick')" style="flex:1;background:var(--card2);color:var(--text2)">⚡ Швидко</button>
+      <button class="btn btn-sm" id="modeQuick" onclick="setAddMode('quick')" style="flex:1;background:var(--card2);color:var(--text2)">✏️ Ручне</button>
       <button class="btn btn-sm" id="modeAI" onclick="setAddMode('ai')" style="flex:1;background:var(--card2);color:var(--text2)">🤖 AI</button>
     </div>
 
@@ -408,7 +408,7 @@
       <div class="form-group"><label>Вага (г)</label><input type="number" id="addMealWeight" value="100" min="1" step="1"></div>
     </div>
 
-    <!-- Mode: Quick -->
+    <!-- Mode: Manual -->
     <div id="addModeQuick" style="display:none">
       <div class="form-group"><label>Назва страви</label><input type="text" id="quickName" placeholder="напр. Яєчня з беконом"></div>
       <div class="form-group"><label>🔥 Ккал</label><input type="number" id="quickCal" value="0" step="0.1"></div>
