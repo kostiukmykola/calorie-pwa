@@ -185,7 +185,7 @@
     .meal-items.hidden { display: none; }
     .meal-item { position: relative; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,0.05); }
     .meal-item:last-child { border-bottom: none; }
-    .meal-content { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: var(--card); position: relative; z-index: 2; cursor: pointer; transition: transform 0.2s; touch-action: pan-y; }
+    .meal-content { display: flex; align-items: center; padding: 10px 16px; background: var(--card); position: relative; z-index: 2; cursor: pointer; transition: transform 0.2s; touch-action: pan-y; }
     .meal-content.swiping { transition: none; }
     .meal-content .info { flex:1; }
     .meal-content .name { font-size: 14px; font-weight: 500; }
@@ -1431,10 +1431,12 @@ function renderDiary() {
             <li class="meal-item" data-id="${e.id}">
               <div class="meal-content" onclick="onSwipeableClick(this)">
                 <div class="info">
-                  <div class="name">${escHtml(e.productName)}</div>
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div class="name">${escHtml(e.productName)}</div>
+                    <div class="kcal">${e.cal} ккал</div>
+                  </div>
                   <div class="detail">${e.weight ? e.weight + ' г' : '— г'} · Б: ${e.protein} г · Ж: ${e.fat} г · В: ${e.carbs} г</div>
                 </div>
-                <div class="kcal">${e.cal} ккал</div>
               </div>
               <div class="meal-delete" onclick="event.stopPropagation();swipeDeleteEntry('${e.id}')"><i class="fas fa-trash-can"></i></div>
             </li>
