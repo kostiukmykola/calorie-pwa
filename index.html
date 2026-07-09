@@ -848,9 +848,12 @@ function fireDelete(collection, id) {
 async function loadProducts() {
   products = await fireGet('products');
   if (products.length === 0) {
+    const existingNames = new Set(products.map(p => p.name.toLowerCase()));
     for (const p of SEED_PRODUCTS) {
-      const added = await fireAdd('products', p);
-      products.push(added);
+      if (!existingNames.has(p.name.toLowerCase())) {
+        const added = await fireAdd('products', p);
+        products.push(added);
+      }
     }
   }
   return products;
