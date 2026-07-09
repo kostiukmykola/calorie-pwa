@@ -1063,8 +1063,8 @@ async function addMealEntry() {
 
   await fireAdd('entries', entry);
   closeModal('addMealModal');
-  await loadDiary();
   showSyncBadge();
+  await loadDiary();
   showToast('Додано!');
 }
 
