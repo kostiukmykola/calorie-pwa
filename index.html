@@ -333,7 +333,7 @@
 <!-- ====== APP ====== -->
 <div id="app">
   <div class="header">
-    <h1>🍽️ Щоденник Калорій</h1>
+    <h1>Щоденник Калорій</h1>
     <span class="sync-badge" id="syncBadge">✓</span>
     <button class="user-btn" onclick="toggleUserMenu()">👤</button>
     <div class="user-menu" id="userMenu">
@@ -370,21 +370,21 @@
   </div>
 
   <div class="page" id="pageGoals">
-    <div class="page-title">🎯 Мої норми</div>
+    <div class="page-title">🎯 Мої цілі</div>
     <div class="card">
       <div class="goal-row"><span class="glabel">🔥 Калорії</span><span class="gvalue"><span id="goalCal">2000</span> ккал</span></div>
       <div class="goal-row"><span class="glabel">🥩 Білки</span><span class="gvalue"><span id="goalProtein">150</span> г</span></div>
       <div class="goal-row"><span class="glabel">🧈 Жири</span><span class="gvalue"><span id="goalFat">65</span> г</span></div>
       <div class="goal-row"><span class="glabel">🍚 Вуглеводи</span><span class="gvalue"><span id="goalCarbs">250</span> г</span></div>
     </div>
-    <button class="btn btn-primary btn-block" onclick="openGoalsModal()">⚙️ Змінити норми</button>
+    <button class="btn btn-primary btn-block" onclick="openGoalsModal()">⚙️ Змінити цілі</button>
   </div>
 
   <div class="nav">
     <button class="active" onclick="switchPage('diary')"><span class="icon">📓</span>Щоденник</button>
     <button onclick="switchPage('products')"><span class="icon">📦</span>Продукти</button>
     <button onclick="switchPage('stats')"><span class="icon">📊</span>Статистика</button>
-    <button onclick="switchPage('goals')"><span class="icon">🎯</span>Норми</button>
+    <button onclick="switchPage('goals')"><span class="icon">🎯</span>Цілі</button>
   </div>
 </div>
 
@@ -464,7 +464,7 @@
 <div class="modal-overlay" id="goalsModal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <h2>🎯 Денні норми</h2>
+    <h2>🎯 Денні цілі</h2>
     <div class="form-row">
       <div class="form-group"><label>🔥 Калорії</label><input type="number" id="goalCalInput" min="0"></div>
       <div class="form-group"><label>🥩 Білки (г)</label><input type="number" id="goalProteinInput" min="0"></div>
@@ -1128,7 +1128,7 @@ async function saveGoals() {
   closeModal('goalsModal');
   updateGoalsUI();
   showSyncBadge();
-  showToast('Норми збережено');
+  showToast('Цілі збережено');
 }
 
 // ====== STATS ======
