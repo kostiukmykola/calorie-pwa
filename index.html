@@ -1759,29 +1759,21 @@ async function renderStats() {
   const avgC = totalG > 0 ? Math.round(totalC / daysWithEntries.length * 10) / 10 : 0;
 
   const ratioHtml = daysWithEntries.length > 0 ? `
-    <div class="card">
-      <div style="font-weight:600;font-size:15px;margin-bottom:8px;padding:0 16px"><i class="fas fa-chart-pie"></i> Середнє співвідношення БЖВ</div>
-      <div style="padding:0 16px;font-size:12px;color:var(--text2);margin-bottom:4px">По грамах</div>
-      ${[
-        {pct: pPct, color: '#22c55e', label: 'Б', avg: avgP},
-        {pct: fPct, color: '#eab308', label: 'Ж', avg: avgF},
-        {pct: cPct, color: '#3b82f6', label: 'В', avg: avgC},
-      ].map(s => `
-      <div class="dist-row">
-        <div class="dist-label" style="color:${s.color};font-weight:600">${s.label}</div>
-        <div class="dist-bar"><div class="dist-seg" style="width:${s.pct}%;flex:none;background:${s.color};min-width:${s.pct>0?4:0}px;font-size:10px;color:#fff">${s.pct}%</div></div>
-        <div class="dist-total">${s.avg}г</div>
-      </div>`).join('')}
-      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--bg3);padding-left:16px;padding-right:16px;font-size:12px;color:var(--text2)">По калоріях</div>
-      <div class="dist-row">
-        <div class="dist-label"></div>
-        <div class="dist-bar">${[
-          {pct: calPctP, color:'#22c55e'},
-          {pct: calPctF, color:'#eab308'},
-          {pct: calPctC, color:'#3b82f6'},
-        ].map(s => `<div class="dist-seg" style="flex:${s.pct};background:${s.color};min-width:${s.pct>0?4:0}px;font-size:9px;color:#fff">${s.pct}%</div>`).join('')}
-        </div>
-        <div class="dist-total"></div>
+    <div class="stats-grid" style="margin-top:16px">
+      <div class="stat-card protein">
+        <div class="label"><i class="fas fa-drumstick-bite" style="color:#22c55e"></i> Білки</div>
+        <div class="value" style="color:#22c55e">${calPctP}%</div>
+        <div class="sub">${Math.round(avgP)} г/день · ${pPct}% від маси</div>
+      </div>
+      <div class="stat-card fat">
+        <div class="label"><i class="fas fa-droplet" style="color:#eab308"></i> Жири</div>
+        <div class="value" style="color:#eab308">${calPctF}%</div>
+        <div class="sub">${Math.round(avgF)} г/день · ${fPct}% від маси</div>
+      </div>
+      <div class="stat-card carbs">
+        <div class="label"><i class="fas fa-wheat-awn" style="color:#3b82f6"></i> Вуглеводи</div>
+        <div class="value" style="color:#3b82f6">${calPctC}%</div>
+        <div class="sub">${Math.round(avgC)} г/день · ${cPct}% від маси</div>
       </div>
     </div>
   ` : '';
