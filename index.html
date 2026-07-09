@@ -177,13 +177,15 @@
     .meal-header .meal-title .emoji { margin-right: 6px; }
     .meal-items { list-style: none; }
     .meal-items.hidden { display: none; }
-    .meal-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); touch-action: pan-y; cursor: pointer; transition: transform 0.3s, opacity 0.3s; }
-    .meal-item.swiping { transition: none; }
+    .meal-item { position: relative; overflow: hidden; border-bottom: 1px solid rgba(255,255,255,0.04); }
     .meal-item:last-child { border-bottom: none; }
-    .meal-item .info { flex:1; }
-    .meal-item .name { font-size: 14px; font-weight: 500; }
-    .meal-item .detail { font-size: 12px; color: var(--text2); }
-    .meal-item .kcal { font-size: 15px; font-weight: 600; transition: color 0.2s; }
+    .meal-content { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; background: var(--card); position: relative; z-index: 2; cursor: pointer; transition: transform 0.2s; touch-action: pan-y; }
+    .meal-content.swiping { transition: none; }
+    .meal-content .info { flex:1; }
+    .meal-content .name { font-size: 14px; font-weight: 500; }
+    .meal-content .detail { font-size: 12px; color: var(--text2); }
+    .meal-content .kcal { font-size: 15px; font-weight: 600; transition: color 0.2s; }
+    .meal-delete { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; display: flex; align-items: center; justify-content: center; background: #ef4444; color: #fff; font-size: 24px; cursor: pointer; z-index: 1; }
 
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 20px; border: none; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -1187,9 +1189,21 @@ async function deleteEntry(id) {
   });
 }
 
-function onMealClick(e) {
-  const item = e.target.closest('.meal-item');
-  if (!item || item._swiped) return;
+let _openSwipeItem = null;
+
+function closeOpenSwipeItem() {
+  if (_openSwipeItem) {
+    const c = _openSwipeItem.querySelector('.meal-content');
+    if (c) { c.style.transform = ''; c.classList.remove('swiping'); }
+    _openSwipeItem = null;
+  }
+}
+
+function onSwipeableClick(el) {
+  const item = el.closest('.meal-item');
+  if (!item) return;
+  if (item === _openSwipeItem) { closeOpenSwipeItem(); return; }
+  closeOpenSwipeItem();
   const id = item.dataset.id;
   if (id) openEditEntry(id);
 }
@@ -1197,37 +1211,40 @@ function onMealClick(e) {
 document.getElementById('mealSections').addEventListener('touchstart', e => {
   const item = e.target.closest('.meal-item');
   if (!item) return;
+  const content = item.querySelector('.meal-content');
+  if (!content) return;
+  if (item !== _openSwipeItem) closeOpenSwipeItem();
   item._touchX = e.touches[0].clientX;
   item._touchY = e.touches[0].clientY;
-  item._swiped = false;
-  item.classList.add('swiping');
+  content.classList.add('swiping');
 }, { passive: true });
 
 document.getElementById('mealSections').addEventListener('touchmove', e => {
   const item = e.target.closest('.meal-item');
   if (!item || item._touchX === undefined) return;
+  const content = item.querySelector('.meal-content');
+  if (!content) return;
   const dx = e.touches[0].clientX - item._touchX;
   const dy = e.touches[0].clientY - item._touchY;
   if (dx < 0 && Math.abs(dx) > Math.abs(dy)) {
-    item.style.transform = `translateX(${dx}px)`;
-    item.style.opacity = 1 + dx / 150;
+    content.style.transform = `translateX(${Math.max(dx, -80)}px)`;
   }
 }, { passive: true });
 
 document.getElementById('mealSections').addEventListener('touchend', e => {
   const item = e.target.closest('.meal-item');
   if (!item || item._touchX === undefined) return;
-  item.classList.remove('swiping');
-  const dx = parseFloat(item.style.transform?.replace('translateX(','')?.replace('px)','') || 0);
-  if (dx < -80) {
-    item.style.transform = 'translateX(-100%)';
-    item.style.opacity = '0';
-    item._swiped = true;
-    const id = item.dataset.id;
-    if (id) setTimeout(() => swipeDeleteEntry(id), 300);
+  const content = item.querySelector('.meal-content');
+  if (!content) return;
+  content.classList.remove('swiping');
+  const m = content.style.transform?.match(/translateX\((-?\d+)/);
+  const dx = m ? parseFloat(m[1]) : 0;
+  if (dx < -50) {
+    content.style.transform = 'translateX(-80px)';
+    _openSwipeItem = item;
   } else {
-    item.style.transform = 'translateX(0)';
-    item.style.opacity = '1';
+    content.style.transform = '';
+    _openSwipeItem = null;
   }
   item._touchX = undefined;
 }, { passive: true });
@@ -1235,17 +1252,22 @@ document.getElementById('mealSections').addEventListener('touchend', e => {
 document.getElementById('mealSections').addEventListener('touchcancel', e => {
   const item = e.target.closest('.meal-item');
   if (!item) return;
-  item.classList.remove('swiping');
-  item.style.transform = '';
-  item.style.opacity = '';
+  const content = item.querySelector('.meal-content');
+  if (!content) return;
+  content.classList.remove('swiping');
+  content.style.transform = '';
   item._touchX = undefined;
+  _openSwipeItem = null;
 }, { passive: true });
 
-async function swipeDeleteEntry(id) {
-  await fireDelete('entries', id);
-  entries = entries.filter(e => e.id !== id);
-  renderDiary();
-  showSyncBadge();
+function swipeDeleteEntry(id) {
+  closeOpenSwipeItem();
+  showConfirm('Видалити запис?', 'Прийом їжі буде видалено.', async () => {
+    await fireDelete('entries', id);
+    entries = entries.filter(e => e.id !== id);
+    renderDiary();
+    showSyncBadge();
+  });
 }
 
 function renderDiary() {
@@ -1329,12 +1351,15 @@ function renderDiary() {
         </div>
         <ul class="meal-items" id="meal_${m}">
           ${items.map(e => `
-            <li class="meal-item" data-id="${e.id}" onclick="onMealClick(event)">
-              <div class="info">
-                <div class="name">${escHtml(e.productName)}</div>
-                <div class="detail">${e.weight} г · Б: ${e.protein} г · Ж: ${e.fat} г · В: ${e.carbs} г</div>
+            <li class="meal-item" data-id="${e.id}">
+              <div class="meal-content" onclick="onSwipeableClick(this)">
+                <div class="info">
+                  <div class="name">${escHtml(e.productName)}</div>
+                  <div class="detail">${e.weight} г · Б: ${e.protein} г · Ж: ${e.fat} г · В: ${e.carbs} г</div>
+                </div>
+                <div class="kcal">${e.cal} ккал</div>
               </div>
-              <div class="kcal">${e.cal} ккал</div>
+              <div class="meal-delete" onclick="event.stopPropagation();swipeDeleteEntry('${e.id}')">🗑️</div>
             </li>
           `).join('')}
         </ul>
