@@ -881,14 +881,6 @@ document.querySelectorAll('.modal input, .modal textarea').forEach(el => {
   });
 });
 
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', () => {
-    document.querySelectorAll('.modal-overlay.open .modal').forEach(modal => {
-      modal.style.maxHeight = Math.min(window.visualViewport.height * 0.85, 500) + 'px';
-    });
-  });
-}
-
 function changeDate(delta) {
   currentDate.setDate(currentDate.getDate() + delta);
   updateDateDisplay();
