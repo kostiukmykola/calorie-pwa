@@ -479,17 +479,17 @@
     <div id="addModeProduct">
       <div class="form-group"><label>Пошук продукту</label><div class="search-wrap"><input type="text" id="addMealProductSearch" placeholder="Почніть вводити назву..." autocomplete="off" oninput="toggleClearBtn(this)"><button class="clear-btn" onclick="clearSearch(this)"><i class="fas fa-xmark"></i></button></div></div>
       <div id="productSearchResults" class="product-search-list"></div>
-      <div class="form-group" id="productWeightGroup" style="display:none"><label>Вага (г)</label><input type="number" id="addMealWeight" value="100" min="1" step="1"></div>
+      <div class="form-group" id="productWeightGroup" style="display:none"><label>Вага (г)</label><input type="number" id="addMealWeight" value="100" min="1" step="1" onfocus="this.select()"></div>
     </div>
 
     <!-- Mode: Manual -->
     <div id="addModeQuick" style="display:none">
       <div class="form-group"><label>Назва страви</label><input type="text" id="quickName" placeholder="напр. Яєчня з беконом"></div>
-      <div class="form-group"><label><i class="fas fa-fire"></i> Ккал</label><input type="number" id="quickCal" value="0" step="0.1"></div>
+      <div class="form-group"><label><i class="fas fa-fire"></i> Ккал</label><input type="number" id="quickCal" value="0" step="0.1" onfocus="this.select()"></div>
       <div class="form-row-3">
-        <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки (г)</label><input type="number" id="quickProtein" value="0" step="0.1"></div>
-        <div class="form-group"><label><i class="fas fa-droplet"></i> Жири (г)</label><input type="number" id="quickFat" value="0" step="0.1"></div>
-        <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи (г)</label><input type="number" id="quickCarbs" value="0" step="0.1"></div>
+        <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки (г)</label><input type="number" id="quickProtein" value="0" step="0.1" onfocus="this.select()"></div>
+        <div class="form-group"><label><i class="fas fa-droplet"></i> Жири (г)</label><input type="number" id="quickFat" value="0" step="0.1" onfocus="this.select()"></div>
+        <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи (г)</label><input type="number" id="quickCarbs" value="0" step="0.1" onfocus="this.select()"></div>
       </div>
     </div>
 
@@ -504,11 +504,11 @@
       </div>
       <div id="aiStep2" style="display:none">
         <div class="form-group"><label>Назва</label><input type="text" id="aiNameInput"></div>
-        <div class="form-group"><label><i class="fas fa-fire"></i> Ккал</label><input type="number" id="aiCalInput" step="0.1"></div>
+        <div class="form-group"><label><i class="fas fa-fire"></i> Ккал</label><input type="number" id="aiCalInput" step="0.1" onfocus="this.select()"></div>
         <div class="form-row-3">
-          <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки</label><input type="number" id="aiProteinInput" step="0.1"></div>
-          <div class="form-group"><label><i class="fas fa-droplet"></i> Жири</label><input type="number" id="aiFatInput" step="0.1"></div>
-          <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи</label><input type="number" id="aiCarbsInput" step="0.1"></div>
+          <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки</label><input type="number" id="aiProteinInput" step="0.1" onfocus="this.select()"></div>
+          <div class="form-group"><label><i class="fas fa-droplet"></i> Жири</label><input type="number" id="aiFatInput" step="0.1" onfocus="this.select()"></div>
+          <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи</label><input type="number" id="aiCarbsInput" step="0.1" onfocus="this.select()"></div>
         </div>
       </div>
     </div>
@@ -524,11 +524,11 @@
     <h2 id="productModalTitle"><i class="fas fa-box"></i> Новий продукт</h2>
     <input type="hidden" id="productEditId">
     <div class="form-group"><label>Назва продукту</label><input type="text" id="productName" placeholder="напр. Куряча грудка"></div>
-    <div class="form-group"><label>Ккал (100г)</label><input type="number" id="productCal" value="0" step="0.1"></div>
+    <div class="form-group"><label>Ккал (100г)</label><input type="number" id="productCal" value="0" step="0.1" onfocus="this.select()"></div>
     <div class="form-row-3">
-      <div class="form-group"><label>Білки (г)</label><input type="number" id="productProtein" value="0" step="0.1"></div>
-      <div class="form-group"><label>Жири (г)</label><input type="number" id="productFat" value="0" step="0.1"></div>
-      <div class="form-group"><label>Вуглеводи (г)</label><input type="number" id="productCarbs" value="0" step="0.1"></div>
+      <div class="form-group"><label>Білки (г)</label><input type="number" id="productProtein" value="0" step="0.1" onfocus="this.select()"></div>
+      <div class="form-group"><label>Жири (г)</label><input type="number" id="productFat" value="0" step="0.1" onfocus="this.select()"></div>
+      <div class="form-group"><label>Вуглеводи (г)</label><input type="number" id="productCarbs" value="0" step="0.1" onfocus="this.select()"></div>
     </div>
     <button class="btn btn-primary btn-block" id="saveProductBtn">Зберегти</button>
     <button class="btn btn-secondary btn-block mt-8" id="productCancel">Скасувати</button>
@@ -554,32 +554,32 @@
     <div class="modal-handle"></div>
     <h2><i class="fas fa-bullseye"></i> Денні цілі</h2>
     <div class="form-row-4">
-      <div class="form-group"><label><i class="fas fa-fire"></i> Калорії</label><input type="number" id="goalCalInput" min="0"></div>
-      <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки (г)</label><input type="number" id="goalProteinInput" min="0"></div>
-      <div class="form-group"><label><i class="fas fa-droplet"></i> Жири (г)</label><input type="number" id="goalFatInput" min="0"></div>
-      <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи (г)</label><input type="number" id="goalCarbsInput" min="0"></div>
+      <div class="form-group"><label><i class="fas fa-fire"></i> Калорії</label><input type="number" id="goalCalInput" min="0" onfocus="this.select()"></div>
+      <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки (г)</label><input type="number" id="goalProteinInput" min="0" onfocus="this.select()"></div>
+      <div class="form-group"><label><i class="fas fa-droplet"></i> Жири (г)</label><input type="number" id="goalFatInput" min="0" onfocus="this.select()"></div>
+      <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи (г)</label><input type="number" id="goalCarbsInput" min="0" onfocus="this.select()"></div>
     </div>
 
     <h2><i class="fas fa-drumstick-bite"></i> Розподіл Білків (%)</h2>
     <div class="form-row-4">
-      <div class="form-group"><label><i class="fas fa-sun"></i> Сніданок</label><input type="number" id="distP0" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label><i class="fas fa-cloud-sun"></i> Обід</label><input type="number" id="distP1" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label><i class="fas fa-moon"></i> Вечеря</label><input type="number" id="distP2" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label><i class="fas fa-cookie-bite"></i> Перекус</label><input type="number" id="distP3" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-sun"></i> Сніданок</label><input type="number" id="distP0" min="0" max="100" step="1" oninput="validateDist()" onfocus="this.select()"></div>
+      <div class="form-group"><label><i class="fas fa-cloud-sun"></i> Обід</label><input type="number" id="distP1" min="0" max="100" step="1" oninput="validateDist()" onfocus="this.select()"></div>
+      <div class="form-group"><label><i class="fas fa-moon"></i> Вечеря</label><input type="number" id="distP2" min="0" max="100" step="1" oninput="validateDist()" onfocus="this.select()"></div>
+      <div class="form-group"><label><i class="fas fa-cookie-bite"></i> Перекус</label><input type="number" id="distP3" min="0" max="100" step="1" oninput="validateDist()" onfocus="this.select()"></div>
     </div>
     <h2><i class="fas fa-droplet"></i> Розподіл Жирів (%)</h2>
     <div class="form-row-4">
-      <div class="form-group"><label><i class="fas fa-sun"></i> Сніданок</label><input type="number" id="distF0" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label><i class="fas fa-cloud-sun"></i> Обід</label><input type="number" id="distF1" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label><i class="fas fa-moon"></i> Вечеря</label><input type="number" id="distF2" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label><i class="fas fa-cookie-bite"></i> Перекус</label><input type="number" id="distF3" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-sun"></i> Сніданок</label><input type="number" id="distF0" min="0" max="100" step="1" oninput="validateDist()" onfocus="this.select()"></div>
+      <div class="form-group"><label><i class="fas fa-cloud-sun"></i> Обід</label><input type="number" id="distF1" min="0" max="100" step="1" oninput="validateDist()" onfocus="this.select()"></div>
+      <div class="form-group"><label><i class="fas fa-moon"></i> Вечеря</label><input type="number" id="distF2" min="0" max="100" step="1" oninput="validateDist()" onfocus="this.select()"></div>
+      <div class="form-group"><label><i class="fas fa-cookie-bite"></i> Перекус</label><input type="number" id="distF3" min="0" max="100" step="1" oninput="validateDist()" onfocus="this.select()"></div>
     </div>
     <h2><i class="fas fa-wheat-awn"></i> Розподіл Вуглеводів (%)</h2>
     <div class="form-row-4">
-      <div class="form-group"><label><i class="fas fa-sun"></i> Сніданок</label><input type="number" id="distC0" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label><i class="fas fa-cloud-sun"></i> Обід</label><input type="number" id="distC1" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label><i class="fas fa-moon"></i> Вечеря</label><input type="number" id="distC2" min="0" max="100" step="1" oninput="validateDist()"></div>
-      <div class="form-group"><label><i class="fas fa-cookie-bite"></i> Перекус</label><input type="number" id="distC3" min="0" max="100" step="1" oninput="validateDist()"></div>
+      <div class="form-group"><label><i class="fas fa-sun"></i> Сніданок</label><input type="number" id="distC0" min="0" max="100" step="1" oninput="validateDist()" onfocus="this.select()"></div>
+      <div class="form-group"><label><i class="fas fa-cloud-sun"></i> Обід</label><input type="number" id="distC1" min="0" max="100" step="1" oninput="validateDist()" onfocus="this.select()"></div>
+      <div class="form-group"><label><i class="fas fa-moon"></i> Вечеря</label><input type="number" id="distC2" min="0" max="100" step="1" oninput="validateDist()" onfocus="this.select()"></div>
+      <div class="form-group"><label><i class="fas fa-cookie-bite"></i> Перекус</label><input type="number" id="distC3" min="0" max="100" step="1" oninput="validateDist()" onfocus="this.select()"></div>
     </div>
     <div id="distHint" style="font-size:13px;color:#ef4444;margin-bottom:12px;min-height:20px"></div>
     <button class="btn btn-primary btn-block" id="saveGoalsBtn">Зберегти</button>
@@ -593,11 +593,11 @@
     <h2><i class="fas fa-pencil"></i> Редагувати запис</h2>
     <input type="hidden" id="editEntryId">
     <div class="form-group"><label>Назва страви</label><input type="text" id="editEntryName"></div>
-    <div class="form-group"><label><i class="fas fa-fire"></i> Ккал</label><input type="number" id="editEntryCal" step="0.1"></div>
+    <div class="form-group"><label><i class="fas fa-fire"></i> Ккал</label><input type="number" id="editEntryCal" step="0.1" onfocus="this.select()"></div>
     <div class="form-row-3">
-      <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки (г)</label><input type="number" id="editEntryProtein" step="0.1"></div>
-      <div class="form-group"><label><i class="fas fa-droplet"></i> Жири (г)</label><input type="number" id="editEntryFat" step="0.1"></div>
-      <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи (г)</label><input type="number" id="editEntryCarbs" step="0.1"></div>
+      <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки (г)</label><input type="number" id="editEntryProtein" step="0.1" onfocus="this.select()"></div>
+      <div class="form-group"><label><i class="fas fa-droplet"></i> Жири (г)</label><input type="number" id="editEntryFat" step="0.1" onfocus="this.select()"></div>
+      <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи (г)</label><input type="number" id="editEntryCarbs" step="0.1" onfocus="this.select()"></div>
     </div>
     <button class="btn btn-primary btn-block" id="saveEditBtn">Зберегти</button>
     <button class="btn btn-secondary btn-block mt-8" id="editCancel">Скасувати</button>
