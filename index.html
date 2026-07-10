@@ -418,7 +418,7 @@
   </div>
 
   <div class="page" id="pageProducts">
-    <div class="page-title"><i class="fas fa-box"></i> Мої продукти</div>
+    <div class="page-title"><i class="fas fa-apple-whole"></i> Мої продукти</div>
     <div class="product-search"><div class="search-wrap"><input type="text" id="productSearchInput" placeholder="Пошук продуктів..." oninput="toggleClearBtn(this);renderProducts()"><button class="clear-btn" onclick="clearSearch(this)"><i class="fas fa-xmark"></i></button></div></div>
       <div class="toolbar">
       <button class="btn btn-primary flex-1" id="newProductBtn">+ Новий продукт</button>
@@ -458,7 +458,7 @@
 
   <div class="nav">
     <button class="active" id="navDiary"><span class="icon"><i class="fas fa-book"></i></span>Щоденник</button>
-    <button id="navProducts"><span class="icon"><i class="fas fa-box"></i></span>Продукти</button>
+    <button id="navProducts"><span class="icon"><i class="fas fa-apple-whole"></i></span>Продукти</button>
     <button id="navStats"><span class="icon"><i class="fas fa-chart-simple"></i></span>Статистика</button>
     <button id="navGoals"><span class="icon"><i class="fas fa-bullseye"></i></span>Цілі</button>
   </div>
@@ -473,7 +473,7 @@
 
     <!-- Mode selector -->
     <div style="display:flex;gap:8px;margin-bottom:16px">
-      <button class="btn btn-sm btn-active flex-1" id="modeProduct"><i class="fas fa-box"></i> Продукт</button>
+      <button class="btn btn-sm btn-active flex-1" id="modeProduct"><i class="fas fa-apple-whole"></i> Продукт</button>
       <button class="btn btn-sm btn-inactive flex-1" id="modeQuick"><i class="fas fa-pencil"></i> Вручну</button>
       <button class="btn btn-sm btn-inactive flex-1" id="modeAI"><i class="fas fa-robot"></i> AI</button>
     </div>
@@ -524,7 +524,7 @@
 <div class="modal-overlay" id="productModal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <h2 id="productModalTitle"><i class="fas fa-box"></i> Новий продукт</h2>
+    <h2 id="productModalTitle"><i class="fas fa-apple-whole"></i> Новий продукт</h2>
     <input type="hidden" id="productEditId">
     <div class="form-group"><label>Назва продукту</label><input type="text" id="productName" placeholder="напр. Куряча грудка"></div>
     <div class="form-group"><label>Ккал (100г)</label><input type="number" id="productCal" value="0" step="0.1" onfocus="setTimeout(()=>this.select(),80)"></div>
@@ -1020,7 +1020,7 @@ function renderProducts() {
   if (!products.length) { list.innerHTML = '<div class="loader"></div>'; }
   const filtered = products.filter(p => p.name.toLowerCase().includes(q));
   if (filtered.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="icon"><i class="fas fa-box"></i></div><h3>Немає продуктів</h3><p>Додайте свій перший продукт</p></div>';
+    list.innerHTML = '<div class="empty-state"><div class="icon"><i class="fas fa-apple-whole"></i></div><h3>Немає продуктів</h3><p>Додайте свій перший продукт</p></div>';
     return;
   }
   list.innerHTML = '<div class="product-grid">' + filtered.map(p => `
@@ -1036,7 +1036,7 @@ function renderProducts() {
 
 async function openProductModal() {
   editingProductId = null;
-  document.getElementById('productModalTitle').innerHTML = '<i class="fas fa-box"></i> Новий продукт';
+  document.getElementById('productModalTitle').innerHTML = '<i class="fas fa-apple-whole"></i> Новий продукт';
   document.getElementById('productEditId').value = '';
   document.getElementById('productName').value = '';
   document.getElementById('productCal').value = '0';
