@@ -625,6 +625,8 @@ db.enablePersistence({ synchronizeTabs: true }).catch(err => {
     console.warn('Persistence not supported');
   }
 });
+// Warm up Firestore connection during splash
+db.collection('_health').doc('_ping').get().catch(() => {});
 
 // ====== AUTH ======
 let currentUser = null;
@@ -1114,9 +1116,23 @@ async function importProducts() {
 async function loadDiary() {
   document.getElementById('mealSections').innerHTML = '<div class="loader"></div>';
   document.getElementById('dailySummary').innerHTML = '';
-  entries = await fireGetWhere('entries', ['date', '==', formatDate(currentDate)]);
-  await loadProducts();
-  renderDiary();
+  try {
+    const result = await Promise.race([
+      fireGetWhere('entries', ['date', '==', formatDate(currentDate)]),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000)),
+    ]);
+    entries = result;
+    await loadProducts();
+    renderDiary();
+  } catch (e) {
+    document.getElementById('mealSections').innerHTML = `
+      <div class="card" style="text-align:center;padding:32px 20px">
+        <div style="font-size:40px;margin-bottom:12px"><i class="fas fa-exclamation-triangle" style="color:var(--accent)"></i></div>
+        <h3 style="margin-bottom:8px">Помилка завантаження</h3>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px">${e.message === 'timeout' ? 'Сервер не відповідає. Перевірте з\'єднання' : 'Не вдалося завантажити дані щоденника'}</p>
+        <button class="btn btn-primary" onclick="loadDiary()">Повторити</button>
+      </div>`;
+  }
 }
 
 let addMode = 'product';
@@ -1859,7 +1875,7 @@ auth.onAuthStateChanged(async user => {
     try {
       await Promise.all([loadProducts(), loadGoals()]);
       updateDateDisplay();
-      loadDiary();
+      await loadDiary();
     } catch (e) {
       handleFirebaseError(e);
     }
