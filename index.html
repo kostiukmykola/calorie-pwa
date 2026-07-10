@@ -1815,6 +1815,7 @@ async function renderStats() {
 
 // ====== AUTH LISTENER & INIT ======
 function showApp() {
+  hideLoadingOverlay();
   document.getElementById('authPage').style.display = 'none';
   document.getElementById('app').classList.add('visible');
   document.body.style.paddingBottom = '0';
