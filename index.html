@@ -230,6 +230,11 @@
     .product-search { margin-bottom: 12px; }
     .product-search input { width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: var(--text); font-size: 14px; font-family: inherit; outline: none; }
     .product-search input:focus { border-color: var(--accent); }
+    .search-wrap { position: relative; display: flex; align-items: center; }
+    .search-wrap input { width: 100%; padding: 10px 36px 10px 14px; background: var(--bg3); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: var(--text); font-size: 14px; font-family: inherit; outline: none; }
+    .search-wrap input:focus { border-color: var(--accent); }
+    .search-wrap .clear-btn { position: absolute; right: 6px; background: none; border: none; color: var(--text2); cursor: pointer; font-size: 14px; padding: 6px; display: none; }
+    .search-wrap .clear-btn.visible { display: flex; }
     .product-search-list { max-height: 200px; overflow-y: auto; margin-bottom: 12px; }
     .product-search-item { padding: 10px 14px; background: var(--bg3); border-radius: 10px; margin-bottom: 4px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.15s; }
     .product-search-item:active { transform: scale(0.97); }
@@ -411,7 +416,7 @@
 
   <div class="page" id="pageProducts">
     <div class="page-title"><i class="fas fa-box"></i> Мої продукти</div>
-    <div class="product-search"><input type="text" id="productSearchInput" placeholder="Пошук продуктів..." oninput="renderProducts()"></div>
+    <div class="product-search"><div class="search-wrap"><input type="text" id="productSearchInput" placeholder="Пошук продуктів..." oninput="toggleClearBtn(this);renderProducts()"><button class="clear-btn" onclick="clearSearch(this)"><i class="fas fa-xmark"></i></button></div></div>
       <div class="toolbar">
       <button class="btn btn-primary flex-1" id="newProductBtn">+ Новий продукт</button>
       <button class="btn btn-secondary flex-shrink-0" id="importBtn"><i class="fas fa-file-import"></i> Імпорт</button>
@@ -472,7 +477,7 @@
 
     <!-- Mode: Product -->
     <div id="addModeProduct">
-      <div class="form-group"><label>Пошук продукту</label><input type="text" id="addMealProductSearch" placeholder="Почніть вводити назву..." autocomplete="off"></div>
+      <div class="form-group"><label>Пошук продукту</label><div class="search-wrap"><input type="text" id="addMealProductSearch" placeholder="Почніть вводити назву..." autocomplete="off" oninput="toggleClearBtn(this)"><button class="clear-btn" onclick="clearSearch(this)"><i class="fas fa-xmark"></i></button></div></div>
       <div id="productSearchResults" class="product-search-list"></div>
       <div class="form-group" id="productWeightGroup" style="display:none"><label>Вага (г)</label><input type="number" id="addMealWeight" value="100" min="1" step="1"></div>
     </div>
@@ -808,6 +813,19 @@ function showSyncBadge() {
   el.classList.add('show');
   clearTimeout(el._t);
   el._t = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+function toggleClearBtn(input) {
+  const btn = input.parentElement.querySelector('.clear-btn');
+  if (btn) btn.classList.toggle('visible', input.value.length > 0);
+}
+
+function clearSearch(btn) {
+  const input = btn.parentElement.querySelector('input');
+  input.value = '';
+  btn.classList.remove('visible');
+  input.focus();
+  input.dispatchEvent(new Event('input'));
 }
 
 function showConfirm(title, text) {
@@ -1170,7 +1188,11 @@ function renderProductSearch() {
 function selectSearchProduct(id) {
   selectedProductId = id;
   const p = products.find(x => x.id === id);
-  if (p) document.getElementById('addMealProductSearch').value = p.name;
+  if (p) {
+    const input = document.getElementById('addMealProductSearch');
+    input.value = p.name;
+    toggleClearBtn(input);
+  }
   document.getElementById('productWeightGroup').style.display = 'block';
   document.getElementById('addMealWeight').value = '100';
   renderProductSearch();
@@ -1180,6 +1202,7 @@ async function openAddMealModal() {
   await loadProducts();
   selectedProductId = null;
   document.getElementById('addMealProductSearch').value = '';
+  toggleClearBtn(document.getElementById('addMealProductSearch'));
   document.getElementById('productWeightGroup').style.display = 'none';
   document.getElementById('productSearchResults').innerHTML = '';
   document.getElementById('mealType').value = 'Сніданок';
