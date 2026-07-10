@@ -230,6 +230,12 @@
     .product-search { margin-bottom: 12px; }
     .product-search input { width: 100%; padding: 10px 14px; background: var(--bg3); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; color: var(--text); font-size: 14px; font-family: inherit; outline: none; }
     .product-search input:focus { border-color: var(--accent); }
+    .product-search-list { max-height: 200px; overflow-y: auto; margin-bottom: 12px; }
+    .product-search-item { padding: 10px 14px; background: var(--bg3); border-radius: 10px; margin-bottom: 4px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.15s; }
+    .product-search-item:active { transform: scale(0.97); }
+    .product-search-item.selected { background: var(--accent); color: #fff; }
+    .product-search-item .cal { font-size: 12px; color: var(--text2); }
+    .product-search-item.selected .cal { color: rgba(255,255,255,0.7); }
     .product-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
     .product-card { background: var(--card2); border-radius: 12px; padding: 12px 16px; cursor: pointer; transition: all 0.15s; border: 2px solid transparent; }
     .product-card:active { transform: scale(0.97); }
@@ -466,8 +472,9 @@
 
     <!-- Mode: Product -->
     <div id="addModeProduct">
-      <div class="form-group"><label>Оберіть продукт</label><select id="addMealProduct"></select></div>
-      <div class="form-group"><label>Вага (г)</label><input type="number" id="addMealWeight" value="100" min="1" step="1"></div>
+      <div class="form-group"><label>Пошук продукту</label><input type="text" id="addMealProductSearch" placeholder="Почніть вводити назву..." autocomplete="off"></div>
+      <div id="productSearchResults" class="product-search-list"></div>
+      <div class="form-group" id="productWeightGroup" style="display:none"><label>Вага (г)</label><input type="number" id="addMealWeight" value="100" min="1" step="1"></div>
     </div>
 
     <!-- Mode: Manual -->
@@ -722,6 +729,7 @@ let products = [];
 let entries = [];
 let goals = { cal:2000, protein:150, fat:65, carbs:250, distProtein:{Сніданок:25,Обід:35,Вечеря:30,Перекус:10}, distFat:{Сніданок:25,Обід:35,Вечеря:30,Перекус:10}, distCarbs:{Сніданок:25,Обід:35,Вечеря:30,Перекус:10} };
 let editingProductId = null;
+let selectedProductId = null;
 let statsWeekView = true;
 let entriesCache = { data: null, timestamp: 0, key: '' };
 let productsCache = { data: null, timestamp: 0 };
@@ -1147,10 +1155,33 @@ async function loadDiary() {
 
 let addMode = 'product';
 
+function renderProductSearch() {
+  const q = (document.getElementById('addMealProductSearch').value || '').toLowerCase();
+  const list = document.getElementById('productSearchResults');
+  const filtered = q ? products.filter(p => p.name.toLowerCase().includes(q)) : products.slice(0, 10);
+  list.innerHTML = filtered.map(p => `
+    <div class="product-search-item${selectedProductId === p.id ? ' selected' : ''}" onclick="selectSearchProduct('${p.id}')">
+      <span>${escHtml(p.name)}</span>
+      <span class="cal">${p.cal}</span>
+    </div>
+  `).join('');
+}
+
+function selectSearchProduct(id) {
+  selectedProductId = id;
+  const p = products.find(x => x.id === id);
+  if (p) document.getElementById('addMealProductSearch').value = p.name;
+  document.getElementById('productWeightGroup').style.display = 'block';
+  document.getElementById('addMealWeight').value = '100';
+  renderProductSearch();
+}
+
 async function openAddMealModal() {
   await loadProducts();
-  const sel = document.getElementById('addMealProduct');
-  sel.innerHTML = products.map(p => `<option value="${p.id}">${escHtml(p.name)} (${p.cal} ккал/100г)</option>`).join('');
+  selectedProductId = null;
+  document.getElementById('addMealProductSearch').value = '';
+  document.getElementById('productWeightGroup').style.display = 'none';
+  document.getElementById('productSearchResults').innerHTML = '';
   document.getElementById('mealType').value = 'Сніданок';
   document.getElementById('addMealWeight').value = '100';
   document.getElementById('quickName').value = '';
@@ -1190,8 +1221,9 @@ async function addMealEntry() {
   let entry;
 
   if (addMode === 'product') {
-    const productId = document.getElementById('addMealProduct').value;
+    const productId = selectedProductId;
     const weight = parseFloat(document.getElementById('addMealWeight').value) || 0;
+    if (!productId) { showToast('Оберіть продукт'); return; }
     if (!weight || weight <= 0) { showToast('Введіть коректну вагу'); return; }
     const product = products.find(p => p.id === productId);
     if (!product) { showToast('Оберіть продукт'); return; }
@@ -1860,6 +1892,7 @@ document.getElementById('navGoals').addEventListener('click', () => switchPage('
 document.getElementById('modeProduct').addEventListener('click', () => setAddMode('product'));
 document.getElementById('modeQuick').addEventListener('click', () => setAddMode('quick'));
 document.getElementById('modeAI').addEventListener('click', () => setAddMode('ai'));
+document.getElementById('addMealProductSearch').addEventListener('input', renderProductSearch);
 document.getElementById('openAIBtn').addEventListener('click', openAIAnalysis);
 document.getElementById('parseAIBtn').addEventListener('click', parseAIResult);
 document.getElementById('addMealSubmit').addEventListener('click', addMealEntry);
