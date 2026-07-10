@@ -152,6 +152,7 @@
       justify-content: space-around;
       align-items: center;
       z-index: 200;
+      transform: translateZ(0);
     }
     .nav button {
       background: none; border: none; color: var(--text2);
@@ -1818,6 +1819,7 @@ function showApp() {
   document.getElementById('authPage').style.display = 'none';
   document.getElementById('app').classList.add('visible');
   document.body.style.paddingBottom = '0';
+  setTimeout(() => window.scrollTo(0, 0), 100);
 }
 
 function showAuth() {
