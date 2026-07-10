@@ -99,14 +99,13 @@
     .auth-box .divider::after { right: 0; }
 
     /* APP */
-    #app { display: none; }
+    #app { display: none; padding-top: env(safe-area-inset-top, 0); background: var(--bg2); }
     #app.visible { display: block; }
 
     .header {
-      position: sticky; top: 0; z-index:100;
+      position: sticky; top: env(safe-area-inset-top, 0); z-index:100;
       background: var(--bg2);
       padding: 12px 16px;
-      padding-top: max(12px, env(safe-area-inset-top, 0px), constant(safe-area-inset-top, 0px));
       display: flex; align-items: center; gap: 12px;
       border-bottom: 1px solid rgba(233,69,96,0.15);
     }
