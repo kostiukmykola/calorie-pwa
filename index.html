@@ -870,14 +870,7 @@ document.addEventListener('click', e => {
 
 document.querySelectorAll('.modal input, .modal textarea').forEach(el => {
   el.addEventListener('focus', function() {
-    setTimeout(() => {
-      const modal = this.closest('.modal');
-      if (modal) {
-        const rect = this.getBoundingClientRect();
-        const modalRect = modal.getBoundingClientRect();
-        modal.scrollTop = Math.max(0, rect.top - modalRect.top - 120);
-      }
-    }, 400);
+    setTimeout(() => this.scrollIntoView({ block: 'center' }), 300);
   });
 });
 
