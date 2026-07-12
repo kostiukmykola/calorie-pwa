@@ -2087,7 +2087,34 @@ async function renderStats() {
       <div class="goal-row"><span class="glabel"><i class="fas fa-calendar"></i> Днів в періоді</span><span class="gvalue">${count}</span></div>
       <div class="goal-row"><span class="glabel"><i class="fas fa-check"></i> Днів з записами</span><span class="gvalue">${daysWithData}</span></div>
     </div>
+    <button class="btn btn-primary" id="exportCsvBtn" style="margin:0 auto;display:flex;gap:8px;padding:10px 20px" onclick="exportCSV()"><i class="fas fa-download"></i> Експорт CSV</button>
   `;
+}
+
+async function exportCSV() {
+  showLoadingOverlay('Формування файлу...');
+  try {
+    const allEntries = await fireGet('entries');
+    allEntries.sort((a, b) => a.date.localeCompare(b.date) || (a.timestamp || 0) - (b.timestamp || 0));
+    const headers = 'Дата,Прийом,Страва,Вага(г),Ккал,Білки,Жири,Вуглеводи\n';
+    const escape = v => {
+      const s = String(v ?? '');
+      return s.includes(',') || s.includes('"') ? '"' + s.replace(/"/g, '""') + '"' : s;
+    };
+    const rows = allEntries.map(e =>
+      [e.date, e.mealType, escape(e.productName), e.weight || 0, e.cal || 0, e.protein || 0, e.fat || 0, e.carbs || 0].join(',')
+    ).join('\n');
+    const csv = '\uFEFF' + headers + rows;
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'calorie-diary.csv'; a.click();
+    URL.revokeObjectURL(url);
+    showToast('Файл завантажено');
+  } catch (e) {
+    showToast('Помилка створення файлу');
+  }
+  hideLoadingOverlay();
 }
 
 // ====== AUTH LISTENER & INIT ======
