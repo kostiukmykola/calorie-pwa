@@ -1627,7 +1627,7 @@ function renderDiary() {
         adviceCard.style.display = 'block';
         adviceCard.innerHTML = `
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> Порада ШІ на сьогодні</span>
+            <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> ШІ аналіз</span>
             <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:20px;cursor:pointer;color:var(--text2)" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></span>
           </div>
           <div style="font-size:14px;line-height:1.6;color:var(--text)"><div class="advice-collapsed advice-text">${adviceText}</div><span class="advice-toggle" onclick="toggleAdvice(this)">Розгорнути</span></div>`;
@@ -1663,7 +1663,7 @@ async function handleAdviceClick() {
   card.style.display = 'block';
   card.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> Порада ШІ на сьогодні</span>
+      <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> ШІ аналіз</span>
       <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:20px"><span class="typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span></span>
     </div>
     <div style="font-size:14px;line-height:1.6;color:var(--text2)">Аналізую ваше харчування...</div>`;
@@ -1671,14 +1671,14 @@ async function handleAdviceClick() {
   if (advice) {
     card.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> Порада ШІ на сьогодні</span>
+        <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> ШІ аналіз</span>
         <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:20px;cursor:pointer;color:var(--text2)" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></span>
       </div>
       <div style="font-size:14px;line-height:1.6;color:var(--text)"><div class="advice-collapsed advice-text open">${advice}</div><span class="advice-toggle" onclick="toggleAdvice(this)">Згорнути</span></div>`;
   } else {
     card.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> Порада ШІ на сьогодні</span>
+        <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> ШІ аналіз</span>
       </div>
       <div style="font-size:14px;line-height:1.6;color:var(--text2)">Не вдалося отримати пораду. <span style="cursor:pointer;color:var(--accent);font-size:14px" onclick="handleAdviceClick()">Спробувати ще</span></div>`;
   }
@@ -1694,7 +1694,7 @@ async function refreshAdvice(btn) {
   if (card) {
     card.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> Порада ШІ на сьогодні</span>
+        <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> ШІ аналіз</span>
         <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:20px"><span class="typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span></span>
       </div>
       <div style="font-size:14px;line-height:1.6;color:var(--text2)">Аналізую ваше харчування...</div>`;
@@ -1703,14 +1703,14 @@ async function refreshAdvice(btn) {
   if (advice) {
     card.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> Порада ШІ на сьогодні</span>
+        <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> ШІ аналіз</span>
         <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:20px;cursor:pointer;color:var(--text2)" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></span>
       </div>
       <div style="font-size:14px;line-height:1.6;color:var(--text)"><div class="advice-collapsed advice-text open">${advice}</div><span class="advice-toggle" onclick="toggleAdvice(this)">Згорнути</span></div>`;
   } else {
     card.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> Порада ШІ на сьогодні</span>
+        <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> ШІ аналіз</span>
       </div>
       <div style="font-size:14px;line-height:1.6;color:var(--text2)">Не вдалося отримати пораду. <span style="cursor:pointer;color:var(--accent);font-size:14px" onclick="handleAdviceClick()">Спробувати ще</span></div>`;
   }
