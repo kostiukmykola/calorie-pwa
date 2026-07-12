@@ -1689,10 +1689,6 @@ ${mealLog}`;
         contents: [{ parts: [{ text: prompt }] }]
       })
     });
-    if (res.status === 429) {
-      showToast('Забагато запитів. Спробуйте за хвилину');
-      return null;
-    }
     const data = await res.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
     const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
@@ -1701,7 +1697,6 @@ ${mealLog}`;
     return parsed.advice;
   } catch (e) {
     console.warn('AI advice failed:', e);
-    showToast('Не вдалося отримати пораду');
     return null;
   }
 }
