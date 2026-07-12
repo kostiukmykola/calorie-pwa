@@ -1577,10 +1577,20 @@ function renderDiary() {
   sections.innerHTML = html;
 
   if (window.location.search.includes('test')) {
+    const progress = Math.min(100, goals.cal > 0 ? total.cal / goals.cal * 100 : 0);
     const totalG = total.protein + total.fat + total.carbs;
-    const p = totalG > 0 ? Math.round(total.protein / totalG * 100) : 0;
-    const f = totalG > 0 ? Math.round(total.fat / totalG * 100) : 0;
-    const c = totalG > 0 ? 100 - p - f : 0;
+    let pAngle = 0, fAngle = 0, cAngle = 0;
+    if (totalG > 0 && progress > 0) {
+      const pRatio = total.protein / totalG;
+      const fRatio = total.fat / totalG;
+      const cRatio = total.carbs / totalG;
+      pAngle = progress * pRatio;
+      fAngle = pAngle + progress * fRatio;
+      cAngle = fAngle + progress * cRatio;
+    }
+    const ringGrad = totalG > 0 && progress > 0
+      ? `conic-gradient(#22c55e 0% ${pAngle}%, #eab308 ${pAngle}% ${fAngle}%, #3b82f6 ${fAngle}% ${cAngle}%, rgba(255,255,255,0.08) ${cAngle}% 100%)`
+      : `conic-gradient(rgba(255,255,255,0.08) 0% 100%)`;
     const remainCal = Math.max(0, goals.cal - total.cal);
     const remainP = Math.max(0, goals.protein - total.protein);
     const remainF = Math.max(0, goals.fat - total.fat);
@@ -1595,10 +1605,10 @@ function renderDiary() {
       ring = div;
     }
     ring.innerHTML = `
-      <div class="test-ring-chart" style="background:conic-gradient(#22c55e 0% ${p}%, #eab308 ${p}% ${p+f}%, #3b82f6 ${p+f}% 100%)">
+      <div class="test-ring-chart" style="background:${ringGrad}">
         <div class="test-ring-hole">
           <span class="val">${Math.round(total.cal)}</span>
-          <span class="lbl">ккал</span>
+          <span class="lbl">${Math.round(progress)}%</span>
         </div>
       </div>
       <div class="test-ring-items">
