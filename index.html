@@ -1847,7 +1847,7 @@ async function renderStats() {
   const avgF = totalG > 0 ? Math.round(totalF / daysWithEntries.length * 10) / 10 : 0;
   const avgC = totalG > 0 ? Math.round(totalC / daysWithEntries.length * 10) / 10 : 0;
 
-  container.innerHTML = chartHtml + `
+  container.innerHTML = `
     <div class="card test-ring" style="align-items:stretch;gap:16px">
       <div class="test-ring-chart" style="background:${ringGrad}">
         <div class="test-ring-hole">
@@ -1861,7 +1861,7 @@ async function renderStats() {
         <div class="test-ring-item"><div class="dot" style="background:#3b82f6"></div><span class="name">Вуглеводи</span><span class="val">${avgC} г/день</span></div>
       </div>
     </div>
-  ` + `
+    ` + chartHtml + `
     <div class="card">
       <div class="goal-row"><span class="glabel"><i class="fas fa-calendar"></i> Днів в періоді</span><span class="gvalue">${count}</span></div>
       <div class="goal-row"><span class="glabel"><i class="fas fa-check"></i> Днів з записами</span><span class="gvalue">${daysWithData}</span></div>
