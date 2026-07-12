@@ -1554,7 +1554,7 @@ function renderDiary() {
               <div class="meal-content" onclick="onSwipeableClick(this)">
                 <div class="info">
                   <div class="name">${escHtml(e.productName)}</div>
-                  <div class="detail">${e.weight ? e.weight + ' г' : '— г'} · Б: ${round1(e.protein)} г · Ж: ${round1(e.fat)} г · В: ${round1(e.carbs)} г</div>
+                  <div class="detail"><span class="c-green">Б</span> ${round1(e.protein)}<span class="c-text2">г</span> <span class="c-text2">·</span> <span class="c-yellow">Ж</span> ${round1(e.fat)}<span class="c-text2">г</span> <span class="c-text2">·</span> <span class="c-blue">В</span> ${round1(e.carbs)}<span class="c-text2">г</span></div>
                 </div>
                 <div class="kcal">${e.cal} ккал</div>
               </div>
