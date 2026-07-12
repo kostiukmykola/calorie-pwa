@@ -433,8 +433,7 @@
   <div class="page active" id="pageDiary">
     <div class="date-nav" id="dateNav">
       <button id="datePrevBtn">◀</button>
-      <span id="dateDisplay" style="font-size:15px" class="fw-600" onclick="goToToday()"></span>
-      <button id="dateNextBtn">▶</button>
+      <span id="dateDisplay" style="font-size:15px" class="fw-600" onclick="goToToday()"></span>      <button id="dateNextBtn">▶</button>
     </div>
     <div id="mealSections"><div class="loader"></div></div>
     <button class="fab" id="addMealBtn"><i class="fas fa-plus"></i> Додати</button>
@@ -458,7 +457,7 @@
     </div>
     <div class="date-nav" id="statsNav">
       <button id="statsPrevBtn">◀</button>
-      <span id="statsPeriodLabel" class="fw-600" style="font-size:15px;cursor:pointer" onclick="resetStatsPeriod()"></span>
+      <span id="statsPeriodLabel" class="fw-600" style="font-size:15px" onclick="resetStatsPeriod()"></span>
       <button id="statsNextBtn">▶</button>
     </div>
     <div id="statsContent"></div>
@@ -902,7 +901,9 @@ function goToToday() {
 }
 
 function updateDateDisplay() {
-  document.getElementById('dateDisplay').textContent = displayDateStr(currentDate);
+  const el = document.getElementById('dateDisplay');
+  el.textContent = displayDateStr(currentDate);
+  el.style.cursor = formatDate(currentDate) === formatDate(new Date()) ? '' : 'pointer';
 }
 
 function displayDateStr(d) {
@@ -1933,6 +1934,7 @@ async function renderStats() {
     }
     numDays = new Date(refMonth.getFullYear(), refMonth.getMonth() + 1, 0).getDate();
   }
+  label.style.cursor = statsOffset === 0 ? '' : 'pointer';
 
   const dates = [];
   for (let i = 0; i < numDays; i++) {
