@@ -883,6 +883,7 @@ function changeDate(delta) {
 }
 
 function goToToday() {
+  if (formatDate(currentDate) === formatDate(new Date())) return;
   currentDate = new Date();
   updateDateDisplay();
   loadDiary();
