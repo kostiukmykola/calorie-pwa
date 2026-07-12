@@ -425,6 +425,7 @@
     <button class="user-btn" id="userMenuBtn"><i class="fas fa-user"></i></button>
     <div class="user-menu" id="userMenu">
       <div style="padding:8px 12px;font-size:13px;color:var(--text2);word-break:break-all" id="userEmail"></div>
+      <button id="settingsBtn"><i class="fas fa-gear"></i> Налаштування</button>
       <button id="logoutBtn"><i class="fas fa-right-from-bracket"></i> Вийти</button>
     </div>
   </div>
@@ -622,6 +623,17 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2><i class="fas fa-gear"></i> Налаштування</h2>
+    <div class="form-group"><label>Gemini API ключ</label><input type="text" id="geminiKeyInput" placeholder="Вставте ваш API ключ"></div>
+    <button class="btn btn-primary btn-block" id="saveGeminiKeyBtn">Зберегти</button>
+    <button class="btn btn-secondary btn-block mt-8" id="deleteGeminiKeyBtn" style="background:rgba(233,69,96,0.15);color:var(--accent)">Видалити ключ</button>
+    <button class="btn btn-secondary btn-block mt-8" id="settingsCancel">Скасувати</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <div class="loading-overlay" id="loadingOverlay"><div class="loader" style="padding:0"></div><span id="loadingText">Завантаження...</span></div>
 
@@ -751,8 +763,8 @@ let confirmResolve = null;
 const MEAL_ORDER = ['Сніданок','Обід','Вечеря','Перекус'];
 const MEAL_ICONS = {Сніданок:'<i class="fas fa-sun"></i>',Обід:'<i class="fas fa-cloud-sun"></i>',Вечеря:'<i class="fas fa-moon"></i>',Перекус:'<i class="fas fa-cookie-bite"></i>'};
 const MEAL_COLORS = {Сніданок:'#f59e0b',Обід:'#3b82f6',Вечеря:'#8b5cf6',Перекус:'#10b981'};
-const GEMINI_KEY = atob('QVEuQWI4Uk42SkpNdFJLM0pyWk1qYVBpZ0ZmNFBrNFloZDVWZUlrMVh4NGpoTDZ1RXNJaVE=');
-const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=' + GEMINI_KEY;
+let userGeminiKey = null;
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=';
 function round1(v) { return Math.round(v * 10) / 10; }
 function toNum(v) { return parseFloat(v) || 0; }
 
@@ -1601,51 +1613,58 @@ function renderDiary() {
       <div class="test-ring-item"><span class="name"><i class="fas fa-fire"></i> ${Math.round(remainCal)} ккал</span><span class="val"><i class="fas fa-drumstick-bite"></i> ${Math.round(remainP)}г / <i class="fas fa-droplet"></i> ${Math.round(remainF)}г / <i class="fas fa-wheat-awn"></i> ${Math.round(remainC)}г</span></div>
     </div>`;
 
-  const today = formatDate(currentDate);
-  const isFuture = formatDate(currentDate) > formatDate(new Date());
-  let adviceCard = document.getElementById('aiAdviceCard');
-  let adviceBtn = document.getElementById('aiAdviceBtn');
+  if (userGeminiKey) {
+    const today = formatDate(currentDate);
+    const isFuture = formatDate(currentDate) > formatDate(new Date());
+    let adviceCard = document.getElementById('aiAdviceCard');
+    let adviceBtn = document.getElementById('aiAdviceBtn');
 
-  if (isFuture) {
-    if (adviceCard) adviceCard.style.display = 'none';
-    if (adviceBtn) adviceBtn.style.display = 'none';
+    if (isFuture) {
+      if (adviceCard) adviceCard.style.display = 'none';
+      if (adviceBtn) adviceBtn.style.display = 'none';
+    } else {
+      (async () => {
+        let adviceText = null;
+        try {
+          const doc = await userRef().collection('dailyInsights').doc(today).get();
+          if (doc.exists) adviceText = doc.data().advice;
+        } catch(e) {}
+        if (adviceText) {
+          if (adviceBtn) adviceBtn.style.display = 'none';
+          if (!adviceCard) {
+            adviceCard = document.createElement('div');
+            adviceCard.id = 'aiAdviceCard';
+            adviceCard.className = 'card';
+            ring.after(adviceCard);
+          }
+          adviceCard.style.display = 'block';
+          adviceCard.innerHTML = `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> ШІ аналіз</span>
+              <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:20px;cursor:pointer;color:var(--text2)" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></span>
+            </div>
+            <div style="font-size:14px;line-height:1.6;color:var(--text)"><div class="advice-collapsed advice-text">${adviceText}</div><span class="advice-toggle" onclick="toggleAdvice(this)">Розгорнути</span></div>`;
+        } else {
+          if (adviceCard) adviceCard.style.display = 'none';
+          if (!adviceBtn) {
+            adviceBtn = document.createElement('button');
+            adviceBtn.id = 'aiAdviceBtn';
+            adviceBtn.className = 'advice-btn-wrap';
+            adviceBtn.onclick = () => handleAdviceClick();
+            adviceBtn.innerHTML = '<span class="advice-btn-inner">'
+              + '<img class="advice-btn-icon" src="gemini-icon.png">'
+              + '<span class="advice-btn-text">ШІ аналіз</span></span>';
+            ring.after(adviceBtn);
+          }
+          adviceBtn.style.display = entries.length > 0 ? 'block' : 'none';
+        }
+      })();
+    }
   } else {
-    (async () => {
-      let adviceText = null;
-      try {
-        const doc = await userRef().collection('dailyInsights').doc(today).get();
-        if (doc.exists) adviceText = doc.data().advice;
-      } catch(e) {}
-      if (adviceText) {
-        if (adviceBtn) adviceBtn.style.display = 'none';
-        if (!adviceCard) {
-          adviceCard = document.createElement('div');
-          adviceCard.id = 'aiAdviceCard';
-          adviceCard.className = 'card';
-          ring.after(adviceCard);
-        }
-        adviceCard.style.display = 'block';
-        adviceCard.innerHTML = `
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <span style="font-size:12px;font-weight:600"><img class="gemini-icon" src="gemini-icon.png"> ШІ аналіз</span>
-            <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:20px;cursor:pointer;color:var(--text2)" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></span>
-          </div>
-          <div style="font-size:14px;line-height:1.6;color:var(--text)"><div class="advice-collapsed advice-text">${adviceText}</div><span class="advice-toggle" onclick="toggleAdvice(this)">Розгорнути</span></div>`;
-      } else {
-        if (adviceCard) adviceCard.style.display = 'none';
-        if (!adviceBtn) {
-          adviceBtn = document.createElement('button');
-          adviceBtn.id = 'aiAdviceBtn';
-          adviceBtn.className = 'advice-btn-wrap';
-          adviceBtn.onclick = () => handleAdviceClick();
-          adviceBtn.innerHTML = '<span class="advice-btn-inner">'
-            + '<img class="advice-btn-icon" src="gemini-icon.png">'
-            + '<span class="advice-btn-text">ШІ аналіз</span></span>';
-          ring.after(adviceBtn);
-        }
-        adviceBtn.style.display = entries.length > 0 ? 'block' : 'none';
-      }
-    })();
+    const el = document.getElementById('aiAdviceCard');
+    if (el) el.style.display = 'none';
+    const btn = document.getElementById('aiAdviceBtn');
+    if (btn) btn.style.display = 'none';
   }
 }
 
@@ -1726,6 +1745,7 @@ function toggleAdvice(btn) {
 }
 
 async function generateDailyAdvice() {
+  if (!userGeminiKey) return null;
   const today = formatDate(currentDate);
   try {
     const doc = await userRef().collection('dailyInsights').doc(today).get();
@@ -1756,7 +1776,7 @@ async function generateDailyAdvice() {
     + '\nСписок страв:\n' + mealLog;
 
   try {
-    const res = await fetch(GEMINI_URL, {
+    const res = await fetch(GEMINI_URL + userGeminiKey, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1797,6 +1817,14 @@ async function loadGoals() {
   document.getElementById('goalProtein').textContent = goals.protein;
   document.getElementById('goalFat').textContent = goals.fat;
   document.getElementById('goalCarbs').textContent = goals.carbs;
+}
+
+async function loadUserConfig() {
+  try {
+    const doc = await userRef().collection('config').doc('api').get();
+    userGeminiKey = doc.exists ? doc.data().geminiKey : null;
+  } catch(e) { userGeminiKey = null; }
+  document.getElementById('geminiKeyInput').value = userGeminiKey || '';
 }
 
 function openGoalsModal() {
@@ -2032,6 +2060,30 @@ document.getElementById('authRegisterBtn').addEventListener('click', authRegiste
 document.getElementById('authToggleLink2').addEventListener('click', toggleAuthMode);
 document.getElementById('userMenuBtn').addEventListener('click', toggleUserMenu);
 document.getElementById('logoutBtn').addEventListener('click', logout);
+document.getElementById('settingsBtn').addEventListener('click', () => {
+  document.getElementById('userMenu').classList.remove('open');
+  document.getElementById('geminiKeyInput').value = userGeminiKey || '';
+  openModal('settingsModal');
+});
+document.getElementById('saveGeminiKeyBtn').addEventListener('click', async () => {
+  const key = document.getElementById('geminiKeyInput').value.trim();
+  if (key) {
+    await userRef().collection('config').doc('api').set({ geminiKey: key });
+    userGeminiKey = key;
+  }
+  closeModal('settingsModal');
+  renderDiary();
+  showToast('Налаштування збережено');
+});
+document.getElementById('deleteGeminiKeyBtn').addEventListener('click', async () => {
+  await userRef().collection('config').doc('api').delete();
+  userGeminiKey = null;
+  document.getElementById('geminiKeyInput').value = '';
+  closeModal('settingsModal');
+  renderDiary();
+  showToast('Ключ видалено');
+});
+document.getElementById('settingsCancel').addEventListener('click', () => closeModal('settingsModal'));
 document.getElementById('datePrevBtn').addEventListener('click', () => changeDate(-1));
 document.getElementById('dateNextBtn').addEventListener('click', () => changeDate(1));
 document.getElementById('addMealBtn').addEventListener('click', openAddMealModal);
@@ -2075,7 +2127,7 @@ auth.onAuthStateChanged(async user => {
     currentUser = user;
     document.getElementById('userEmail').textContent = user.email;
     try {
-      await Promise.all([loadProducts(), loadGoals()]);
+      await Promise.all([loadProducts(), loadGoals(), loadUserConfig()]);
       updateDateDisplay();
       await loadDiary();
     } catch (e) {
