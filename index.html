@@ -458,7 +458,7 @@
     </div>
     <div class="date-nav" id="statsNav">
       <button id="statsPrevBtn">◀</button>
-      <span id="statsPeriodLabel"></span>
+      <span id="statsPeriodLabel" class="fw-600" style="font-size:15px;cursor:pointer" onclick="resetStatsPeriod()"></span>
       <button id="statsNextBtn">▶</button>
     </div>
     <div id="statsContent"></div>
@@ -1882,6 +1882,12 @@ function shiftStatsPeriod(dir) {
   renderStats();
 }
 
+function resetStatsPeriod() {
+  if (statsOffset === 0) return;
+  statsOffset = 0;
+  renderStats();
+}
+
 async function renderStats() {
   const container = document.getElementById('statsContent');
   container.innerHTML = '<div class="loader"></div>';
@@ -1918,7 +1924,13 @@ async function renderStats() {
   } else {
     refMonth = new Date(now.getFullYear(), now.getMonth() + statsOffset, 1);
     const months = ['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
-    label.textContent = months[refMonth.getMonth()] + ' ' + refMonth.getFullYear();
+    if (statsOffset === 0) {
+      label.textContent = 'Цей місяць';
+    } else if (statsOffset === -1) {
+      label.textContent = 'Минулий місяць';
+    } else {
+      label.textContent = months[refMonth.getMonth()] + ' ' + refMonth.getFullYear();
+    }
     numDays = new Date(refMonth.getFullYear(), refMonth.getMonth() + 1, 0).getDate();
   }
 
