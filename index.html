@@ -1538,7 +1538,8 @@ function renderDiary() {
   }
   sections.innerHTML = html;
 
-  const progress = Math.min(100, goals.cal > 0 ? total.cal / goals.cal * 100 : 0);
+  const progressRaw = goals.cal > 0 ? total.cal / goals.cal * 100 : 0;
+  const progress = Math.min(100, progressRaw);
   const totalG = total.protein + total.fat + total.carbs;
   let pAngle = 0, fAngle = 0, cAngle = 0;
   if (totalG > 0 && progress > 0) {
@@ -1568,7 +1569,7 @@ function renderDiary() {
     <div class="test-ring-chart" style="background:${ringGrad}">
       <div class="test-ring-hole">
         <span class="val">${Math.round(total.cal)}</span>
-        <span class="lbl">${Math.round(progress)}%</span>
+        <span class="lbl">${Math.round(progressRaw)}%</span>
       </div>
     </div>
     <div class="test-ring-items">
@@ -1824,7 +1825,8 @@ async function renderStats() {
   const totalC = daysWithEntries.reduce((s, d) => s + d.carbs, 0);
   const totalG = totalP + totalF + totalC;
   const avgCal = totalCalPer / (daysWithData || 1);
-  const avgProgress = Math.min(100, goals.cal > 0 ? avgCal / goals.cal * 100 : 0);
+  const avgProgressRaw = goals.cal > 0 ? avgCal / goals.cal * 100 : 0;
+  const avgProgress = Math.min(100, avgProgressRaw);
 
   let pAngle = 0, fAngle = 0, cAngle = 0;
   if (totalG > 0 && avgProgress > 0) {
@@ -1849,7 +1851,7 @@ async function renderStats() {
       <div class="test-ring-chart" style="background:${ringGrad}">
         <div class="test-ring-hole">
           <span class="val">${Math.round(avgCal)}</span>
-          <span class="lbl">${Math.round(avgProgress)}%</span>
+          <span class="lbl">${Math.round(avgProgressRaw)}%</span>
         </div>
       </div>
       <div class="test-ring-items" style="justify-content:center">
