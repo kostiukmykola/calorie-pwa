@@ -223,6 +223,17 @@
     .btn-sm.btn-block { width:100%; display:flex; }
     .btn-block { width: 100%; }
     .btn-icon { width: 36px; height: 36px; padding: 0; border-radius: 50%; }
+    .fab {
+      position: fixed; bottom: calc(var(--nav-h) + 20px + env(safe-area-inset-bottom, 0px));
+      right: 16px; z-index: 150;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 24px; border: none; border-radius: 28px;
+      background: var(--accent); color: #fff;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(233,69,96,0.4);
+      transition: all 0.2s;
+    }
+    .fab:active { transform: scale(0.95); }
 
     .form-group { margin-bottom: 14px; }
     .form-group label { display: block; font-size: 13px; color: var(--text2); margin-bottom: 4px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -425,7 +436,7 @@
     </div>
     <div class="daily-summary" id="dailySummary"></div>
     <div id="mealSections"><div class="loader"></div></div>
-    <button class="btn btn-primary btn-block" id="addMealBtn">+ Додати прийом їжі</button>
+    <button class="fab" id="addMealBtn"><i class="fas fa-plus"></i> додати</button>
   </div>
 
   <div class="page" id="pageProducts">
@@ -607,6 +618,7 @@
     <h2><i class="fas fa-pencil"></i> Редагувати запис</h2>
     <input type="hidden" id="editEntryId">
     <div class="form-group"><label>Назва страви</label><input type="text" id="editEntryName"></div>
+    <div class="form-group"><label>Тип прийому</label><select id="editMealType"><option value="Сніданок">🌅 Сніданок</option><option value="Обід">☀️ Обід</option><option value="Вечеря">🌙 Вечеря</option><option value="Перекус">🍿 Перекус</option></select></div>
     <div class="form-group"><label><i class="fas fa-fire"></i> Ккал</label><input type="number" id="editEntryCal" step="0.1" onfocus="setTimeout(()=>this.select(),80)"></div>
     <div class="form-row-3">
       <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки (г)</label><input type="number" id="editEntryProtein" step="0.1" onfocus="setTimeout(()=>this.select(),80)"></div>
@@ -1364,6 +1376,7 @@ function openEditEntry(id) {
   if (!entry) return;
   document.getElementById('editEntryId').value = id;
   document.getElementById('editEntryName').value = entry.productName;
+  document.getElementById('editMealType').value = entry.mealType;
   document.getElementById('editEntryCal').value = entry.cal;
   document.getElementById('editEntryProtein').value = entry.protein;
   document.getElementById('editEntryFat').value = entry.fat;
@@ -1382,6 +1395,7 @@ async function saveEditEntry() {
   const carbs = parseFloat(document.getElementById('editEntryCarbs').value) || 0;
   if (!name) { showToast('Введіть назву'); return; }
   entry.productName = name;
+  entry.mealType = document.getElementById('editMealType').value;
   entry.cal = cal;
   entry.protein = protein;
   entry.fat = fat;
