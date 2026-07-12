@@ -1625,7 +1625,7 @@ function renderDiary() {
         adviceCard.innerHTML = `
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
             <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
-            <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><span class="typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span></button>
+            <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></button>
           </div>
           <div style="font-size:14px;line-height:1.6;color:var(--text)">${adviceText}</div>`;
       } else {
@@ -1668,7 +1668,7 @@ async function handleAdviceClick() {
     card.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
-        <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><span class="typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span></button>
+        <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></button>
       </div>
       <div style="font-size:14px;line-height:1.6;color:var(--text)">${advice}</div>`;
   } else {
@@ -1682,6 +1682,7 @@ async function handleAdviceClick() {
 
 async function refreshAdvice(btn) {
   btn.disabled = true;
+  btn.innerHTML = '<span class="typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>';
   try {
     await userRef().collection('dailyInsights').doc(formatDate(currentDate)).delete();
   } catch(e) {}
@@ -1699,7 +1700,7 @@ async function refreshAdvice(btn) {
     card.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
-        <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><span class="typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span></button>
+        <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></button>
       </div>
       <div style="font-size:14px;line-height:1.6;color:var(--text)">${advice}</div>`;
   } else {
