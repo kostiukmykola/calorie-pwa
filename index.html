@@ -753,6 +753,8 @@ let confirmResolve = null;
 const MEAL_ORDER = ['Сніданок','Обід','Вечеря','Перекус'];
 const MEAL_ICONS = {Сніданок:'<i class="fas fa-sun"></i>',Обід:'<i class="fas fa-cloud-sun"></i>',Вечеря:'<i class="fas fa-moon"></i>',Перекус:'<i class="fas fa-cookie-bite"></i>'};
 const MEAL_COLORS = {Сніданок:'#f59e0b',Обід:'#3b82f6',Вечеря:'#8b5cf6',Перекус:'#10b981'};
+const GEMINI_KEY = atob('QVEuQWI4Uk42TDA4VTU1RnI4X2FmYXJYRXR3dUlSRElOeXpmVk9XTDNTemdnWUdXckJWVFE=');
+const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_KEY;
 function round1(v) { return Math.round(v * 10) / 10; }
 function toNum(v) { return parseFloat(v) || 0; }
 
@@ -1589,6 +1591,114 @@ function renderDiary() {
       <div class="test-ring-item"><span class="name" style="font-weight:600">Залишилось</span></div>
       <div class="test-ring-item"><span class="name"><i class="fas fa-fire"></i> ${Math.round(remainCal)} ккал</span><span class="val"><i class="fas fa-drumstick-bite"></i> ${Math.round(remainP)}г / <i class="fas fa-droplet"></i> ${Math.round(remainF)}г / <i class="fas fa-wheat-awn"></i> ${Math.round(remainC)}г</span></div>
     </div>`;
+
+  const today = formatDate(currentDate);
+  const cached = localStorage.getItem('aiAdvice_' + today);
+  let adviceText = null;
+  if (cached) {
+    try {
+      const parsed = JSON.parse(cached);
+      if (Date.now() - parsed.ts < 86400000) adviceText = parsed.advice;
+    } catch(e) {}
+  }
+  let adviceCard = document.getElementById('aiAdviceCard');
+  if (!adviceCard) {
+    adviceCard = document.createElement('div');
+    adviceCard.id = 'aiAdviceCard';
+    adviceCard.className = 'card';
+    ring.after(adviceCard);
+  }
+  if (adviceText) {
+    adviceCard.style.display = 'block';
+    adviceCard.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
+        <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></button>
+      </div>
+      <div style="font-size:14px;line-height:1.6;color:var(--text)">${adviceText}</div>`;
+  } else {
+    adviceCard.style.display = entries.length > 0 ? 'block' : 'none';
+    adviceCard.innerHTML = '<button class="btn btn-sm btn-block" style="background:var(--card2);color:var(--text2);padding:12px" onclick="handleAdviceClick(this)">✨ Отримати аналіз дня від ШІ</button>';
+  }
+}
+
+async function handleAdviceClick(btn) {
+  btn.disabled = true;
+  btn.innerHTML = '<div class="loader" style="padding:0"></div>';
+  const advice = await generateDailyAdvice();
+  if (advice) {
+    const card = document.getElementById('aiAdviceCard');
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
+        <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></button>
+      </div>
+      <div style="font-size:14px;line-height:1.6;color:var(--text)">${advice}</div>`;
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = '✨ Отримати аналіз дня від ШІ';
+    showToast('Не вдалося отримати пораду. Спробуйте пізніше');
+  }
+}
+
+async function refreshAdvice(btn) {
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+  localStorage.removeItem('aiAdvice_' + formatDate(currentDate));
+  await handleAdviceClick(btn);
+}
+
+async function generateDailyAdvice() {
+  const today = formatDate(currentDate);
+  const cached = localStorage.getItem('aiAdvice_' + today);
+  if (cached) {
+    try {
+      const parsed = JSON.parse(cached);
+      if (Date.now() - parsed.ts < 86400000) return parsed.advice;
+    } catch(e) {}
+  }
+
+  const meals = {};
+  MEAL_ORDER.forEach(m => meals[m] = []);
+  entries.forEach(e => {
+    if (meals[e.mealType]) meals[e.mealType].push(e);
+  });
+  let mealLog = '';
+  MEAL_ORDER.forEach(m => {
+    if (meals[m].length === 0) return;
+    mealLog += '- ' + m + ': ' + meals[m].map(e => `${e.productName} (${Math.round(e.cal)} ккал, Б:${e.protein} Ж:${e.fat} В:${e.carbs})`).join(', ') + '\n';
+  });
+  const now = new Date();
+  const timeStr = now.getHours() + ':' + zeroPad(now.getMinutes(), 2);
+  const totalCals = entries.reduce((s, e) => s + e.cal, 0);
+  const totalP = entries.reduce((s, e) => s + e.protein, 0);
+  const totalF = entries.reduce((s, e) => s + e.fat, 0);
+  const totalCarbs = entries.reduce((s, e) => s + e.carbs, 0);
+  const prompt = `Поточний час: ${timeStr}.
+З'їдено за сьогодні: ${Math.round(totalCals)} ккал (Б: ${round1(totalP)}г, Ж: ${round1(totalF)}г, В: ${round1(totalCarbs)}г).
+Ціль на день: ${goals.cal} ккал (Б: ${goals.protein}г, Ж: ${goals.fat}г, В: ${goals.carbs}г).
+
+Список страв:
+${mealLog}`;
+
+  try {
+    const res = await fetch(GEMINI_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: 'Ти — професійний нутриціолог та фітнес-аналітик. Твоє завдання — проаналізувати поточний щоденник харчування користувача за день і дати ОДНУ ультра-коротку, персоналізовану та практичну пораду. Правила: 1. Довжина строго 2-3 речення. Мова — українська. Тон — дружній, мотивуючий, експертний (звертайся на "ви"). 2. Жодної води та банальностей.          3. Обов\'язково зважай на поточний час та дисбаланс БЖВ. 4. Завжди повертай відповідь ТІЛЬКИ у форматі JSON: {"advice": "текст поради"}' }] },
+        contents: [{ parts: [{ text: prompt }] }]
+      })
+    });
+    const data = await res.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
+    const result = { advice: parsed.advice, ts: Date.now() };
+    localStorage.setItem('aiAdvice_' + today, JSON.stringify(result));
+    return parsed.advice;
+  } catch (e) {
+    console.warn('AI advice failed:', e);
+    return null;
+  }
 }
 
 function toggleMeal(name) {
