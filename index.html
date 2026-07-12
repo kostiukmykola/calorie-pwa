@@ -351,6 +351,10 @@
     }
     .sync-badge.show { display: inline-flex; }
 
+    .advice-collapsed { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .advice-collapsed.open { -webkit-line-clamp:unset; display:block; }
+    .advice-toggle { cursor:pointer; font-size:12px; color:var(--accent); margin-top:4px; display:inline-block; }
+
     @media(min-width:500px){
       .daily-summary { grid-template-columns: repeat(4,1fr); }
     }
@@ -1632,7 +1636,7 @@ function renderDiary() {
             <span style="font-size:12px;font-weight:600"><i class="fas fa-robot"></i> Порада ШІ на сьогодні</span>
             <span style="cursor:pointer;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></span>
           </div>
-          <div style="font-size:14px;line-height:1.6;color:var(--text)">${adviceText}</div>`;
+          <div style="font-size:14px;line-height:1.6;color:var(--text)"><div class="advice-collapsed" class="advice-text">${adviceText}</div><span class="advice-toggle" onclick="toggleAdvice(this)">Розгорнути</span></div>`;
       } else {
         if (adviceCard) adviceCard.style.display = 'none';
         if (!adviceBtn) {
@@ -1675,7 +1679,7 @@ async function handleAdviceClick() {
         <span style="font-size:12px;font-weight:600"><i class="fas fa-robot"></i> Порада ШІ на сьогодні</span>
         <span style="cursor:pointer;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></span>
       </div>
-      <div style="font-size:14px;line-height:1.6;color:var(--text)">${advice}</div>`;
+      <div style="font-size:14px;line-height:1.6;color:var(--text)"><div class="advice-collapsed" class="advice-text">${advice}</div><span class="advice-toggle" onclick="toggleAdvice(this)">Розгорнути</span></div>`;
   } else {
     card.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
@@ -1707,13 +1711,21 @@ async function refreshAdvice(btn) {
         <span style="font-size:12px;font-weight:600"><i class="fas fa-robot"></i> Порада ШІ на сьогодні</span>
         <span style="cursor:pointer;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></span>
       </div>
-      <div style="font-size:14px;line-height:1.6;color:var(--text)">${advice}</div>`;
+      <div style="font-size:14px;line-height:1.6;color:var(--text)"><div class="advice-collapsed" class="advice-text">${advice}</div><span class="advice-toggle" onclick="toggleAdvice(this)">Розгорнути</span></div>`;
   } else {
     card.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <span style="font-size:12px;font-weight:600"><i class="fas fa-robot"></i> Порада ШІ на сьогодні</span>
       </div>
       <div style="font-size:14px;line-height:1.6;color:var(--text2)">Не вдалося отримати пораду. <span style="cursor:pointer;color:var(--accent);font-size:14px" onclick="handleAdviceClick()">Спробувати ще</span></div>`;
+  }
+}
+
+function toggleAdvice(btn) {
+  const text = btn.parentElement.querySelector('.advice-text');
+  if (text) {
+    text.classList.toggle('open');
+    btn.textContent = text.classList.contains('open') ? 'Згорнути' : 'Розгорнути';
   }
 }
 
