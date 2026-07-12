@@ -339,6 +339,12 @@
     .loading-overlay.open { display:flex; }
     .loading-overlay span { color:var(--text2); font-size:14px; }
 
+    @keyframes typing { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+    .typing { display:inline-flex; align-items:center; gap:3px; }
+    .typing-dot { width:6px; height:6px; border-radius:50%; background:#a78bfa; animation:typing 1.4s infinite ease-in-out; }
+    .typing-dot:nth-child(2) { animation-delay:.2s; }
+    .typing-dot:nth-child(3) { animation-delay:.4s; }
+
     .sync-badge {
       font-size: 11px; color: var(--green); display: none; align-items: center; gap: 4px;
     }
@@ -1593,74 +1599,124 @@ function renderDiary() {
     </div>`;
 
   const today = formatDate(currentDate);
-  const cached = localStorage.getItem('aiAdvice_' + today);
-  let adviceText = null;
-  if (cached) {
-    try {
-      const parsed = JSON.parse(cached);
-      if (Date.now() - parsed.ts < 86400000) adviceText = parsed.advice;
-    } catch(e) {}
-  }
   const isFuture = formatDate(currentDate) > formatDate(new Date());
   let adviceCard = document.getElementById('aiAdviceCard');
+  let adviceBtn = document.getElementById('aiAdviceBtn');
+
   if (isFuture) {
     if (adviceCard) adviceCard.style.display = 'none';
+    if (adviceBtn) adviceBtn.style.display = 'none';
   } else {
-    if (!adviceCard) {
-      adviceCard = document.createElement('div');
-      adviceCard.id = 'aiAdviceCard';
-      adviceCard.className = 'card';
-      ring.after(adviceCard);
-    }
-    if (adviceText) {
-      adviceCard.style.display = 'block';
-      adviceCard.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
-          <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></button>
-        </div>
-        <div style="font-size:14px;line-height:1.6;color:var(--text)">${adviceText}</div>`;
-    } else {
-      adviceCard.style.display = entries.length > 0 ? 'block' : 'none';
-      adviceCard.innerHTML = '<button class="btn btn-sm btn-block" style="background:var(--card2);color:var(--text2);padding:12px" onclick="handleAdviceClick(this)">✨ Отримати аналіз дня від ШІ</button>';
-    }
+    (async () => {
+      let adviceText = null;
+      try {
+        const doc = await userRef().collection('dailyInsights').doc(today).get();
+        if (doc.exists) adviceText = doc.data().advice;
+      } catch(e) {}
+      if (adviceText) {
+        if (adviceBtn) adviceBtn.style.display = 'none';
+        if (!adviceCard) {
+          adviceCard = document.createElement('div');
+          adviceCard.id = 'aiAdviceCard';
+          adviceCard.className = 'card';
+          ring.after(adviceCard);
+        }
+        adviceCard.style.display = 'block';
+        adviceCard.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
+            <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><span class="typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span></button>
+          </div>
+          <div style="font-size:14px;line-height:1.6;color:var(--text)">${adviceText}</div>`;
+      } else {
+        if (adviceCard) adviceCard.style.display = 'none';
+        if (!adviceBtn) {
+          adviceBtn = document.createElement('button');
+          adviceBtn.id = 'aiAdviceBtn';
+          adviceBtn.className = 'btn btn-sm btn-block';
+          adviceBtn.style.cssText = 'background:var(--card2);color:var(--text2);padding:12px;margin-bottom:12px';
+          adviceBtn.textContent = '✨ Отримати аналіз дня від ШІ';
+          adviceBtn.onclick = () => handleAdviceClick();
+          ring.after(adviceBtn);
+        }
+        adviceBtn.style.display = entries.length > 0 ? 'block' : 'none';
+      }
+    })();
   }
 }
 
-async function handleAdviceClick(btn) {
-  btn.disabled = true;
-  btn.innerHTML = '<div class="loader" style="padding:0"></div>';
+async function handleAdviceClick() {
+  const btn = document.getElementById('aiAdviceBtn');
+  if (btn) btn.style.display = 'none';
+  let card = document.getElementById('aiAdviceCard');
+  if (!card) {
+    card = document.createElement('div');
+    card.id = 'aiAdviceCard';
+    card.className = 'card';
+    const ring = document.getElementById('testRing') || document.getElementById('mealSections');
+    ring.after(card);
+  }
+  card.style.display = 'block';
+  card.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
+      <span class="typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>
+    </div>
+    <div style="font-size:14px;line-height:1.6;color:var(--text2)">Аналізую ваше харчування...</div>`;
   const advice = await generateDailyAdvice();
   if (advice) {
-    const card = document.getElementById('aiAdviceCard');
     card.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
         <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
-        <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></button>
+        <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><span class="typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span></button>
       </div>
       <div style="font-size:14px;line-height:1.6;color:var(--text)">${advice}</div>`;
   } else {
-    btn.disabled = false;
-    btn.innerHTML = '✨ Отримати аналіз дня від ШІ';
-    showToast('Не вдалося отримати пораду. Спробуйте пізніше');
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
+      </div>
+      <div style="font-size:14px;line-height:1.6;color:var(--text2)">Не вдалося отримати пораду. <button class="btn btn-sm" style="background:none;color:var(--accent);padding:0;font-size:14px" onclick="handleAdviceClick()">Спробувати ще</button></div>`;
   }
 }
 
 async function refreshAdvice(btn) {
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-  localStorage.removeItem('aiAdvice_' + formatDate(currentDate));
-  await handleAdviceClick(btn);
+  btn.disabled = true;
+  try {
+    await userRef().collection('dailyInsights').doc(formatDate(currentDate)).delete();
+  } catch(e) {}
+  const card = document.getElementById('aiAdviceCard');
+  if (card) {
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
+        <span class="typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span>
+      </div>
+      <div style="font-size:14px;line-height:1.6;color:var(--text2)">Аналізую ваше харчування...</div>`;
+  }
+  const advice = await generateDailyAdvice();
+  if (advice) {
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
+        <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><span class="typing"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></span></button>
+      </div>
+      <div style="font-size:14px;line-height:1.6;color:var(--text)">${advice}</div>`;
+  } else {
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
+      </div>
+      <div style="font-size:14px;line-height:1.6;color:var(--text2)">Не вдалося отримати пораду. <button class="btn btn-sm" style="background:none;color:var(--accent);padding:0;font-size:14px" onclick="handleAdviceClick()">Спробувати ще</button></div>`;
+  }
 }
 
 async function generateDailyAdvice() {
   const today = formatDate(currentDate);
-  const cached = localStorage.getItem('aiAdvice_' + today);
-  if (cached) {
-    try {
-      const parsed = JSON.parse(cached);
-      if (Date.now() - parsed.ts < 86400000) return parsed.advice;
-    } catch(e) {}
-  }
+  try {
+    const doc = await userRef().collection('dailyInsights').doc(today).get();
+    if (doc.exists) return doc.data().advice;
+  } catch(e) {}
 
   const meals = {};
   MEAL_ORDER.forEach(m => meals[m] = []);
@@ -1697,8 +1753,12 @@ async function generateDailyAdvice() {
     const data = await res.json();
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
     const parsed = JSON.parse(text.replace(/```json|```/g, '').trim());
-    const result = { advice: parsed.advice, ts: Date.now() };
-    localStorage.setItem('aiAdvice_' + today, JSON.stringify(result));
+    await userRef().collection('dailyInsights').doc(today).set({
+      advice: parsed.advice,
+      request: prompt,
+      kcalConsumed: Math.round(totalCals),
+      generatedAt: Date.now()
+    });
     return parsed.advice;
   } catch (e) {
     console.warn('AI advice failed:', e);
