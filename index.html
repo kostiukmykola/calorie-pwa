@@ -1817,7 +1817,6 @@ async function renderStats() {
   </div>`;
 
   const totalCalPer = dailyData.reduce((s, d) => s + d.cal, 0);
-  const totalGoal = goals.cal * numDays;
 
   const daysWithEntries = dailyData.filter(d => d.cal > 0);
   const totalP = daysWithEntries.reduce((s, d) => s + d.protein, 0);
