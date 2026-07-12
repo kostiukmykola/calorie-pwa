@@ -432,7 +432,7 @@
   <div class="page active" id="pageDiary">
     <div class="date-nav" id="dateNav">
       <button id="datePrevBtn">◀</button>
-      <span id="dateDisplay" style="font-size:15px" class="fw-600"></span>
+      <span id="dateDisplay" style="font-size:15px" class="fw-600" onclick="goToToday()"></span>
       <button id="dateNextBtn">▶</button>
     </div>
     <div id="mealSections"><div class="loader"></div></div>
@@ -878,6 +878,12 @@ document.addEventListener('click', e => {
 
 function changeDate(delta) {
   currentDate.setDate(currentDate.getDate() + delta);
+  updateDateDisplay();
+  loadDiary();
+}
+
+function goToToday() {
+  currentDate = new Date();
   updateDateDisplay();
   loadDiary();
 }
