@@ -1817,6 +1817,21 @@ async function loadGoals() {
   document.getElementById('goalProtein').textContent = goals.protein;
   document.getElementById('goalFat').textContent = goals.fat;
   document.getElementById('goalCarbs').textContent = goals.carbs;
+  updateGoalsRing();
+}
+
+function updateGoalsRing() {
+  const calP = goals.protein * 4;
+  const calF = goals.fat * 9;
+  const calC = goals.carbs * 4;
+  const total = calP + calF + calC;
+  const p = total > 0 ? calP / total * 100 : 0;
+  const f = total > 0 ? calF / total * 100 : 0;
+  const c = total > 0 ? calC / total * 100 : 0;
+  const ring = document.querySelector('#pageGoals .test-ring-chart');
+  if (ring) {
+    ring.style.background = `conic-gradient(#22c55e 0% ${p}%, #eab308 ${p}% ${p+f}%, #3b82f6 ${p+f}% 100%)`;
+  }
 }
 
 async function loadUserConfig() {
@@ -1846,6 +1861,7 @@ async function saveGoals() {
   document.getElementById('goalProtein').textContent = goals.protein;
   document.getElementById('goalFat').textContent = goals.fat;
   document.getElementById('goalCarbs').textContent = goals.carbs;
+  updateGoalsRing();
   showSyncBadge();
   showToast('Цілі збережено');
 }
