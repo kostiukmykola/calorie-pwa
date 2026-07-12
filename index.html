@@ -425,7 +425,8 @@
     <button class="user-btn" id="userMenuBtn"><i class="fas fa-user"></i></button>
     <div class="user-menu" id="userMenu">
       <div style="padding:8px 12px;font-size:13px;color:var(--text2);word-break:break-all" id="userEmail"></div>
-      <button id="settingsBtn"><i class="fas fa-gear"></i> Налаштування</button>
+       <button id="settingsBtn"><i class="fas fa-gear"></i> Налаштування</button>
+      <button id="exportMenuBtn"><i class="fas fa-download"></i> Експорт CSV</button>
       <button id="logoutBtn"><i class="fas fa-right-from-bracket"></i> Вийти</button>
     </div>
   </div>
@@ -2049,7 +2050,6 @@ async function renderStats() {
       <div class="goal-row"><span class="glabel"><i class="fas fa-calendar"></i> Днів в періоді</span><span class="gvalue">${count}</span></div>
       <div class="goal-row"><span class="glabel"><i class="fas fa-check"></i> Днів з записами</span><span class="gvalue">${daysWithData}</span></div>
     </div>
-    <button class="btn btn-primary" id="exportCsvBtn" style="margin:0 auto;display:flex;gap:8px;padding:10px 20px" onclick="exportCSV()"><i class="fas fa-download"></i> Експорт CSV</button>
   `;
 }
 
@@ -2105,6 +2105,10 @@ document.getElementById('settingsBtn').addEventListener('click', () => {
   document.getElementById('userMenu').classList.remove('open');
   document.getElementById('geminiKeyInput').value = userGeminiKey || '';
   openModal('settingsModal');
+});
+document.getElementById('exportMenuBtn').addEventListener('click', () => {
+  document.getElementById('userMenu').classList.remove('open');
+  exportCSV();
 });
 document.getElementById('saveGeminiKeyBtn').addEventListener('click', async () => {
   const key = document.getElementById('geminiKeyInput').value.trim();
