@@ -282,18 +282,6 @@
     .goal-row .glabel { font-size: 14px; }
     .goal-row .gvalue { font-size: 14px; color: var(--text2); }
 
-    .dist-chart { margin-top: 4px; }
-    .dist-row { display: grid; grid-template-columns: 30px 1fr 30px; gap: 10px; align-items: center; margin-bottom: 10px; padding: 0 16px; }
-    .dist-label { font-size: 12px; color: var(--text2); text-align: right; white-space: nowrap; }
-    .dist-bar { height: 22px; border-radius: 6px; overflow: hidden; display: flex; cursor: pointer; }
-    .dist-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #fff; transition: flex 0.3s; min-width: 0; }
-    .dist-seg span { opacity: 0; transition: opacity 0.2s; }
-    .dist-seg:hover span { opacity: 1; }
-    .dist-total { font-size: 12px; font-weight: 600; color: var(--text2); }
-    .dist-legend { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; justify-content: center; }
-    .dist-legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text2); }
-    .dist-legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
-
     .btn-danger { margin-top:8px; background:rgba(233,69,96,0.15); color:var(--accent); }
     .btn-danger:hover { background:rgba(233,69,96,0.25); }
     .btn-active { background:var(--accent); color:#fff; }
@@ -482,10 +470,6 @@
       <div class="goal-row"><span class="glabel"><i class="fas fa-droplet"></i> Жири</span><span class="gvalue"><span id="goalFat">65</span> г</span></div>
       <div class="goal-row"><span class="glabel"><i class="fas fa-wheat-awn"></i> Вуглеводи</span><span class="gvalue"><span id="goalCarbs">250</span> г</span></div>
     </div>
-    <div class="page-title"><i class="fas fa-chart-simple"></i> Розподіл по прийомах</div>
-    <div class="card" id="distCard">
-      <div id="distPreview"></div>
-    </div>
     <button class="btn btn-primary btn-block" id="openGoalsBtn"><i class="fas fa-gear"></i> Змінити цілі</button>
   </div>
 
@@ -595,29 +579,6 @@
       <div class="form-group"><label><i class="fas fa-droplet"></i> Жири (г)</label><input type="number" id="goalFatInput" min="0" onfocus="setTimeout(()=>this.select(),80)"></div>
       <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи (г)</label><input type="number" id="goalCarbsInput" min="0" onfocus="setTimeout(()=>this.select(),80)"></div>
     </div>
-
-    <h2><i class="fas fa-drumstick-bite"></i> Розподіл Білків (%)</h2>
-    <div class="form-row-4">
-      <div class="form-group"><label><i class="fas fa-sun"></i> Сніданок</label><input type="number" id="distP0" min="0" max="100" step="1" oninput="validateDist()" onfocus="setTimeout(()=>this.select(),80)"></div>
-      <div class="form-group"><label><i class="fas fa-cloud-sun"></i> Обід</label><input type="number" id="distP1" min="0" max="100" step="1" oninput="validateDist()" onfocus="setTimeout(()=>this.select(),80)"></div>
-      <div class="form-group"><label><i class="fas fa-moon"></i> Вечеря</label><input type="number" id="distP2" min="0" max="100" step="1" oninput="validateDist()" onfocus="setTimeout(()=>this.select(),80)"></div>
-      <div class="form-group"><label><i class="fas fa-cookie-bite"></i> Перекус</label><input type="number" id="distP3" min="0" max="100" step="1" oninput="validateDist()" onfocus="setTimeout(()=>this.select(),80)"></div>
-    </div>
-    <h2><i class="fas fa-droplet"></i> Розподіл Жирів (%)</h2>
-    <div class="form-row-4">
-      <div class="form-group"><label><i class="fas fa-sun"></i> Сніданок</label><input type="number" id="distF0" min="0" max="100" step="1" oninput="validateDist()" onfocus="setTimeout(()=>this.select(),80)"></div>
-      <div class="form-group"><label><i class="fas fa-cloud-sun"></i> Обід</label><input type="number" id="distF1" min="0" max="100" step="1" oninput="validateDist()" onfocus="setTimeout(()=>this.select(),80)"></div>
-      <div class="form-group"><label><i class="fas fa-moon"></i> Вечеря</label><input type="number" id="distF2" min="0" max="100" step="1" oninput="validateDist()" onfocus="setTimeout(()=>this.select(),80)"></div>
-      <div class="form-group"><label><i class="fas fa-cookie-bite"></i> Перекус</label><input type="number" id="distF3" min="0" max="100" step="1" oninput="validateDist()" onfocus="setTimeout(()=>this.select(),80)"></div>
-    </div>
-    <h2><i class="fas fa-wheat-awn"></i> Розподіл Вуглеводів (%)</h2>
-    <div class="form-row-4">
-      <div class="form-group"><label><i class="fas fa-sun"></i> Сніданок</label><input type="number" id="distC0" min="0" max="100" step="1" oninput="validateDist()" onfocus="setTimeout(()=>this.select(),80)"></div>
-      <div class="form-group"><label><i class="fas fa-cloud-sun"></i> Обід</label><input type="number" id="distC1" min="0" max="100" step="1" oninput="validateDist()" onfocus="setTimeout(()=>this.select(),80)"></div>
-      <div class="form-group"><label><i class="fas fa-moon"></i> Вечеря</label><input type="number" id="distC2" min="0" max="100" step="1" oninput="validateDist()" onfocus="setTimeout(()=>this.select(),80)"></div>
-      <div class="form-group"><label><i class="fas fa-cookie-bite"></i> Перекус</label><input type="number" id="distC3" min="0" max="100" step="1" oninput="validateDist()" onfocus="setTimeout(()=>this.select(),80)"></div>
-    </div>
-    <div id="distHint" style="font-size:13px;color:#ef4444;margin-bottom:12px;min-height:20px"></div>
     <button class="btn btn-primary btn-block" id="saveGoalsBtn">Зберегти</button>
     <button class="btn btn-secondary btn-block mt-8" id="goalsCancel">Скасувати</button>
   </div>
@@ -769,7 +730,7 @@ let currentDate = new Date();
 let currentPage = 'diary';
 let products = [];
 let entries = [];
-let goals = { cal:2000, protein:150, fat:65, carbs:250, distProtein:{Сніданок:25,Обід:35,Вечеря:30,Перекус:10}, distFat:{Сніданок:25,Обід:35,Вечеря:30,Перекус:10}, distCarbs:{Сніданок:25,Обід:35,Вечеря:30,Перекус:10} };
+let goals = { cal:2000, protein:150, fat:65, carbs:250 };
 let editingProductId = null;
 let selectedProductId = null;
 let statsWeekView = true;
@@ -1814,64 +1775,13 @@ async function loadGoals() {
   const doc = await userRef().collection('goals').doc('main').get();
   if (doc.exists) {
     goals = doc.data();
-    if (!goals.distProtein) goals.distProtein = {Сніданок:25,Обід:35,Вечеря:30,Перекус:10};
-    if (!goals.distFat) goals.distFat = {Сніданок:25,Обід:35,Вечеря:30,Перекус:10};
-    if (!goals.distCarbs) goals.distCarbs = {Сніданок:25,Обід:35,Вечеря:30,Перекус:10};
   } else {
   await userRef().collection('goals').doc('main').set(goals, { merge: true });
   }
-  updateGoalsUI();
-}
-
-function updateGoalsUI() {
   document.getElementById('goalCal').textContent = goals.cal;
   document.getElementById('goalProtein').textContent = goals.protein;
   document.getElementById('goalFat').textContent = goals.fat;
   document.getElementById('goalCarbs').textContent = goals.carbs;
-
-  function segBar(mealVals) {
-    const total = mealVals.reduce((s,x) => s+x.val, 0);
-    let h = '<div class="dist-bar">';
-    mealVals.forEach(s => {
-      const w = total > 0 ? s.val/total*100 : 0;
-      const pct = Math.round(w);
-      h += `<div class="dist-seg" style="flex:${w};background:${MEAL_COLORS[s.meal]};min-width:${w>0?4:0}px" title="${s.meal}: ${Math.round(s.val)}${s.unit}">${pct>0?pct+'%':''}</div>`;
-    });
-    h += `</div><div class="dist-total">${Math.round(total)} ${mealVals[0].unit}</div>`;
-    return h;
-  }
-
-  const legendHtml = '<div class="dist-legend">' + MEAL_ORDER.map(m => `<div class="dist-legend-item"><div class="dist-legend-dot" style="background:${MEAL_COLORS[m]}"></div>${MEAL_ICONS[m]} ${m}</div>`).join('') + '</div>';
-
-  let html = '<div style="font-weight:600;font-size:15px;margin-bottom:8px;padding:0 16px"><i class="fas fa-fire"></i> Розподіл калорій</div>';
-  const calVals = MEAL_ORDER.map(m => {
-    const pPct = goals.distProtein[m] || 0;
-    const fPct = goals.distFat[m] || 0;
-    const cPct = goals.distCarbs[m] || 0;
-    const pG = goals.protein * pPct / 100;
-    const fG = goals.fat * fPct / 100;
-    const cG = goals.carbs * cPct / 100;
-    return {meal:m, val:pG*4+fG*9+cG*4, unit:'ккал'};
-  });
-  const totalMacroCal = calVals.reduce((s,x) => s+x.val, 0);
-  if (totalMacroCal > 0) calVals.forEach(v => v.val = v.val / totalMacroCal * goals.cal);
-  html += '<div class="dist-row"><div class="dist-label"><i class="fas fa-fire"></i> К</div>' + segBar(calVals) + '</div>';
-  html += legendHtml;
-
-  html += '<div style="margin:16px 0;border-top:1px solid var(--bg3);padding:12px 16px 0;font-weight:600;font-size:15px;margin-bottom:8px"><i class="fas fa-chart-simple"></i> Розподіл нутрієнтів</div>';
-  const macros = [
-    {key:'protein',label:'<i class="fas fa-drumstick-bite"></i> Б', unit:'г', getPct:m=>goals.distProtein[m]||0},
-    {key:'fat',label:'<i class="fas fa-droplet"></i> Ж', unit:'г', getPct:m=>goals.distFat[m]||0},
-    {key:'carbs',label:'<i class="fas fa-wheat-awn"></i> В', unit:'г', getPct:m=>goals.distCarbs[m]||0},
-  ];
-  macros.forEach(mt => {
-    const totalGoals = mt.key==='protein'?goals.protein:mt.key==='fat'?goals.fat:goals.carbs;
-    const vals = MEAL_ORDER.map(m => ({meal:m, val:totalGoals * mt.getPct(m) / 100, unit:mt.unit}));
-    html += '<div class="dist-row"><div class="dist-label">' + mt.label + '</div>' + segBar(vals) + '</div>';
-  });
-  html += legendHtml;
-
-  document.getElementById('distPreview').innerHTML = html;
 }
 
 function openGoalsModal() {
@@ -1879,52 +1789,20 @@ function openGoalsModal() {
   document.getElementById('goalProteinInput').value = goals.protein;
   document.getElementById('goalFatInput').value = goals.fat;
   document.getElementById('goalCarbsInput').value = goals.carbs;
-  const distMap = {P:'distProtein',F:'distFat',C:'distCarbs'};
-  ['P','F','C'].forEach(t => {
-    MEAL_ORDER.forEach((m,i) => {
-      document.getElementById('dist'+t+i).value = goals[distMap[t]]?.[m] || 0;
-    });
-  });
-  validateDist();
   openModal('goalsModal');
 }
 
-
-function validateDist() {
-  const labels = ['Білків','Жирів','Вуглеводів'];
-  const prefixes = ['P','F','C'];
-  let allOk = true;
-  let hints = [];
-  prefixes.forEach((pref, idx) => {
-    let sum = 0;
-    MEAL_ORDER.forEach((_, i) => {
-      sum += parseInt(document.getElementById('dist'+pref+i).value) || 0;
-    });
-    if (sum !== 100) {
-      allOk = false;
-      hints.push('Сума ' + labels[idx] + ' має бути 100% (зараз ' + sum + '%)');
-    }
-  });
-  document.getElementById('distHint').textContent = hints.join('. ');
-  document.getElementById('saveGoalsBtn').disabled = !allOk;
-}
-
 async function saveGoals() {
-  validateDist();
-  if (document.getElementById('saveGoalsBtn').disabled) return;
   goals.cal = parseInt(document.getElementById('goalCalInput').value) || 0;
   goals.protein = parseInt(document.getElementById('goalProteinInput').value) || 0;
   goals.fat = parseInt(document.getElementById('goalFatInput').value) || 0;
   goals.carbs = parseInt(document.getElementById('goalCarbsInput').value) || 0;
-  const distMap = {P:'distProtein',F:'distFat',C:'distCarbs'};
-  ['P','F','C'].forEach(t => {
-    MEAL_ORDER.forEach((m,i) => {
-      goals[distMap[t]][m] = parseInt(document.getElementById('dist'+t+i).value) || 0;
-    });
-  });
   await userRef().collection('goals').doc('main').set(goals);
   closeModal('goalsModal');
-  updateGoalsUI();
+  document.getElementById('goalCal').textContent = goals.cal;
+  document.getElementById('goalProtein').textContent = goals.protein;
+  document.getElementById('goalFat').textContent = goals.fat;
+  document.getElementById('goalCarbs').textContent = goals.carbs;
   showSyncBadge();
   showToast('Цілі збережено');
 }
