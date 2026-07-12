@@ -887,6 +887,14 @@ function updateDateDisplay() {
 }
 
 function displayDateStr(d) {
+  const today = new Date();
+  const fmt = date => date.getFullYear() + '-' + zeroPad(date.getMonth()+1, 2) + '-' + zeroPad(date.getDate(), 2);
+  const dStr = fmt(d);
+  if (dStr === fmt(today)) return 'Сьогодні';
+  const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
+  if (dStr === fmt(yesterday)) return 'Вчора';
+  const tomorrow = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1);
+  if (dStr === fmt(tomorrow)) return 'Завтра';
   const days = ['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
   const months = ['Січ','Лют','Бер','Кві','Тра','Чер','Лип','Сер','Вер','Жов','Лис','Гру'];
   return days[d.getDay()] + ', ' + d.getDate() + ' ' + months[d.getMonth()];
