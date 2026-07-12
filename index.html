@@ -1168,6 +1168,10 @@ async function importProducts() {
 // ====== DIARY ======
 async function loadDiary() {
   document.getElementById('mealSections').innerHTML = '<div class="loader"></div>';
+  ['aiAdviceCard','aiAdviceBtn'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
   try {
     const dateStr = formatDate(currentDate);
     const entriesPromise = fireGetWhere('entries', ['date', '==', dateStr]);
