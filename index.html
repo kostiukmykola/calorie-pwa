@@ -314,7 +314,8 @@
     .segmented button.active { background:var(--accent); color:#fff; }
 
     .week-chart { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding: 24px 0 10px; }
-    .week-chart.month { gap: 2px; overflow-x:auto; overflow-y:hidden; scrollbar-width:thin; }
+    .week-chart.month { gap: 3px; overflow-x:auto; overflow-y:hidden; scrollbar-width:thin; }
+    .week-chart.month .bar-wrap { min-width: 24px; }
     .week-chart .bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height: 100%; justify-content:flex-end; }
     .week-chart .bar { width: 100%; max-width: 32px; border-radius: 4px 4px 0 0; background: var(--accent); min-height: 2px; transition: height 0.3s; position:relative; }
     .week-chart .bar-value { font-size: 10px; color: var(--text2); font-weight: 600; white-space:nowrap; position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:2px; }
