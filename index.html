@@ -1818,25 +1818,30 @@ async function renderStats() {
 
   const totalCalPer = dailyData.reduce((s, d) => s + d.cal, 0);
   const totalGoal = goals.cal * numDays;
-  const progress = Math.min(100, totalGoal > 0 ? totalCalPer / totalGoal * 100 : 0);
 
   const daysWithEntries = dailyData.filter(d => d.cal > 0);
   const totalP = daysWithEntries.reduce((s, d) => s + d.protein, 0);
   const totalF = daysWithEntries.reduce((s, d) => s + d.fat, 0);
   const totalC = daysWithEntries.reduce((s, d) => s + d.carbs, 0);
   const totalG = totalP + totalF + totalC;
+  const avgCal = totalCalPer / (daysWithData || 1);
+  const avgProgress = Math.min(100, goals.cal > 0 ? avgCal / goals.cal * 100 : 0);
+
   let pAngle = 0, fAngle = 0, cAngle = 0;
-  if (totalG > 0 && progress > 0) {
+  if (totalG > 0 && avgProgress > 0) {
     const pRatio = totalP / totalG;
     const fRatio = totalF / totalG;
     const cRatio = totalC / totalG;
-    pAngle = progress * pRatio;
-    fAngle = pAngle + progress * fRatio;
-    cAngle = fAngle + progress * cRatio;
+    pAngle = avgProgress * pRatio;
+    fAngle = pAngle + avgProgress * fRatio;
+    cAngle = fAngle + avgProgress * cRatio;
   }
-  const ringGrad = totalG > 0 && progress > 0
+  const ringGrad = totalG > 0 && avgProgress > 0
     ? `conic-gradient(#22c55e 0% ${pAngle}%, #eab308 ${pAngle}% ${fAngle}%, #3b82f6 ${fAngle}% ${cAngle}%, rgba(255,255,255,0.08) ${cAngle}% 100%)`
     : `conic-gradient(rgba(255,255,255,0.08) 0% 100%)`;
+
+  const avgCal = totalCalPer / (daysWithData || 1);
+  const avgProgress = Math.min(100, goals.cal > 0 ? avgCal / goals.cal * 100 : 0);
 
   const avgP = totalG > 0 ? Math.round(totalP / daysWithEntries.length * 10) / 10 : 0;
   const avgF = totalG > 0 ? Math.round(totalF / daysWithEntries.length * 10) / 10 : 0;
@@ -1846,17 +1851,14 @@ async function renderStats() {
     <div class="card test-ring" style="align-items:stretch;gap:16px">
       <div class="test-ring-chart" style="background:${ringGrad}">
         <div class="test-ring-hole">
-          <span class="val">${Math.round(totalCalPer)}</span>
-          <span class="lbl">${Math.round(progress)}%</span>
+          <span class="val">${Math.round(avgCal)}</span>
+          <span class="lbl">${Math.round(avgProgress)}%</span>
         </div>
       </div>
       <div class="test-ring-items" style="justify-content:center">
         <div class="test-ring-item"><div class="dot" style="background:#22c55e"></div><span class="name">Білки</span><span class="val">${avgP} г/день</span></div>
         <div class="test-ring-item"><div class="dot" style="background:#eab308"></div><span class="name">Жири</span><span class="val">${avgF} г/день</span></div>
         <div class="test-ring-item"><div class="dot" style="background:#3b82f6"></div><span class="name">Вуглеводи</span><span class="val">${avgC} г/день</span></div>
-        <div style="border-top:1px solid var(--bg3);padding-top:6px;margin-top:2px"></div>
-        <div class="test-ring-item"><span class="name"><i class="fas fa-calendar"></i> Днів</span><span class="val">${daysWithData}</span></div>
-        <div class="test-ring-item"><span class="name"><i class="fas fa-fire"></i> Середнє</span><span class="val">${Math.round(totalCalPer / (daysWithData || 1))} ккал</span></div>
       </div>
     </div>
   ` + `
