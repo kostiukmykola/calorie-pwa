@@ -1601,24 +1601,29 @@ function renderDiary() {
       if (Date.now() - parsed.ts < 86400000) adviceText = parsed.advice;
     } catch(e) {}
   }
+  const isFuture = formatDate(currentDate) > formatDate(new Date());
   let adviceCard = document.getElementById('aiAdviceCard');
-  if (!adviceCard) {
-    adviceCard = document.createElement('div');
-    adviceCard.id = 'aiAdviceCard';
-    adviceCard.className = 'card';
-    ring.after(adviceCard);
-  }
-  if (adviceText) {
-    adviceCard.style.display = 'block';
-    adviceCard.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
-        <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></button>
-      </div>
-      <div style="font-size:14px;line-height:1.6;color:var(--text)">${adviceText}</div>`;
+  if (isFuture) {
+    if (adviceCard) adviceCard.style.display = 'none';
   } else {
-    adviceCard.style.display = entries.length > 0 ? 'block' : 'none';
-    adviceCard.innerHTML = '<button class="btn btn-sm btn-block" style="background:var(--card2);color:var(--text2);padding:12px" onclick="handleAdviceClick(this)">✨ Отримати аналіз дня від ШІ</button>';
+    if (!adviceCard) {
+      adviceCard = document.createElement('div');
+      adviceCard.id = 'aiAdviceCard';
+      adviceCard.className = 'card';
+      ring.after(adviceCard);
+    }
+    if (adviceText) {
+      adviceCard.style.display = 'block';
+      adviceCard.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span style="font-size:12px;color:#a78bfa;font-weight:600">✨ Порада ШІ на сьогодні</span>
+          <button class="btn btn-sm" style="background:none;color:var(--text2);padding:4px;font-size:14px" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></button>
+        </div>
+        <div style="font-size:14px;line-height:1.6;color:var(--text)">${adviceText}</div>`;
+    } else {
+      adviceCard.style.display = entries.length > 0 ? 'block' : 'none';
+      adviceCard.innerHTML = '<button class="btn btn-sm btn-block" style="background:var(--card2);color:var(--text2);padding:12px" onclick="handleAdviceClick(this)">✨ Отримати аналіз дня від ШІ</button>';
+    }
   }
 }
 
@@ -1673,19 +1678,19 @@ async function generateDailyAdvice() {
   const totalP = entries.reduce((s, e) => s + e.protein, 0);
   const totalF = entries.reduce((s, e) => s + e.fat, 0);
   const totalCarbs = entries.reduce((s, e) => s + e.carbs, 0);
-  const prompt = `Поточний час: ${timeStr}.
-З'їдено за сьогодні: ${Math.round(totalCals)} ккал (Б: ${round1(totalP)}г, Ж: ${round1(totalF)}г, В: ${round1(totalCarbs)}г).
-Ціль на день: ${goals.cal} ккал (Б: ${goals.protein}г, Ж: ${goals.fat}г, В: ${goals.carbs}г).
-
-Список страв:
-${mealLog}`;
+  const prompt = 'Сьогоднішня дата: ' + formatDate(new Date()) + '\n'
+    + 'Дата аналізованого дня: ' + formatDate(currentDate) + '\n'
+    + 'Поточний час: ' + timeStr + '.\n'
+    + 'З\'їдено за сьогодні: ' + Math.round(totalCals) + ' ккал (Б: ' + round1(totalP) + 'г, Ж: ' + round1(totalF) + 'г, В: ' + round1(totalCarbs) + 'г).\n'
+    + 'Ціль на день: ' + goals.cal + ' ккал (Б: ' + goals.protein + 'г, Ж: ' + goals.fat + 'г, В: ' + goals.carbs + 'г).\n'
+    + '\nСписок страв:\n' + mealLog;
 
   try {
     const res = await fetch(GEMINI_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        system_instruction: { parts: [{ text: 'Ти — професійний нутриціолог та фітнес-аналітик. Твоє завдання — проаналізувати поточний щоденник харчування користувача за день і дати ОДНУ ультра-коротку, персоналізовану та практичну пораду. Правила: 1. Довжина строго 2-3 речення. Мова — українська. Тон — дружній, мотивуючий, експертний (звертайся на "ви"). 2. Жодної води та банальностей.          3. Обов\'язково зважай на поточний час та дисбаланс БЖВ. 4. Завжди повертай відповідь ТІЛЬКИ у форматі JSON: {"advice": "текст поради"}' }] },
+        system_instruction: { parts: [{ text: 'Ти — професійний нутриціолог та фітнес-аналітик. Твоє завдання — проаналізувати поточний щоденник харчування користувача за день і дати ОДНУ ультра-коротку, персоналізовану та практичну пораду. Правила: 1. Довжина строго 2-3 речення. Мова — українська. Тон — дружній, мотивуючий, експертний (звертайся на "ви"). 2. Жодної води та банальностей.          3. Обов\'язково порівнюй "Сьогоднішню дату" та "Дата аналізованого дня": А) Якщо "Дата аналізованого дня" < "Сьогоднішня дата" — пиши у МИНУЛОМУ ЧАСІ (ретроспектива). Заборонено давати рекомендації на залишок дня. Дай аналітичний висновок: що зроблено добре, де помилка, порада НА МАЙБУТНЄ. Б) Якщо "Дата аналізованого дня" == "Сьогоднішня дата" — пиши в ТЕПЕРІШНЬОМУ або МАЙБУТНЬОМУ часі. Враховуй "Поточний час", дай практичні рекомендації на залишок дня. 4. Завжди повертай відповідь ТІЛЬКИ у форматі JSON: {"advice": "текст поради"}' }] },
         contents: [{ parts: [{ text: prompt }] }]
       })
     });
