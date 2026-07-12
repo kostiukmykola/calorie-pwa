@@ -1679,7 +1679,7 @@ async function handleAdviceClick() {
         <span style="font-size:12px;font-weight:600"><i class="fas fa-robot"></i> Порада ШІ на сьогодні</span>
         <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:20px;cursor:pointer;color:var(--text2)" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></span>
       </div>
-      <div style="font-size:14px;line-height:1.6;color:var(--text)"><div class="advice-collapsed advice-text">${advice}</div><span class="advice-toggle" onclick="toggleAdvice(this)">Розгорнути</span></div>`;
+      <div style="font-size:14px;line-height:1.6;color:var(--text)"><div class="advice-collapsed advice-text open">${advice}</div><span class="advice-toggle" onclick="toggleAdvice(this)">Згорнути</span></div>`;
   } else {
     card.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
@@ -1711,7 +1711,7 @@ async function refreshAdvice(btn) {
         <span style="font-size:12px;font-weight:600"><i class="fas fa-robot"></i> Порада ШІ на сьогодні</span>
         <span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:20px;cursor:pointer;color:var(--text2)" onclick="refreshAdvice(this)"><i class="fas fa-rotate"></i></span>
       </div>
-      <div style="font-size:14px;line-height:1.6;color:var(--text)"><div class="advice-collapsed advice-text">${advice}</div><span class="advice-toggle" onclick="toggleAdvice(this)">Розгорнути</span></div>`;
+      <div style="font-size:14px;line-height:1.6;color:var(--text)"><div class="advice-collapsed advice-text open">${advice}</div><span class="advice-toggle" onclick="toggleAdvice(this)">Згорнути</span></div>`;
   } else {
     card.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
