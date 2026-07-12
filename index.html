@@ -1635,6 +1635,7 @@ function renderDiary() {
             adviceCard = document.createElement('div');
             adviceCard.id = 'aiAdviceCard';
             adviceCard.className = 'card';
+            adviceCard.style.marginBottom = '24px';
             ring.after(adviceCard);
           }
           adviceCard.style.display = 'block';
@@ -1676,6 +1677,7 @@ async function handleAdviceClick() {
     card = document.createElement('div');
     card.id = 'aiAdviceCard';
     card.className = 'card';
+    card.style.marginBottom = '24px';
     const ring = document.getElementById('testRing') || document.getElementById('mealSections');
     ring.after(card);
   }
