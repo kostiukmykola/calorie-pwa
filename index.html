@@ -302,13 +302,13 @@
     .segmented button { flex:1; background:none; border:none; color:var(--text2); font-size:13px; font-weight:500; padding:8px 12px; border-radius:10px; cursor:pointer; font-family:inherit; transition:all 0.2s; }
     .segmented button.active { background:var(--accent); color:#fff; }
 
-    .week-chart { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding: 24px 0 10px; overflow-y: hidden; }
-    .week-chart.month { gap: 3px; overflow-x:auto; overflow-y:hidden; scrollbar-width:thin; }
-    .week-chart.month .bar-wrap { min-width: 24px; }
-    .week-chart .bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; justify-content:flex-end; }
-    .week-chart .bar { width: 100%; max-width: 32px; border-radius: 4px 4px 0 0; min-height: 2px; transition: height 0.3s; position:relative; }
-    .week-chart .bar-value { font-size: 10px; color: var(--text2); font-weight: 600; white-space:nowrap; position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:2px; }
-    .week-chart .bar-label { font-size: 10px; color: var(--text2); }
+    .chart { display:flex; gap:6px; height:150px; padding:24px 0 10px; }
+    .chart.month { gap:3px; overflow-x:auto; overflow-y:hidden; scrollbar-width:thin; }
+    .chart.month .chart-bar { min-width:24px; }
+    .chart-bar { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:4px; }
+    .chart-fill { width:100%; max-width:32px; border-radius:4px 4px 0 0; min-height:2px; position:relative; }
+    .chart-value { font-size:10px; color:var(--text2); font-weight:600; white-space:nowrap; position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:2px; }
+    .chart-label { font-size:10px; color:var(--text2); }
 
     .confirm-overlay { display: none; position: fixed; inset:0; background: rgba(0,0,0,0.6); z-index: 600; justify-content: center; align-items: center; }
     .confirm-overlay.open { display: flex; }
@@ -1966,8 +1966,9 @@ async function renderStats() {
 
   const daysLabels = ['Нд','Пн','Вт','Ср','Чт','Пт','Сб'];
   const chartHtml = `<div class="card">
-    <div class="week-chart${statsWeekView ? '' : ' month'}">
+    <div class="chart${statsWeekView ? '' : ' month'}">
       ${dailyData.map(d => {
+        const barHeight = Math.max(2, Math.round(d.cal / maxCal * 100));
         const pCal = d.protein * 4;
         const fCal = d.fat * 9;
         const cCal = d.carbs * 4;
@@ -1976,9 +1977,9 @@ async function renderStats() {
         const fP = tMacro > 0 ? fCal / tMacro * 100 : 0;
         const cP = tMacro > 0 ? cCal / tMacro * 100 : 0;
         return `
-        <div class="bar-wrap">
-          <div class="bar" style="height:${Math.max(2, Math.round(d.cal / maxCal * 120))}px;background:linear-gradient(to top, #22c55e 0% ${pP}%, #eab308 ${pP}% ${pP+fP}%, #3b82f6 ${pP+fP}% 100%)"><div class="bar-value">${Math.round(d.cal)}</div></div>
-          <div class="bar-label">${statsWeekView ? daysLabels[d.date.getDay()] : d.date.getDate()}</div>
+        <div class="chart-bar">
+          <div class="chart-fill" style="height:${barHeight}px;background:linear-gradient(to top, #22c55e 0% ${pP}%, #eab308 ${pP}% ${pP+fP}%, #3b82f6 ${pP+fP}% 100%)"><div class="chart-value">${Math.round(d.cal)}</div></div>
+          <span class="chart-label">${statsWeekView ? daysLabels[d.date.getDay()] : d.date.getDate()}</span>
         </div>`;
       }).join('')}
     </div>
