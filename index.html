@@ -1581,33 +1581,34 @@ function renderDiary() {
     const p = totalG > 0 ? Math.round(total.protein / totalG * 100) : 0;
     const f = totalG > 0 ? Math.round(total.fat / totalG * 100) : 0;
     const c = totalG > 0 ? 100 - p - f : 0;
-    const ring = document.getElementById('testRing');
+    const remainCal = Math.max(0, goals.cal - total.cal);
+    const remainP = Math.max(0, goals.protein - total.protein);
+    const remainF = Math.max(0, goals.fat - total.fat);
+    const remainC = Math.max(0, goals.carbs - total.carbs);
+    let ring = document.getElementById('testRing');
     if (!ring) {
       const div = document.createElement('div');
       div.id = 'testRing';
       div.className = 'test-ring';
-      const remainCal = Math.max(0, goals.cal - total.cal);
-      const remainP = Math.max(0, goals.protein - total.protein);
-      const remainF = Math.max(0, goals.fat - total.fat);
-      const remainC = Math.max(0, goals.carbs - total.carbs);
-      div.innerHTML = `
-        <div class="test-ring-chart" style="background:conic-gradient(#22c55e 0% ${p}%, #eab308 ${p}% ${p+f}%, #3b82f6 ${p+f}% 100%)">
-          <div class="test-ring-hole">
-            <span class="val">${Math.round(total.cal)}</span>
-            <span class="lbl">ккал</span>
-          </div>
-        </div>
-        <div class="test-ring-items">
-          <div class="test-ring-item"><div class="dot" style="background:#22c55e"></div><span class="name">Білки</span><span class="val">${Math.round(total.protein)} / ${goals.protein} г</span></div>
-          <div class="test-ring-item"><div class="dot" style="background:#eab308"></div><span class="name">Жири</span><span class="val">${Math.round(total.fat)} / ${goals.fat} г</span></div>
-          <div class="test-ring-item"><div class="dot" style="background:#3b82f6"></div><span class="name">Вуглеводи</span><span class="val">${Math.round(total.carbs)} / ${goals.carbs} г</span></div>
-          <div style="border-top:1px solid var(--bg3);padding-top:6px;margin-top:2px"></div>
-          <div class="test-ring-item"><span class="name" style="font-weight:600">Залишилось</span></div>
-          <div class="test-ring-item"><span class="name">🔥 ${remainCal} ккал</span><span class="val">🥩 ${Math.round(remainP)}г / 🫧 ${Math.round(remainF)}г / 🌾 ${Math.round(remainC)}г</span></div>
-        </div>`;
       const summary = document.getElementById('dailySummary');
       summary.after(div);
+      ring = div;
     }
+    ring.innerHTML = `
+      <div class="test-ring-chart" style="background:conic-gradient(#22c55e 0% ${p}%, #eab308 ${p}% ${p+f}%, #3b82f6 ${p+f}% 100%)">
+        <div class="test-ring-hole">
+          <span class="val">${Math.round(total.cal)}</span>
+          <span class="lbl">ккал</span>
+        </div>
+      </div>
+      <div class="test-ring-items">
+        <div class="test-ring-item"><div class="dot" style="background:#22c55e"></div><span class="name">Білки</span><span class="val">${Math.round(total.protein)} / ${goals.protein} г</span></div>
+        <div class="test-ring-item"><div class="dot" style="background:#eab308"></div><span class="name">Жири</span><span class="val">${Math.round(total.fat)} / ${goals.fat} г</span></div>
+        <div class="test-ring-item"><div class="dot" style="background:#3b82f6"></div><span class="name">Вуглеводи</span><span class="val">${Math.round(total.carbs)} / ${goals.carbs} г</span></div>
+        <div style="border-top:1px solid var(--bg3);padding-top:6px;margin-top:2px"></div>
+        <div class="test-ring-item"><span class="name" style="font-weight:600">Залишилось</span></div>
+        <div class="test-ring-item"><span class="name">🔥 ${remainCal} ккал</span><span class="val">🥩 ${Math.round(remainP)}г / 🫧 ${Math.round(remainF)}г / 🌾 ${Math.round(remainC)}г</span></div>
+      </div>`;
   }
 }
 
