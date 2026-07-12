@@ -176,11 +176,6 @@
     .page-title::after { content: ''; width: 1em; }
     .card { background: var(--card); border-radius: var(--radius); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
 
-    .daily-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-    .daily-summary .stat { background: var(--card); border-radius: var(--radius); padding: 14px 12px; text-align: center; }
-    .daily-summary .stat .label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
-    .daily-summary .stat .value { font-size: 24px; font-weight: 700; margin-top: 4px; color: #fff; }
-    .daily-summary .stat .goal { font-size: 11px; color: var(--text2); }
     .progress-bar { height: 6px; background: var(--bg3); border-radius: 3px; margin: 4px 0 2px; overflow:hidden; }
     .progress-bar .fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
 
@@ -281,17 +276,6 @@
     .empty-state h3 { font-size: 16px; margin-bottom: 6px; color: var(--text); }
     .empty-state p { font-size: 13px; }
 
-    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-    .stats-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-    .stats-grid .stat-card { background: var(--card); border-radius: var(--radius); padding: 14px; text-align: center; }
-    .stats-grid .stat-card .label { font-size: 11px; color: var(--text2); }
-    .stats-grid .stat-card .value { font-size: 22px; font-weight: 700; color: #fff; }
-    .stats-grid .stat-card .sub { font-size: 11px; color: var(--text2); }
-    .stats-grid-3 .stat-card { background: var(--card); border-radius: var(--radius); padding: 14px; text-align: center; }
-    .stats-grid-3 .stat-card .label { font-size: 11px; color: var(--text2); }
-    .stats-grid-3 .stat-card .value { font-size: 22px; font-weight: 700; color: #fff; }
-    .stats-grid-3 .stat-card .sub { font-size: 11px; color: var(--text2); }
-
     .goal-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }
     .goal-row:last-child { border-bottom: none; }
     .goal-row .glabel { font-size: 14px; }
@@ -361,7 +345,6 @@
 
     @media(min-width:500px){
       .daily-summary { grid-template-columns: repeat(4,1fr); }
-      .stats-grid { grid-template-columns: repeat(4,1fr); }
     }
   </style>
 </head>
@@ -1833,77 +1816,50 @@ async function renderStats() {
     </div>
   </div>`;
 
-  const statsHtml = `
-    <div class="stats-grid">
-      <div class="stat-card cal">
-        <div class="label"><i class="fas fa-fire"></i> Середнє</div>
-        <div class="value">${Math.round(avg(dailyData.filter(d => d.cal > 0).map(d => d.cal)))}</div>
-        <div class="sub">ккал/день</div>
-      </div>
-      <div class="stat-card protein">
-        <div class="label"><i class="fas fa-drumstick-bite"></i> Білки</div>
-        <div class="value">${Math.round(avg(dailyData.filter(d => d.protein > 0).map(d => d.protein)))}</div>
-        <div class="sub">г/день</div>
-      </div>
-      <div class="stat-card fat">
-        <div class="label"><i class="fas fa-droplet"></i> Жири</div>
-        <div class="value">${Math.round(avg(dailyData.filter(d => d.fat > 0).map(d => d.fat)))}</div>
-        <div class="sub">г/день</div>
-      </div>
-      <div class="stat-card carbs">
-        <div class="label"><i class="fas fa-wheat-awn"></i> Вуглеводи</div>
-        <div class="value">${Math.round(avg(dailyData.filter(d => d.carbs > 0).map(d => d.carbs)))}</div>
-        <div class="sub">г/день</div>
-      </div>
-    </div>`;
+  const totalCalPer = dailyData.reduce((s, d) => s + d.cal, 0);
+  const totalGoal = goals.cal * numDays;
+  const progress = Math.min(100, totalGoal > 0 ? totalCalPer / totalGoal * 100 : 0);
 
-  // BZHU ratio
   const daysWithEntries = dailyData.filter(d => d.cal > 0);
   const totalP = daysWithEntries.reduce((s, d) => s + d.protein, 0);
   const totalF = daysWithEntries.reduce((s, d) => s + d.fat, 0);
   const totalC = daysWithEntries.reduce((s, d) => s + d.carbs, 0);
   const totalG = totalP + totalF + totalC;
-  const pPct = totalG > 0 ? Math.round(totalP / totalG * 100) : 0;
-  const fPct = totalG > 0 ? Math.round(totalF / totalG * 100) : 0;
-  const cPct = totalG > 0 ? Math.round(totalC / totalG * 100) : 0;
-
-  const calP = totalP * 4;
-  const calF = totalF * 9;
-  const calC = totalC * 4;
-  const totalCalFromMacro = calP + calF + calC;
-  const calPctP = totalCalFromMacro > 0 ? Math.round(calP / totalCalFromMacro * 100) : 0;
-  const calPctF = totalCalFromMacro > 0 ? Math.round(calF / totalCalFromMacro * 100) : 0;
-  const calPctC = totalCalFromMacro > 0 ? Math.round(calC / totalCalFromMacro * 100) : 0;
+  let pAngle = 0, fAngle = 0, cAngle = 0;
+  if (totalG > 0 && progress > 0) {
+    const pRatio = totalP / totalG;
+    const fRatio = totalF / totalG;
+    const cRatio = totalC / totalG;
+    pAngle = progress * pRatio;
+    fAngle = pAngle + progress * fRatio;
+    cAngle = fAngle + progress * cRatio;
+  }
+  const ringGrad = totalG > 0 && progress > 0
+    ? `conic-gradient(#22c55e 0% ${pAngle}%, #eab308 ${pAngle}% ${fAngle}%, #3b82f6 ${fAngle}% ${cAngle}%, rgba(255,255,255,0.08) ${cAngle}% 100%)`
+    : `conic-gradient(rgba(255,255,255,0.08) 0% 100%)`;
 
   const avgP = totalG > 0 ? Math.round(totalP / daysWithEntries.length * 10) / 10 : 0;
   const avgF = totalG > 0 ? Math.round(totalF / daysWithEntries.length * 10) / 10 : 0;
   const avgC = totalG > 0 ? Math.round(totalC / daysWithEntries.length * 10) / 10 : 0;
 
-  const ratioHtml = daysWithEntries.length > 0 ? `
-    <div class="page-title" style="margin-top:8px;margin-bottom:8px"><i class="fas fa-chart-pie"></i> Співвідношення БЖВ</div>
-    <div class="stats-grid-3">
-      <div class="stat-card">
-        <div class="label"><i class="fas fa-drumstick-bite"></i> Білки</div>
-        <div class="value">${calPctP}%</div>
-        <div class="sub">${Math.round(avgP)} г/день</div>
-        <div class="sub">${pPct}% від маси</div>
+  container.innerHTML = chartHtml + `
+    <div class="card test-ring" style="align-items:stretch;gap:16px">
+      <div class="test-ring-chart" style="background:${ringGrad}">
+        <div class="test-ring-hole">
+          <span class="val">${Math.round(totalCalPer)}</span>
+          <span class="lbl">${Math.round(progress)}%</span>
+        </div>
       </div>
-      <div class="stat-card">
-        <div class="label"><i class="fas fa-droplet"></i> Жири</div>
-        <div class="value">${calPctF}%</div>
-        <div class="sub">${Math.round(avgF)} г/день</div>
-        <div class="sub">${fPct}% від маси</div>
-      </div>
-      <div class="stat-card">
-        <div class="label"><i class="fas fa-wheat-awn"></i> Вуглеводи</div>
-        <div class="value">${calPctC}%</div>
-        <div class="sub">${Math.round(avgC)} г/день</div>
-        <div class="sub">${cPct}% від маси</div>
+      <div class="test-ring-items" style="justify-content:center">
+        <div class="test-ring-item"><div class="dot" style="background:#22c55e"></div><span class="name">Білки</span><span class="val">${avgP} г/день</span></div>
+        <div class="test-ring-item"><div class="dot" style="background:#eab308"></div><span class="name">Жири</span><span class="val">${avgF} г/день</span></div>
+        <div class="test-ring-item"><div class="dot" style="background:#3b82f6"></div><span class="name">Вуглеводи</span><span class="val">${avgC} г/день</span></div>
+        <div style="border-top:1px solid var(--bg3);padding-top:6px;margin-top:2px"></div>
+        <div class="test-ring-item"><span class="name"><i class="fas fa-calendar"></i> Днів</span><span class="val">${daysWithData}</span></div>
+        <div class="test-ring-item"><span class="name"><i class="fas fa-fire"></i> Середнє</span><span class="val">${Math.round(totalCalPer / (daysWithData || 1))} ккал</span></div>
       </div>
     </div>
-  ` : '';
-
-  container.innerHTML = chartHtml + statsHtml + ratioHtml + `
+  ` + `
     <div class="card">
       <div class="goal-row"><span class="glabel"><i class="fas fa-calendar"></i> Днів в періоді</span><span class="gvalue">${count}</span></div>
       <div class="goal-row"><span class="glabel"><i class="fas fa-check"></i> Днів з записами</span><span class="gvalue">${daysWithData}</span></div>
