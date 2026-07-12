@@ -230,7 +230,6 @@
       padding: 14px 24px; border: none; border-radius: 28px;
       background: var(--accent); color: #fff;
       font-size: 15px; font-weight: 600; cursor: pointer;
-      box-shadow: 0 4px 16px rgba(233,69,96,0.4);
       transition: all 0.2s;
     }
     .fab:active { transform: scale(0.95); }
@@ -434,9 +433,8 @@
       <span id="dateDisplay" style="font-size:15px" class="fw-600"></span>
       <button id="dateNextBtn">▶</button>
     </div>
-    <div class="daily-summary" id="dailySummary"></div>
     <div id="mealSections"><div class="loader"></div></div>
-    <button class="fab" id="addMealBtn"><i class="fas fa-plus"></i> додати</button>
+    <button class="fab" id="addMealBtn"><i class="fas fa-plus"></i> Додати</button>
   </div>
 
   <div class="page" id="pageProducts">
@@ -617,8 +615,8 @@
     <div class="modal-handle"></div>
     <h2><i class="fas fa-pencil"></i> Редагувати запис</h2>
     <input type="hidden" id="editEntryId">
-    <div class="form-group"><label>Назва страви</label><input type="text" id="editEntryName"></div>
     <div class="form-group"><label>Тип прийому</label><select id="editMealType"><option value="Сніданок">🌅 Сніданок</option><option value="Обід">☀️ Обід</option><option value="Вечеря">🌙 Вечеря</option><option value="Перекус">🍿 Перекус</option></select></div>
+    <div class="form-group"><label>Назва страви</label><input type="text" id="editEntryName"></div>
     <div class="form-group"><label><i class="fas fa-fire"></i> Ккал</label><input type="number" id="editEntryCal" step="0.1" onfocus="setTimeout(()=>this.select(),80)"></div>
     <div class="form-row-3">
       <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки (г)</label><input type="number" id="editEntryProtein" step="0.1" onfocus="setTimeout(()=>this.select(),80)"></div>
@@ -1169,7 +1167,6 @@ async function importProducts() {
 // ====== DIARY ======
 async function loadDiary() {
   document.getElementById('mealSections').innerHTML = '<div class="loader"></div>';
-  document.getElementById('dailySummary').innerHTML = '';
   try {
     const dateStr = formatDate(currentDate);
     const entriesPromise = fireGetWhere('entries', ['date', '==', dateStr]);
@@ -1508,7 +1505,6 @@ async function swipeDeleteEntry(id) {
 }
 
 function renderDiary() {
-  const summary = document.getElementById('dailySummary');
   const sections = document.getElementById('mealSections');
 
   let total = { cal:0, protein:0, fat:0, carbs:0 };
@@ -1521,37 +1517,6 @@ function renderDiary() {
     total.fat += e.fat;
     total.carbs += e.carbs;
   });
-
-  function barColor(pct) {
-    return pct < 50 ? '#ef4444' : pct < 80 ? '#f59e0b' : '#10b981';
-  }
-
-  summary.innerHTML = `
-    <div class="stat cal">
-      <div class="label"><i class="fas fa-fire"></i> Калорії</div>
-      <div class="value">${Math.round(total.cal)}</div>
-      <div class="goal">з ${goals.cal}</div>
-      <div class="progress-bar"><div class="fill" style="width:${Math.min(100, total.cal/goals.cal*100)}%;background:${barColor(total.cal/goals.cal*100)}"></div></div>
-    </div>
-    <div class="stat protein">
-      <div class="label"><i class="fas fa-drumstick-bite"></i> Білки</div>
-      <div class="value">${Math.round(total.protein)}г</div>
-      <div class="goal">з ${goals.protein}г</div>
-      <div class="progress-bar"><div class="fill" style="width:${Math.min(100, total.protein/goals.protein*100)}%;background:${barColor(total.protein/goals.protein*100)}"></div></div>
-    </div>
-    <div class="stat fat">
-      <div class="label"><i class="fas fa-droplet"></i> Жири</div>
-      <div class="value">${Math.round(total.fat)}г</div>
-      <div class="goal">з ${goals.fat}г</div>
-      <div class="progress-bar"><div class="fill" style="width:${Math.min(100, total.fat/goals.fat*100)}%;background:${barColor(total.fat/goals.fat*100)}"></div></div>
-    </div>
-    <div class="stat carbs">
-      <div class="label"><i class="fas fa-wheat-awn"></i> Вуглеводи</div>
-      <div class="value">${Math.round(total.carbs)}г</div>
-      <div class="goal">з ${goals.carbs}г</div>
-      <div class="progress-bar"><div class="fill" style="width:${Math.min(100, total.carbs/goals.carbs*100)}%;background:${barColor(total.carbs/goals.carbs*100)}"></div></div>
-    </div>
-  `;
 
   let hasItems = false;
   let html = '';
@@ -1590,50 +1555,47 @@ function renderDiary() {
   }
   sections.innerHTML = html;
 
-  if (window.location.search.includes('test')) {
-    const progress = Math.min(100, goals.cal > 0 ? total.cal / goals.cal * 100 : 0);
-    const totalG = total.protein + total.fat + total.carbs;
-    let pAngle = 0, fAngle = 0, cAngle = 0;
-    if (totalG > 0 && progress > 0) {
-      const pRatio = total.protein / totalG;
-      const fRatio = total.fat / totalG;
-      const cRatio = total.carbs / totalG;
-      pAngle = progress * pRatio;
-      fAngle = pAngle + progress * fRatio;
-      cAngle = fAngle + progress * cRatio;
-    }
-    const ringGrad = totalG > 0 && progress > 0
-      ? `conic-gradient(#22c55e 0% ${pAngle}%, #eab308 ${pAngle}% ${fAngle}%, #3b82f6 ${fAngle}% ${cAngle}%, rgba(255,255,255,0.08) ${cAngle}% 100%)`
-      : `conic-gradient(rgba(255,255,255,0.08) 0% 100%)`;
-    const remainCal = Math.max(0, goals.cal - total.cal);
-    const remainP = Math.max(0, goals.protein - total.protein);
-    const remainF = Math.max(0, goals.fat - total.fat);
-    const remainC = Math.max(0, goals.carbs - total.carbs);
-    let ring = document.getElementById('testRing');
-    if (!ring) {
-      const div = document.createElement('div');
-      div.id = 'testRing';
-      div.className = 'test-ring';
-      const summary = document.getElementById('dailySummary');
-      summary.after(div);
-      ring = div;
-    }
-    ring.innerHTML = `
-      <div class="test-ring-chart" style="background:${ringGrad}">
-        <div class="test-ring-hole">
-          <span class="val">${Math.round(total.cal)}</span>
-          <span class="lbl">${Math.round(progress)}%</span>
-        </div>
-      </div>
-      <div class="test-ring-items">
-        <div class="test-ring-item"><div class="dot" style="background:#22c55e"></div><span class="name">Білки</span><span class="val">${Math.round(total.protein)} / ${goals.protein} г</span></div>
-        <div class="test-ring-item"><div class="dot" style="background:#eab308"></div><span class="name">Жири</span><span class="val">${Math.round(total.fat)} / ${goals.fat} г</span></div>
-        <div class="test-ring-item"><div class="dot" style="background:#3b82f6"></div><span class="name">Вуглеводи</span><span class="val">${Math.round(total.carbs)} / ${goals.carbs} г</span></div>
-        <div style="border-top:1px solid var(--bg3);padding-top:6px;margin-top:2px"></div>
-        <div class="test-ring-item"><span class="name" style="font-weight:600">Залишилось</span></div>
-        <div class="test-ring-item"><span class="name"><i class="fas fa-fire"></i> ${remainCal} ккал</span><span class="val"><i class="fas fa-drumstick-bite"></i> ${Math.round(remainP)}г / <i class="fas fa-droplet"></i> ${Math.round(remainF)}г / <i class="fas fa-wheat-awn"></i> ${Math.round(remainC)}г</span></div>
-      </div>`;
+  const progress = Math.min(100, goals.cal > 0 ? total.cal / goals.cal * 100 : 0);
+  const totalG = total.protein + total.fat + total.carbs;
+  let pAngle = 0, fAngle = 0, cAngle = 0;
+  if (totalG > 0 && progress > 0) {
+    const pRatio = total.protein / totalG;
+    const fRatio = total.fat / totalG;
+    const cRatio = total.carbs / totalG;
+    pAngle = progress * pRatio;
+    fAngle = pAngle + progress * fRatio;
+    cAngle = fAngle + progress * cRatio;
   }
+  const ringGrad = totalG > 0 && progress > 0
+    ? `conic-gradient(#22c55e 0% ${pAngle}%, #eab308 ${pAngle}% ${fAngle}%, #3b82f6 ${fAngle}% ${cAngle}%, rgba(255,255,255,0.08) ${cAngle}% 100%)`
+    : `conic-gradient(rgba(255,255,255,0.08) 0% 100%)`;
+  const remainCal = Math.max(0, goals.cal - total.cal);
+  const remainP = Math.max(0, goals.protein - total.protein);
+  const remainF = Math.max(0, goals.fat - total.fat);
+  const remainC = Math.max(0, goals.carbs - total.carbs);
+  let ring = document.getElementById('testRing');
+  if (!ring) {
+    const div = document.createElement('div');
+    div.id = 'testRing';
+    div.className = 'test-ring';
+    sections.before(div);
+    ring = div;
+  }
+  ring.innerHTML = `
+    <div class="test-ring-chart" style="background:${ringGrad}">
+      <div class="test-ring-hole">
+        <span class="val">${Math.round(total.cal)}</span>
+        <span class="lbl">${Math.round(progress)}%</span>
+      </div>
+    </div>
+    <div class="test-ring-items">
+      <div class="test-ring-item"><div class="dot" style="background:#22c55e"></div><span class="name">Білки</span><span class="val">${Math.round(total.protein)} / ${goals.protein} г</span></div>
+      <div class="test-ring-item"><div class="dot" style="background:#eab308"></div><span class="name">Жири</span><span class="val">${Math.round(total.fat)} / ${goals.fat} г</span></div>
+      <div class="test-ring-item"><div class="dot" style="background:#3b82f6"></div><span class="name">Вуглеводи</span><span class="val">${Math.round(total.carbs)} / ${goals.carbs} г</span></div>
+      <div style="border-top:1px solid var(--bg3);padding-top:6px;margin-top:2px"></div>
+      <div class="test-ring-item"><span class="name" style="font-weight:600">Залишилось</span></div>
+      <div class="test-ring-item"><span class="name"><i class="fas fa-fire"></i> ${remainCal} ккал</span><span class="val"><i class="fas fa-drumstick-bite"></i> ${Math.round(remainP)}г / <i class="fas fa-droplet"></i> ${Math.round(remainF)}г / <i class="fas fa-wheat-awn"></i> ${Math.round(remainC)}г</span></div>
+    </div>`;
 }
 
 function toggleMeal(name) {
