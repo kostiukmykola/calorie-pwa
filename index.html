@@ -474,9 +474,9 @@
         </div>
       </div>
       <div class="test-ring-items" style="justify-content:center">
-        <div class="test-ring-item"><div class="dot" style="background:#22c55e"></div><span class="name">Білки</span><span class="val"><span id="goalProtein">150</span> г</span></div>
-        <div class="test-ring-item"><div class="dot" style="background:#eab308"></div><span class="name">Жири</span><span class="val"><span id="goalFat">65</span> г</span></div>
-        <div class="test-ring-item"><div class="dot" style="background:#3b82f6"></div><span class="name">Вуглеводи</span><span class="val"><span id="goalCarbs">250</span> г</span></div>
+        <div class="test-ring-item"><div class="dot" style="background:#22c55e"></div><span class="name">Білки</span><span class="val" id="goalProteinDisplay">30% (150 г)</span></div>
+        <div class="test-ring-item"><div class="dot" style="background:#eab308"></div><span class="name">Жири</span><span class="val" id="goalFatDisplay">20% (65 г)</span></div>
+        <div class="test-ring-item"><div class="dot" style="background:#3b82f6"></div><span class="name">Вуглеводи</span><span class="val" id="goalCarbsDisplay">50% (250 г)</span></div>
       </div>
     </div>
     <button class="btn btn-primary btn-block" id="openGoalsBtn"><i class="fas fa-gear"></i> Змінити цілі</button>
@@ -582,11 +582,14 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <h2><i class="fas fa-bullseye"></i> Денні цілі</h2>
-    <div class="form-row-4">
-      <div class="form-group"><label><i class="fas fa-fire"></i> Калорії</label><input type="number" id="goalCalInput" min="0" onfocus="setTimeout(()=>this.select(),80)"></div>
-      <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки (г)</label><input type="number" id="goalProteinInput" min="0" onfocus="setTimeout(()=>this.select(),80)"></div>
-      <div class="form-group"><label><i class="fas fa-droplet"></i> Жири (г)</label><input type="number" id="goalFatInput" min="0" onfocus="setTimeout(()=>this.select(),80)"></div>
-      <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи (г)</label><input type="number" id="goalCarbsInput" min="0" onfocus="setTimeout(()=>this.select(),80)"></div>
+    <div class="form-group">
+      <label><i class="fas fa-fire"></i> Калорії (ккал)</label>
+      <input type="number" id="goalCalInput" min="0" onfocus="setTimeout(()=>this.select(),80)">
+    </div>
+    <div class="form-row-3">
+      <div class="form-group"><label><i class="fas fa-drumstick-bite"></i> Білки %</label><input type="number" id="goalProteinPctInput" min="0" max="100" step="1" onfocus="setTimeout(()=>this.select(),80)" oninput="updateCarbsPctAuto()"></div>
+      <div class="form-group"><label><i class="fas fa-droplet"></i> Жири %</label><input type="number" id="goalFatPctInput" min="0" max="100" step="1" onfocus="setTimeout(()=>this.select(),80)" oninput="updateCarbsPctAuto()"></div>
+      <div class="form-group"><label><i class="fas fa-wheat-awn"></i> Вуглеводи %</label><input type="number" id="goalCarbsPctInput" min="0" max="100" step="1" readonly style="opacity:0.6" onfocus="setTimeout(()=>this.select(),80)"></div>
     </div>
     <button class="btn btn-primary btn-block" id="saveGoalsBtn">Зберегти</button>
     <button class="btn btn-secondary btn-block mt-8" id="goalsCancel">Скасувати</button>
@@ -750,7 +753,7 @@ let currentDate = new Date();
 let currentPage = 'diary';
 let products = [];
 let entries = [];
-let goals = { cal:2000, protein:150, fat:65, carbs:250 };
+let goals = { cal:2000, protein:150, fat:65, carbs:250, proteinPct:30, fatPct:20, carbsPct:50 };
 let editingProductId = null;
 let selectedProductId = null;
 let statsWeekView = true;
@@ -1776,7 +1779,7 @@ async function generateDailyAdvice() {
     + 'Дата аналізованого дня: ' + formatDate(currentDate) + '\n'
     + 'Поточний час: ' + timeStr + '.\n'
     + 'З\'їдено за сьогодні: ' + Math.round(totalCals) + ' ккал (Б: ' + round1(totalP) + 'г, Ж: ' + round1(totalF) + 'г, В: ' + round1(totalCarbs) + 'г).\n'
-    + 'Ціль на день: ' + goals.cal + ' ккал (Б: ' + goals.protein + 'г, Ж: ' + goals.fat + 'г, В: ' + goals.carbs + 'г).\n'
+    + 'Ціль на день: ' + goals.cal + ' ккал (Б: ' + goals.proteinPct + '% / ' + goals.protein + 'г, Ж: ' + goals.fatPct + '% / ' + goals.fat + 'г, В: ' + goals.carbsPct + '% / ' + goals.carbs + 'г).\n'
     + '\nСписок страв:\n' + mealLog;
 
   try {
@@ -1814,28 +1817,45 @@ async function loadGoals() {
   const doc = await userRef().collection('goals').doc('main').get();
   if (doc.exists) {
     goals = doc.data();
+    if (goals.protein != null && goals.proteinPct == null) {
+      const calP = goals.protein * 4;
+      const calF = goals.fat * 9;
+      const calC = goals.carbs * 4;
+      const total = calP + calF + calC;
+      if (total > 0) {
+        goals.proteinPct = Math.round(calP / total * 100);
+        goals.fatPct = Math.round(calF / total * 100);
+        goals.carbsPct = Math.max(0, 100 - goals.proteinPct - goals.fatPct);
+        await userRef().collection('goals').doc('main').set(goals);
+      }
+    }
   } else {
-  await userRef().collection('goals').doc('main').set(goals, { merge: true });
+    await userRef().collection('goals').doc('main').set(goals, { merge: true });
   }
+  if (goals.proteinPct == null) goals.proteinPct = 30;
+  if (goals.fatPct == null) goals.fatPct = 20;
+  if (goals.carbsPct == null) goals.carbsPct = 50;
   document.getElementById('goalCal').textContent = goals.cal;
-  document.getElementById('goalProtein').textContent = goals.protein;
-  document.getElementById('goalFat').textContent = goals.fat;
-  document.getElementById('goalCarbs').textContent = goals.carbs;
+  document.getElementById('goalProteinDisplay').textContent = `${goals.proteinPct}% (${goals.protein} г)`;
+  document.getElementById('goalFatDisplay').textContent = `${goals.fatPct}% (${goals.fat} г)`;
+  document.getElementById('goalCarbsDisplay').textContent = `${goals.carbsPct}% (${goals.carbs} г)`;
   updateGoalsRing();
 }
 
 function updateGoalsRing() {
-  const calP = goals.protein * 4;
-  const calF = goals.fat * 9;
-  const calC = goals.carbs * 4;
-  const total = calP + calF + calC;
-  const p = total > 0 ? calP / total * 100 : 0;
-  const f = total > 0 ? calF / total * 100 : 0;
-  const c = total > 0 ? calC / total * 100 : 0;
+  const p = goals.proteinPct || 0;
+  const f = goals.fatPct || 0;
+  const c = goals.carbsPct || 0;
   const ring = document.querySelector('#pageGoals .test-ring-chart');
   if (ring) {
     ring.style.background = `conic-gradient(#22c55e 0% ${p}%, #eab308 ${p}% ${p+f}%, #3b82f6 ${p+f}% 100%)`;
   }
+}
+
+function updateCarbsPctAuto() {
+  const p = parseFloat(document.getElementById('goalProteinPctInput').value) || 0;
+  const f = parseFloat(document.getElementById('goalFatPctInput').value) || 0;
+  document.getElementById('goalCarbsPctInput').value = Math.max(0, 100 - p - f);
 }
 
 async function loadUserConfig() {
@@ -1848,23 +1868,27 @@ async function loadUserConfig() {
 
 function openGoalsModal() {
   document.getElementById('goalCalInput').value = goals.cal;
-  document.getElementById('goalProteinInput').value = goals.protein;
-  document.getElementById('goalFatInput').value = goals.fat;
-  document.getElementById('goalCarbsInput').value = goals.carbs;
+  document.getElementById('goalProteinPctInput').value = goals.proteinPct;
+  document.getElementById('goalFatPctInput').value = goals.fatPct;
+  document.getElementById('goalCarbsPctInput').value = goals.carbsPct;
   openModal('goalsModal');
 }
 
 async function saveGoals() {
   goals.cal = parseInt(document.getElementById('goalCalInput').value) || 0;
-  goals.protein = parseInt(document.getElementById('goalProteinInput').value) || 0;
-  goals.fat = parseInt(document.getElementById('goalFatInput').value) || 0;
-  goals.carbs = parseInt(document.getElementById('goalCarbsInput').value) || 0;
+  goals.proteinPct = parseInt(document.getElementById('goalProteinPctInput').value) || 0;
+  goals.fatPct = parseInt(document.getElementById('goalFatPctInput').value) || 0;
+  goals.carbsPct = Math.max(0, 100 - goals.proteinPct - goals.fatPct);
+  if (goals.cal <= 0) { showToast('Введіть калорійність'); return; }
+  goals.protein = Math.round(goals.cal * goals.proteinPct / 100 / 4);
+  goals.fat = Math.round(goals.cal * goals.fatPct / 100 / 9);
+  goals.carbs = Math.round(goals.cal * goals.carbsPct / 100 / 4);
   await userRef().collection('goals').doc('main').set(goals);
   closeModal('goalsModal');
   document.getElementById('goalCal').textContent = goals.cal;
-  document.getElementById('goalProtein').textContent = goals.protein;
-  document.getElementById('goalFat').textContent = goals.fat;
-  document.getElementById('goalCarbs').textContent = goals.carbs;
+  document.getElementById('goalProteinDisplay').textContent = `${goals.proteinPct}% (${goals.protein} г)`;
+  document.getElementById('goalFatDisplay').textContent = `${goals.fatPct}% (${goals.fat} г)`;
+  document.getElementById('goalCarbsDisplay').textContent = `${goals.carbsPct}% (${goals.carbs} г)`;
   updateGoalsRing();
   showSyncBadge();
   showToast('Цілі збережено');
