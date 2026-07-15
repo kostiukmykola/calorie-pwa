@@ -185,7 +185,7 @@
     .test-ring-hole { position:absolute; inset:12px; border-radius:50%; background:var(--card); display:flex; flex-direction:column; align-items:center; justify-content:center; }
     .test-ring-hole .val { font-size:22px; font-weight:700; color:#fff; line-height:1.2; }
     .test-ring-hole .lbl { font-size:10px; color:var(--text2); }
-    .test-ring-items { flex:1; display:flex; flex-direction:column; gap:6px; }
+    .test-ring-items { flex:1; display:flex; flex-direction:column; gap:6px; cursor:pointer; user-select:none; }
     .test-ring-item { display:flex; justify-content:space-between; align-items:center; font-size:13px; }
     .test-ring-item .dot { width:10px; height:10px; border-radius:3px; flex-shrink:0; }
     .test-ring-item .name { flex:1; margin-left:6px; }
@@ -754,6 +754,7 @@ let currentPage = 'diary';
 let products = [];
 let entries = [];
 let goals = { cal:2000, protein:150, fat:65, carbs:250, proteinPct:30, fatPct:20, carbsPct:50 };
+let showPctMode = false;
 let editingProductId = null;
 let selectedProductId = null;
 let statsWeekView = true;
@@ -770,6 +771,8 @@ let userGeminiKey = null;
 const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=';
 function round1(v) { return Math.round(v * 10) / 10; }
 function toNum(v) { return parseFloat(v) || 0; }
+function pctStr(val, goal) { return Math.round(goal > 0 ? val / goal * 100 : 0) + '%'; }
+function togglePctMode() { showPctMode = !showPctMode; renderDiary(); }
 
 function escHtml(s) {
   const d = document.createElement('div');
@@ -1609,10 +1612,10 @@ function renderDiary() {
         <span class="lbl">${Math.round(progressRaw)}%</span>
       </div>
     </div>
-    <div class="test-ring-items">
-      <div class="test-ring-item"><div class="dot" style="background:#22c55e"></div><span class="name">Білки</span><span class="val">${Math.round(total.protein)} / ${goals.protein} г</span></div>
-      <div class="test-ring-item"><div class="dot" style="background:#eab308"></div><span class="name">Жири</span><span class="val">${Math.round(total.fat)} / ${goals.fat} г</span></div>
-      <div class="test-ring-item"><div class="dot" style="background:#3b82f6"></div><span class="name">Вуглеводи</span><span class="val">${Math.round(total.carbs)} / ${goals.carbs} г</span></div>
+    <div class="test-ring-items" onclick="togglePctMode()">
+      <div class="test-ring-item"><div class="dot" style="background:#22c55e"></div><span class="name">Білки</span><span class="val">${showPctMode ? pctStr(total.protein, goals.protein) : Math.round(total.protein) + ' / ' + goals.protein + ' г'}</span></div>
+      <div class="test-ring-item"><div class="dot" style="background:#eab308"></div><span class="name">Жири</span><span class="val">${showPctMode ? pctStr(total.fat, goals.fat) : Math.round(total.fat) + ' / ' + goals.fat + ' г'}</span></div>
+      <div class="test-ring-item"><div class="dot" style="background:#3b82f6"></div><span class="name">Вуглеводи</span><span class="val">${showPctMode ? pctStr(total.carbs, goals.carbs) : Math.round(total.carbs) + ' / ' + goals.carbs + ' г'}</span></div>
       <div style="border-top:1px solid var(--bg3);padding-top:6px;margin-top:2px"></div>
       <div class="test-ring-item"><span class="name" style="font-weight:600">Залишилось</span></div>
       <div class="test-ring-item"><span class="name"><i class="fas fa-fire"></i> ${Math.round(remainCal)} ккал</span><span class="val"><i class="fas fa-drumstick-bite"></i> ${Math.round(remainP)}г / <i class="fas fa-droplet"></i> ${Math.round(remainF)}г / <i class="fas fa-wheat-awn"></i> ${Math.round(remainC)}г</span></div>
